@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Base Styles */
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Components */
+.btn {
+    @apply px-6 py-2 rounded-lg font-medium transition-all duration-200;
+}
+
+.btn-primary {
+    @apply bg-primary text-white hover:bg-primary-dark;
+}
+
+.input-field {
+    @apply w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
+           focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white;
+}
+
+.movie-card {
+    @apply relative overflow-hidden rounded-lg shadow-lg transition-all duration-300 hover:scale-105;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.animate-fade-in {
+    animation: fadeIn 1s ease-in-out;
+}
+
+::-webkit-scrollbar {
+  @apply w-2;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-200;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-primary rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-primary/80;
+}
