@@ -54,3 +54,46 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-primary/80;
 }
+
+/* Navigation Styles */
+.nav-link {
+    @apply text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium;
+}
+
+.nav-link.active {
+    @apply text-primary dark:text-primary font-semibold;
+}
+
+#auth-links {
+    @apply flex items-center space-x-4;
+}
+
+#user-menu {
+    @apply hidden relative ml-3;
+}
+
+#user-dropdown {
+    @apply hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-50;
+}
+
+#user-menu:hover #user-dropdown,
+#user-dropdown:hover {
+    @apply block;
+}
+
+#user-menu-button {
+    @apply flex items-center space-x-2 focus:outline-none;
+}
+
+#user-avatar {
+    @apply w-10 h-10 rounded-full object-cover;
+}
+
+#user-name {
+    @apply font-medium dark:text-white;
+}
+
+/* Dropdown item styles */
+#user-dropdown a {
+    @apply block px-4 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600 text-sm;
+}

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScyDB - Movie Database</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="/assets/css/dist.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 dark:bg-gray-900">
+     <!-- Navigation -->
+    <nav class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-3">
+        <div class="flex justify-between items-center">
+            <a href="/" class="flex items-center space-x-2">
+                <span class="text-2xl font-bold text-primary dark:text-white">ScyDB</span>
+            </a>
+            
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="/pages/index.html" class="nav-link">Home</a>
+                <a href="/pages/movies/" class="nav-link">Movies</a>
+                <a href="/pages/about.html" class="nav-link">About</a>
+                
+                <!-- Auth Links (shown when logged out) -->
+                <div id="auth-links" class="hidden">
+                    <a href="/pages/auth/login.html" class="btn btn-outline">Login</a>
+                    <a href="/pages/auth/signup.html" class="btn btn-primary">Sign Up</a>
+                </div>
+                
+                <!-- User Menu (shown when logged in) -->
+                <div id="user-menu" class="hidden">
+                    <button id="user-menu-button" class="flex items-center space-x-2 focus:outline-none">
+                        <img id="user-avatar" src="/assets/images/default-avatar.jpg" alt="User" class="w-10 h-10 rounded-full">
+                        <span id="user-name" class="font-medium dark:text-white"></span>
+                    </button>
+                    <div id="user-dropdown" class="hidden">
+                        <a href="/pages/users/profile.html">Profile</a>
+                        <a href="/pages/users/watchlist.html">Watchlist</a>
+                        <a href="#" id="logout-btn">Logout</a>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="mobile-menu-button" class="md:hidden focus:outline-none">
+                <i class="fas fa-bars text-gray-800 dark:text-white text-2xl"></i>
+            </button>
+        </div>
+    </div>
+</nav>
+
+    <main class="container mx-auto px-4 py-8">
+        <!-- Movie Hero Section -->
+        <section class="relative mb-12">
+            <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent z-10 rounded-xl"></div>
+            <img id="movie-backdrop" src="" alt="" class="w-full h-96 object-cover rounded-xl">
+            
+            <div class="relative z-20 p-8 -mt-24">
+                <div class="flex items-end gap-6">
+                    <img id="movie-poster" src="" alt="" class="w-48 h-72 object-cover rounded-lg shadow-xl border-4 border-white dark:border-gray-800">
+                    
+                    <div>
+                        <h1 id="movie-title" class="text-4xl font-bold text-white mb-2"></h1>
+                        <div class="flex items-center gap-4 mb-4">
+                            <span id="movie-year" class="text-white"></span>
+                            <span id="movie-rating" class="bg-yellow-400 text-gray-900 px-2 py-1 rounded-full text-sm font-bold"></span>
+                            <span id="movie-duration" class="text-white"></span>
+                        </div>
+                        <div id="movie-genres" class="flex flex-wrap gap-2 mb-4"></div>
+                        <div class="flex gap-3">
+                            <button id="watchlist-btn" class="btn btn-outline !text-white !border-white hover:!bg-white/10">
+                                <i class="far fa-bookmark mr-2"></i> Watchlist
+                            </button>
+                            <button id="write-review-btn" class="btn btn-primary">
+                                <i class="far fa-edit mr-2"></i> Write Review
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Movie Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column -->
+            <div class="lg:col-span-2">
+                <section class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md mb-6">
+                    <h2 class="text-2xl font-bold mb-4 dark:text-white">Overview</h2>
+                    <p id="movie-description" class="text-gray-700 dark:text-gray-300"></p>
+                </section>
+
+                <!-- Reviews Section -->
+                <section class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold dark:text-white">Reviews</h2>
+                        <button id="add-review-btn" class="btn btn-primary">
+                            <i class="fas fa-plus mr-2"></i> Add Review
+                        </button>
+                    </div>
+                    
+                    <div id="reviews-container" class="space-y-6">
+                        <!-- Reviews will be loaded here -->
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column -->
+            <div>
+                <section class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md mb-6">
+                    <h2 class="text-2xl font-bold mb-4 dark:text-white">Details</h2>
+                    <div class="space-y-3">
+                        <div>
+                            <h3 class="font-semibold text-gray-500 dark:text-gray-400">Director</h3>
+                            <p id="movie-director" class="dark:text-white"></p>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-500 dark:text-gray-400">Cast</h3>
+                            <p id="movie-cast" class="dark:text-white"></p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md">
+                    <h2 class="text-2xl font-bold mb-4 dark:text-white">Statistics</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-gray-700 dark:text-gray-300">Average Rating</span>
+                                <span id="avg-rating" class="font-medium"></span>
+                            </div>
+                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                                <div id="rating-bar" class="bg-yellow-400 h-2.5 rounded-full"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-gray-700 dark:text-gray-300">Total Reviews</span>
+                                <span id="total-reviews" class="font-medium"></span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+   <footer class="bg-white dark:bg-gray-800 py-12 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4 dark:text-white">ScyDB</h3>
+                    <p class="text-gray-600 dark:text-gray-300">The ultimate movie database for film enthusiasts.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4 dark:text-white">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/pages/index.html" class="text-gray-600 dark:text-gray-300 hover:text-primary">Home</a></li>
+                        <li><a href="/pages/movies/" class="text-gray-600 dark:text-gray-300 hover:text-primary">Movies</a></li>
+                        <li><a href="/pages/about.html" class="text-gray-600 dark:text-gray-300 hover:text-primary">About</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4 dark:text-white">Legal</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary">Terms</a></li>
+                        <li><a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary">Privacy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4 dark:text-white">Connect</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary"><i class="fab fa-twitter text-xl"></i></a>
+                        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary"><i class="fab fa-instagram text-xl"></i></a>
+                        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary"><i class="fab fa-facebook text-xl"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-200 dark:border-gray-700 mt-8 pt-8 text-center text-gray-600 dark:text-gray-300">
+                <p>&copy; 2025 ScyDB. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <script src="/assets/js/movies.js"></script>
+    <script src="/assets/js/reviews.js"></script>
+</body>
+</html>

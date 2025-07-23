@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScyDB - Movie Database</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="/assets/css/dist.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-3">
+        <div class="flex justify-between items-center">
+            <a href="/" class="flex items-center space-x-2">
+                <span class="text-2xl font-bold text-primary dark:text-white">ScyDB</span>
+            </a>
+            
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="/pages/index.html" class="nav-link">Home</a>
+                <a href="/pages/movies/" class="nav-link">Movies</a>
+                <a href="/pages/about.html" class="nav-link">About</a>
+                
+                <!-- Auth Links (shown when logged out) -->
+                <div id="auth-links" class="hidden">
+                    <a href="/pages/auth/login.html" class="btn btn-outline">Login</a>
+                    <a href="/pages/auth/signup.html" class="btn btn-primary">Sign Up</a>
+                </div>
+                
+                <!-- User Menu (shown when logged in) -->
+                <div id="user-menu" class="hidden">
+                    <button id="user-menu-button" class="flex items-center space-x-2 focus:outline-none">
+                        <img id="user-avatar" src="/assets/images/default-avatar.jpg" alt="User" class="w-10 h-10 rounded-full">
+                        <span id="user-name" class="font-medium dark:text-white"></span>
+                    </button>
+                    <div id="user-dropdown" class="hidden">
+                        <a href="/pages/users/profile.html">Profile</a>
+                        <a href="/pages/users/watchlist.html">Watchlist</a>
+                        <a href="#" id="logout-btn">Logout</a>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="mobile-menu-button" class="md:hidden focus:outline-none">
+                <i class="fas fa-bars text-gray-800 dark:text-white text-2xl"></i>
+            </button>
+        </div>
+    </div>
+</nav>
+
+    <main class="container mx-auto px-4 py-8 max-w-4xl">
+        <h1 class="text-3xl font-bold mb-8 dark:text-white">Add New Movie</h1>
+        
+        <form id="create-movie-form" class="space-y-6 bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Title*</label>
+                    <input type="text" id="movie-title" required class="input-field">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Release Year*</label>
+                    <input type="number" id="movie-year" min="1900" max="2030" required class="input-field">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Duration (minutes)*</label>
+                    <input type="number" id="movie-duration" min="1" required class="input-field">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Director*</label>
+                    <input type="text" id="movie-director" required class="input-field">
+                </div>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium mb-1 dark:text-gray-300">Genres*</label>
+                <div class="flex flex-wrap gap-2" id="genre-tags"></div>
+                <div class="flex mt-2">
+                    <input type="text" id="genre-input" placeholder="Add genre" class="input-field rounded-r-none">
+                    <button type="button" id="add-genre-btn" class="btn btn-primary rounded-l-none px-4">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium mb-1 dark:text-gray-300">Cast (comma separated)*</label>
+                <textarea id="movie-cast" required class="input-field"></textarea>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium mb-1 dark:text-gray-300">Description*</label>
+                <textarea id="movie-description" rows="4" required class="input-field"></textarea>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Poster URL*</label>
+                    <input type="url" id="movie-poster" required class="input-field">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Backdrop URL*</label>
+                    <input type="url" id="movie-backdrop" required class="input-field">
+                </div>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium mb-1 dark:text-gray-300">Trailer URL*</label>
+                <input type="url" id="movie-trailer" required class="input-field">
+            </div>
+            
+            <button type="submit" class="btn btn-primary w-full py-3">
+                <i class="fas fa-save mr-2"></i> Create Movie
+            </button>
+        </form>
+    </main>
+
+    <footer class="bg-white dark:bg-gray-800 py-12 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4 dark:text-white">ScyDB</h3>
+                    <p class="text-gray-600 dark:text-gray-300">The ultimate movie database for film enthusiasts.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4 dark:text-white">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/pages/index.html" class="text-gray-600 dark:text-gray-300 hover:text-primary">Home</a></li>
+                        <li><a href="/pages/movies/" class="text-gray-600 dark:text-gray-300 hover:text-primary">Movies</a></li>
+                        <li><a href="/pages/about.html" class="text-gray-600 dark:text-gray-300 hover:text-primary">About</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4 dark:text-white">Legal</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary">Terms</a></li>
+                        <li><a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary">Privacy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4 dark:text-white">Connect</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary"><i class="fab fa-twitter text-xl"></i></a>
+                        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary"><i class="fab fa-instagram text-xl"></i></a>
+                        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary"><i class="fab fa-facebook text-xl"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-200 dark:border-gray-700 mt-8 pt-8 text-center text-gray-600 dark:text-gray-300">
+                <p>&copy; 2025 ScyDB. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <script src="/assets/js/movie-create.js"></script>
+</body>
+</html>
