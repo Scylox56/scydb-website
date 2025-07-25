@@ -1,7 +1,18 @@
 // ======================
 // Movie Core Functions
 // ======================
-const API_BASE_URL = 'http://localhost:3000/api/v1';
+
+
+// Helper function to get auth headers
+const getAuthHeaders = () => {
+    const token = localStorage.getItem('token');
+    return token ? {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+    } : {
+        'Content-Type': 'application/json'
+    };
+};
 /**
  * Loads movie details for the details page
  */

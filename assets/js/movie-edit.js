@@ -7,7 +7,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     try {
         // Load movie data
-        const { data } = await axios.get(`/api/v1/movies/${movieId}`);
+        const API_BASE_URL = 'http://localhost:3000/api/v1';
+        const { data } = await axios.get(`${API_BASE_URL}/movies/${movieId}`);
         const movie = data.data.movie;
 
         // Populate form (using same fields as create.js)
@@ -42,7 +43,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             };
 
             try {
-                await axios.patch(`/api/v1/movies/${movieId}`, updatedData, {
+                await axios.patch(`${API_BASE_URL}/movies/${movieId}`, updatedData, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
@@ -75,7 +76,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     try {
-                        await axios.delete(`/api/v1/movies/${movieId}`, {
+                        await axios.delete(`${API_BASE_URL}/movies/${movieId}`, {
                             headers: { Authorization: `Bearer ${token}` }
                         });
                         

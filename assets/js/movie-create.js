@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const API_BASE_URL = 'http://localhost:3000/api/v1';
     const form = document.getElementById('create-movie-form');
     const genreInput = document.getElementById('genre-input');
     const addGenreBtn = document.getElementById('add-genre-btn');
@@ -55,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         try {
-            const { data } = await axios.post('/api/v1/movies', movieData, {
+            const { data } = await axios.post(`${API_BASE_URL}/movies`, movieData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 

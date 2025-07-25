@@ -11,39 +11,56 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 min-h-screen">
+   <!-- Navigation -->
     <nav class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50">
         <div class="container mx-auto px-4 py-3">
             <div class="flex justify-between items-center">
-                <a href="/" class="flex items-center space-x-2">
+                <!-- Logo -->
+                <a href="/pages/index.html" class="flex items-center space-x-2">
                     <span class="text-2xl font-bold text-primary dark:text-white">ScyDB</span>
                 </a>
-                
+
+                <!-- Desktop Navigation -->
                 <div class="hidden md:flex items-center space-x-6">
                     <a href="/pages/index.html" class="nav-link">Home</a>
-                    <a href="/pages/movies/" class="nav-link active">Movies</a>
+                    <a href="/pages/movies/" class="nav-link">Movies</a>
                     <a href="/pages/about.html" class="nav-link">About</a>
-                    
-                    <div id="auth-links" class="flex items-center space-x-4">
+                </div>
+
+                <!-- Auth Section -->
+                <div class="flex items-center space-x-4">
+                    <!-- Auth Links -->
+                    <div id="auth-links" class="items-center space-x-4">
                         <a href="/pages/auth/login.html" class="btn btn-outline">Login</a>
                         <a href="/pages/auth/signup.html" class="btn btn-primary">Sign Up</a>
                     </div>
-                    
-                    <div id="user-menu" class="hidden relative">
+
+                    <!-- User Menu -->
+                    <div id="user-menu" class="relative hidden">
                         <button id="user-menu-button" class="flex items-center space-x-2 focus:outline-none">
                             <img id="user-avatar" src="/assets/images/default-avatar.jpg" alt="User" class="w-10 h-10 rounded-full">
                             <span id="user-name" class="font-medium dark:text-white"></span>
+                            <i class="fas fa-chevron-down text-sm"></i>
                         </button>
                         <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-50">
                             <a href="/pages/users/profile.html" class="block px-4 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600">Profile</a>
                             <a href="/pages/users/watchlist.html" class="block px-4 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600">Watchlist</a>
-                            <a href="#" id="logout-btn" class="block px-4 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600">Logout</a>
+                            <button id="logout-btn" class="w-full text-left px-4 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600">Logout</button>
                         </div>
                     </div>
                 </div>
-                
+
+                <!-- Mobile menu button -->
                 <button id="mobile-menu-button" class="md:hidden focus:outline-none">
                     <i class="fas fa-bars text-gray-800 dark:text-white text-2xl"></i>
                 </button>
+            </div>
+
+            <!-- Mobile menu -->
+            <div id="mobile-menu" class="hidden md:hidden mt-4">
+                <a href="/pages/index.html" class="block py-2 text-gray-800 dark:text-white">Home</a>
+                <a href="/pages/movies/" class="block py-2 text-gray-800 dark:text-white">Movies</a>
+                <a href="/pages/about.html" class="block py-2 text-gray-800 dark:text-white">About</a>
             </div>
         </div>
     </nav>
@@ -55,22 +72,22 @@
             <form id="signup-form" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium mb-1 dark:text-gray-300">Name</label>
-                    <input type="text" id="name" required class="input-field">
+                    <input type="text" id="name" name="name" required class="input-field">
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium mb-1 dark:text-gray-300">Email</label>
-                    <input type="email" id="email" required class="input-field">
+                    <input type="email" id="email" name="email" required class="input-field">
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium mb-1 dark:text-gray-300">Password</label>
-                    <input type="password" id="password" minlength="8" required class="input-field">
+                    <input type="password" id="password" name="password" minlength="8" required class="input-field">
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium mb-1 dark:text-gray-300">Confirm Password</label>
-                    <input type="password" id="passwordConfirm" required class="input-field">
+                    <input type="password" id="passwordConfirm" name="passwordConfirm" required class="input-field">
                 </div>
 
                 <button type="submit" class="btn btn-primary w-full py-3 mt-4" id="signup-button">
@@ -124,6 +141,8 @@
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/navbar.js"></script>
 </body>
 </html>

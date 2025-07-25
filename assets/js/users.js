@@ -1,11 +1,12 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    const API_BASE_URL = 'http://localhost:3000/api/v1';
     const token = localStorage.getItem('token');
     if (!token) return window.location.href = '/pages/auth/login.html';
 
     // Load user data
     const loadUserProfile = async () => {
         try {
-            const { data } = await axios.get('/api/v1/users/me', {
+            const { data } = await axios.get(`${API_BASE_URL}/users/me`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const user = data.data.user;
@@ -36,7 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         e.preventDefault();
         
         try {
-            const { data } = await axios.patch('/api/v1/users/updateMe', {
+            const { data } = await axios.patch(`${API_BASE_URL}/users/updateMe`, {
                 name: document.getElementById('profile-name').value,
                 email: document.getElementById('profile-email').value,
                 photo: document.getElementById('profile-avatar').value
@@ -75,7 +76,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         try {
-            await axios.patch('/api/v1/users/updateMyPassword', {
+            await axios.patch(`${API_BASE_URL}/users/updateMyPassword`, {
                 currentPassword,
                 newPassword,
                 newPasswordConfirm
