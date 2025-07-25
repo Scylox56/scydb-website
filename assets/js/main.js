@@ -21,6 +21,7 @@ if (darkModeToggle) {
 
 // Check auth status on page load
 window.API_BASE_URL = window.API_BASE_URL || 'http://localhost:3000/api/v1';
+
 const checkAuthStatus = async () => {
   const token = localStorage.getItem('token');
   console.log('Checking auth status. Token:', token ? 'exists' : 'not found');
@@ -53,28 +54,16 @@ const checkAuthStatus = async () => {
     updateUIForLoggedInUser(null);
     return;
   }
-
-  try {
-    const { data } = await axios.get(`${window.API_BASE_URL}/auth/check`, {
-      headers: { Authorization: `Bearer ${token}` },
-      withCredentials: true
-    });
-    // Store user in localStorage for consistency with other pages
-    localStorage.setItem('user', JSON.stringify(data.data.user));
-    updateUIForLoggedInUser(data.data.user);
-  } catch (err) {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-  }
 };
 
 // Update UI for logged-in users
 const updateUIForLoggedInUser = (user) => {
   const authLinks = document.getElementById('auth-links');
   const userMenu = document.getElementById('user-menu');
+  const userDashboardLink = document.getElementById('user-dashboard-link');
 
   if (!user) {
-    // Force show auth links and hide user menu when no user
+    // Force show auth links and hide user menu when no user - IMMEDIATE effect
     if (authLinks) {
       authLinks.style.display = 'flex';
       authLinks.classList.remove('hidden');
@@ -82,12 +71,19 @@ const updateUIForLoggedInUser = (user) => {
     }
     if (userMenu) {
       userMenu.style.display = 'none';
-      userMenu.classList.add('hidden');
+      userMenu.classList.add('hidden', 'opacity-0');
+    }
+    // Hide user dashboard link for non-users
+    if (userDashboardLink) {
+      userDashboardLink.style.display = 'none';
+      userDashboardLink.classList.add('hidden');
     }
     return;
   }
 
-  // User is logged in
+  const isAdmin = ['admin', 'super-admin'].includes(user.role);
+
+  // User is logged in - IMMEDIATE effect to prevent flashing
   if (authLinks) {
     authLinks.style.display = 'none';
     authLinks.classList.add('hidden');
@@ -96,7 +92,7 @@ const updateUIForLoggedInUser = (user) => {
   
   if (userMenu) {
     userMenu.style.display = 'flex';
-    userMenu.classList.remove('hidden');
+    userMenu.classList.remove('hidden', 'opacity-0');
     const userNameElement = document.getElementById('user-name');
     const userAvatarElement = document.getElementById('user-avatar');
     if (userNameElement) userNameElement.textContent = user.name || 'User';
@@ -104,8 +100,19 @@ const updateUIForLoggedInUser = (user) => {
     console.log('User menu shown by updateUIForLoggedInUser');
   }
 
+  // FIXED: Show/hide user dashboard link based on admin role
+  if (userDashboardLink) {
+    if (isAdmin) {
+      userDashboardLink.style.display = 'block';
+      userDashboardLink.classList.remove('hidden');
+    } else {
+      userDashboardLink.style.display = 'none';
+      userDashboardLink.classList.add('hidden');
+    }
+  }
+
   // Show admin features if applicable
-  if (['admin', 'super-admin'].includes(user.role)) {
+  if (isAdmin) {
     document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
   }
 };

@@ -20,8 +20,7 @@
             <div class="md:w-1/4">
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 sticky top-6">
                     <div class="flex flex-col items-center text-center mb-6">
-                        <img id="user-avatar" src="/assets/images/default-avatar.jpg" 
-                             alt="Profile" class="w-24 h-24 rounded-full object-cover mb-4 border-4 border-primary">
+                        <img id="user-avatar" src="/assets/images/default-avatar.jpg" alt="User" class="w-10 h-10 rounded-full">
                         <h2 id="user-name" class="text-xl font-bold dark:text-white"></h2>
                         <p id="user-email" class="text-gray-600 dark:text-gray-300"></p>
                     </div>
@@ -29,6 +28,11 @@
                     <nav class="space-y-2">
                         <a href="/pages/users/profile.html" class="block px-4 py-2 rounded-lg bg-primary/10 text-primary font-medium">
                             <i class="fas fa-user mr-2"></i> Profile
+                        </a>
+                        <a href="/pages/users/dashboard.html" 
+                                id="admin-dashboard-link"
+                                class="hidden px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-indigo-600 font-semibold">
+                                <i class="fas fa-cog mr-2"></i> Admin Dashboard
                         </a>
                         <a href="/pages/users/watchlist.html" class="block px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300">
                             <i class="fas fa-bookmark mr-2"></i> Watchlist
@@ -131,6 +135,7 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+        <script src="/assets/js/main.js"></script>
     <script src="/assets/js/users.js"></script>
     <script src="/assets/js/auth.js"></script>
     <script src="/assets/js/navbar.js"></script>

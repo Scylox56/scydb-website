@@ -17,14 +17,14 @@ function createNavbar() {
 
                 <!-- Auth Section -->
                 <div class="flex items-center space-x-4">
-                    <!-- Auth Links -->
-                    <div id="auth-links" class="items-center space-x-4">
+                    <!-- Auth Links - Initially hidden to prevent flash -->
+                    <div id="auth-links" class="items-center space-x-4 hidden">
                         <a href="/pages/auth/login.html" class="btn btn-outline">Login</a>
                         <a href="/pages/auth/signup.html" class="btn btn-primary">Sign Up</a>
                     </div>
 
-                    <!-- User Menu -->
-                    <div id="user-menu" class="relative hidden">
+                    <!-- User Menu - Initially hidden -->
+                    <div id="user-menu" class="relative hidden opacity-0 transition-opacity duration-300">
                         <button id="user-menu-button" class="flex items-center space-x-2 focus:outline-none">
                             <img id="user-avatar" src="/assets/images/default-avatar.jpg" alt="User" class="w-10 h-10 rounded-full">
                             <span id="user-name" class="font-medium dark:text-white"></span>
@@ -32,6 +32,7 @@ function createNavbar() {
                         </button>
                         <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-50">
                             <a href="/pages/users/profile.html" class="block px-4 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600">Profile</a>
+                            <a href="/pages/users/dashboard.html" id="user-dashboard-link" class="hidden px-4 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600" style="display: none;">User Dashboard</a>                            
                             <a href="/pages/users/watchlist.html" class="block px-4 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600">Watchlist</a>
                             <button id="logout-btn" class="w-full text-left px-4 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600">Logout</button>
                         </div>
@@ -53,16 +54,12 @@ function createNavbar() {
         </div>
     `;
 
-     const nav = document.querySelector('nav');
+    const nav = document.querySelector('nav');
     if (nav) {
         nav.innerHTML = navbar;
 
-        // ✅ Once injected, initialize auth logic
-        if (typeof initializeAuth === 'function') {
-            initializeAuth();
-        } else {
-            console.warn('initializeAuth is not available!');
-        }
+        // Call updateAuthUI immediately after navbar creation
+        setTimeout(() => updateAuthUI(), 0);
     }
 }
 
