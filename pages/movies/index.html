@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScyDB - Movie Database</title>
+    <title>ScyDB - Movies</title>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -12,85 +12,155 @@
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 min-h-screen">
     <!-- Navigation -->
-    <nav class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50">
-        <div class="container mx-auto px-4 py-3">
-            <div class="flex justify-between items-center">
-                <!-- Logo -->
-                <a href="/pages/index.html" class="flex items-center space-x-2">
-                    <span class="text-2xl font-bold text-primary dark:text-white">ScyDB</span>
-                </a>
+    <nav class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50"></nav>
 
-                <!-- Desktop Navigation -->
-                <div class="hidden md:flex items-center space-x-6">
-                    <a href="/pages/index.html" class="nav-link">Home</a>
-                    <a href="/pages/movies/" class="nav-link">Movies</a>
-                    <a href="/pages/about.html" class="nav-link">About</a>
-                </div>
-
-                <!-- Auth Section -->
-                <div class="flex items-center space-x-4">
-                    <!-- Auth Links -->
-                    <div id="auth-links" class="items-center space-x-4">
-                        <a href="/pages/auth/login.html" class="btn btn-outline">Login</a>
-                        <a href="/pages/auth/signup.html" class="btn btn-primary">Sign Up</a>
-                    </div>
-
-                    <!-- User Menu -->
-                    <div id="user-menu" class="relative hidden">
-                        <button id="user-menu-button" class="flex items-center space-x-2 focus:outline-none">
-                            <img id="user-avatar" src="/pages/" alt="User" class="w-10 h-10 rounded-full">
-                            <span id="user-name" class="font-medium dark:text-white"></span>
-                            <i class="fas fa-chevron-down text-sm"></i>
-                        </button>
-                        <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-50">
-                            <a href="/pages/users/profile.html" class="block px-4 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600">Profile</a>
-                            <a href="/pages/users/watchlist.html" class="block px-4 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600">Watchlist</a>
-                            <button id="logout-btn" class="w-full text-left px-4 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600">Logout</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Mobile menu button -->
-                <button id="mobile-menu-button" class="md:hidden focus:outline-none">
-                    <i class="fas fa-bars text-gray-800 dark:text-white text-2xl"></i>
-                </button>
-            </div>
-
-            <!-- Mobile menu -->
-            <div id="mobile-menu" class="hidden md:hidden mt-4">
-                <a href="/pages/index.html" class="block py-2 text-gray-800 dark:text-white">Home</a>
-                <a href="/pages/movies/" class="block py-2 text-gray-800 dark:text-white">Movies</a>
-                <a href="/pages/about.html" class="block py-2 text-gray-800 dark:text-white">About</a>
-            </div>
-        </div>
-    </nav>
     <main class="container mx-auto px-4 py-8">
-        <div class="flex justify-between items-center mb-8">
-            <h1 class="text-3xl font-bold dark:text-white">All Movies</h1>
-            <div class="flex space-x-4">
+        <!-- Header Section -->
+        <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-8 gap-4">
+            <div>
+                <h1 class="text-3xl font-bold dark:text-white mb-2">Discover Movies</h1>
+                <p class="text-gray-600 dark:text-gray-400">Explore our collection of amazing films</p>
+                <p id="results-count" class="text-sm text-gray-500 dark:text-gray-400 mt-1">Loading...</p>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row gap-3">
+                <!-- Sort Dropdown -->
                 <div class="relative">
-                    <select id="sort-by" class="input-field appearance-none pr-8">
-                        <option value="popular">Popular</option>
-                        <option value="rating">Top Rated</option>
-                        <option value="newest">Newest</option>
+                    <select id="sort-by" class="appearance-none bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 pr-8 text-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <option value="popular">Most Popular</option>
+                        <option value="rating">Highest Rated</option>
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="title">A-Z</option>
                     </select>
-                    <div class="absolute right-3 top-3 text-gray-400">
+                    <div class="absolute right-3 top-3 text-gray-400 pointer-events-none">
                         <i class="fas fa-chevron-down"></i>
                     </div>
                 </div>
-                <a href="/pages/movies/create.html" id="add-movie-btn" class="btn btn-secondary hidden">Add Movie</a>
+                
+                <!-- Add Movie Button (Admin Only) -->
+                <a href="/pages/movies/create.html" id="add-movie-btn" class="btn btn-primary hidden">
+                    <i class="fas fa-plus mr-2"></i> Add Movie
+                </a>
             </div>
         </div>
         
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <!-- Search and Filter Section -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+                <!-- Search Bar -->
+                <div class="lg:col-span-2">
+  <div class="search-container">
+    <form id="search-form" class="relative">
+      <input type="text" id="search-input" placeholder="Search movies, directors, actors..." 
+             class="w-full px-4 py-3 pr-12 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200">
+      <button type="submit" id="search-btn" class="absolute right-3 top-3 text-gray-400 hover:text-primary transition-colors">
+        <i class="fas fa-search text-xl"></i>
+      </button>
+    </form>
+    <div id="search-suggestions" class="search-suggestions"></div>
+  </div>
+</div>
+                
+                <!-- Genre Filter -->
+                <div class="relative">
+                    <select id="genre-filter" class="appearance-none w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent pr-8">
+                        <option value="">All Genres</option>
+                        <option value="Action">Action</option>
+                        <option value="Adventure">Adventure</option>
+                        <option value="Animation">Animation</option>
+                        <option value="Comedy">Comedy</option>
+                        <option value="Crime">Crime</option>
+                        <option value="Documentary">Documentary</option>
+                        <option value="Drama">Drama</option>
+                        <option value="Family">Family</option>
+                        <option value="Fantasy">Fantasy</option>
+                        <option value="Horror">Horror</option>
+                        <option value="Musical">Musical</option>
+                        <option value="Mystery">Mystery</option>
+                        <option value="Romance">Romance</option>
+                        <option value="Sci-Fi">Sci-Fi</option>
+                        <option value="Thriller">Thriller</option>
+                        <option value="War">War</option>
+                        <option value="Western">Western</option>
+                    </select>
+                    <div class="absolute right-3 top-4 text-gray-400 pointer-events-none">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Active Filters & Quick Actions -->
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div id="active-filters" class="flex flex-wrap gap-2">
+                    <!-- Active filter chips will appear here -->
+                </div>
+                
+                <div class="flex gap-2">
+                    <button id="clear-filters" class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors" style="display: none;">
+                        <i class="fas fa-times mr-1"></i> Clear Filters
+                    </button>
+                    <button id="advanced-search" class="text-sm text-primary hover:text-primary-dark transition-colors">
+                        <i class="fas fa-sliders-h mr-1"></i> Advanced
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Genre Filter Chips -->
+        <div class="mb-8">
+            <h3 class="text-lg font-semibold dark:text-white mb-4">Popular Genres</h3>
+            <div class="flex flex-wrap gap-2">
+                <button class="genre-chip filter-chip px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-primary hover:text-white transition-all" data-genre="">
+                    All
+                </button>
+                <button class="genre-chip filter-chip px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-primary hover:text-white transition-all" data-genre="Action">
+                    Action
+                </button>
+                <button class="genre-chip filter-chip px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-primary hover:text-white transition-all" data-genre="Comedy">
+                    Comedy
+                </button>
+                <button class="genre-chip filter-chip px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-primary hover:text-white transition-all" data-genre="Drama">
+                    Drama
+                </button>
+                <button class="genre-chip filter-chip px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-primary hover:text-white transition-all" data-genre="Horror">
+                    Horror
+                </button>
+                <button class="genre-chip filter-chip px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-primary hover:text-white transition-all" data-genre="Sci-Fi">
+                    Sci-Fi
+                </button>
+                <button class="genre-chip filter-chip px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-primary hover:text-white transition-all" data-genre="Thriller">
+                    Thriller
+                </button>
+            </div>
+        </div>
+        
+        <!-- Movies Grid -->
+        <div id="movies-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-8">
             <!-- Movies will be loaded here -->
         </div>
         
-        <div class="flex justify-center mt-8">
-            <button id="load-more" class="btn btn-outline">Load More</button>
+        <!-- Load More Section -->
+        <div class="text-center">
+            <button id="load-more" class="btn btn-outline btn-lg hidden">
+                <i class="fas fa-plus mr-2"></i> Load More Movies
+            </button>
+            
+            <!-- No Results Message -->
+            <div id="no-results" class="hidden py-12">
+                <div class="text-gray-400 mb-4">
+                    <i class="fas fa-search text-6xl"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">No movies found</h3>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">Try adjusting your search or filters</p>
+                <button onclick="clearFilters()" class="btn btn-primary">
+                    <i class="fas fa-redo mr-2"></i> Reset Filters
+                </button>
+            </div>
         </div>
     </main>
 
+    <!-- Footer -->
     <footer class="bg-white dark:bg-gray-800 py-12 mt-12">
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -101,24 +171,24 @@
                 <div>
                     <h3 class="text-lg font-bold mb-4 dark:text-white">Quick Links</h3>
                     <ul class="space-y-2">
-                        <li><a href="/pages/index.html" class="text-gray-600 dark:text-gray-300 hover:text-primary">Home</a></li>
-                        <li><a href="/pages/movies/" class="text-gray-600 dark:text-gray-300 hover:text-primary">Movies</a></li>
-                        <li><a href="/pages/about.html" class="text-gray-600 dark:text-gray-300 hover:text-primary">About</a></li>
+                        <li><a href="/pages/index.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Home</a></li>
+                        <li><a href="/pages/movies/" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Movies</a></li>
+                        <li><a href="/pages/about.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">About</a></li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="text-lg font-bold mb-4 dark:text-white">Legal</h3>
                     <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary">Terms</a></li>
-                        <li><a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary">Privacy</a></li>
+                        <li><a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Terms</a></li>
+                        <li><a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Privacy</a></li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="text-lg font-bold mb-4 dark:text-white">Connect</h3>
                     <div class="flex space-x-4">
-                        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary"><i class="fab fa-twitter text-xl"></i></a>
-                        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary"><i class="fab fa-instagram text-xl"></i></a>
-                        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary"><i class="fab fa-facebook text-xl"></i></a>
+                        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors"><i class="fab fa-twitter text-xl"></i></a>
+                        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors"><i class="fab fa-instagram text-xl"></i></a>
+                        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors"><i class="fab fa-facebook text-xl"></i></a>
                     </div>
                 </div>
             </div>
@@ -127,6 +197,70 @@
             </div>
         </div>
     </footer>
+
+    <!-- Advanced Search Modal -->
+    <div id="advanced-search-modal" class="fixed inset-0 bg-black/50 z-50 items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-bold dark:text-white">Advanced Search</h3>
+                <button id="close-advanced-search" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="advanced-search-form" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1 dark:text-gray-300">Title</label>
+                        <input type="text" id="adv-title" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1 dark:text-gray-300">Director</label>
+                        <input type="text" id="adv-director" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1 dark:text-gray-300">Year From</label>
+                        <input type="number" id="adv-year-from" min="1900" max="2030" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1 dark:text-gray-300">Year To</label>
+                        <input type="number" id="adv-year-to" min="1900" max="2030" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1 dark:text-gray-300">Minimum Rating</label>
+                        <input type="range" id="adv-rating" min="0" max="10" step="0.1" class="w-full accent-primary">
+                        <div class="flex justify-between text-xs text-gray-500 mt-1">
+                            <span>0</span>
+                            <span id="rating-value">5</span>
+                            <span>10</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1 dark:text-gray-300">Duration (minutes)</label>
+                        <select id="adv-duration" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <option value="">Any Duration</option>
+                            <option value="0-90">Short (< 90 min)</option>
+                            <option value="90-120">Standard (90-120 min)</option>
+                            <option value="120-180">Long (2-3 hours)</option>
+                            <option value="180-">Epic (> 3 hours)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Cast</label>
+                    <input type="text" id="adv-cast" placeholder="Actor names separated by commas" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+                
+                <div class="flex justify-end gap-3 pt-4">
+                    <button type="button" id="clear-advanced" class="btn btn-outline">Clear</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search mr-2"></i> Search
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
     
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -134,7 +268,11 @@
     <script src="/assets/js/auth.js"></script>
     <script src="/assets/js/navbar.js"></script>
     <script src="/assets/js/main.js"></script>
+    
+    
+   
     <script src="/assets/js/movies.js"></script>
-
+     <script src="/assets/js/movie-index.js"></script>
+     
 </body>
 </html>
