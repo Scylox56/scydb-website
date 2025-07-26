@@ -9,107 +9,257 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link href="/assets/css/dist.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .hero-gradient {
+            background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.8) 100%);
+        }
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .rating-stars {
+            background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .cast-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: #374151 #1f2937;
+        }
+        .cast-scroll::-webkit-scrollbar {
+            height: 4px;
+        }
+        .cast-scroll::-webkit-scrollbar-track {
+            background: #1f2937;
+            border-radius: 2px;
+        }
+        .cast-scroll::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 2px;
+        }
+        .cast-scroll::-webkit-scrollbar-thumb:hover {
+            background: #4b5563;
+        }
+    </style>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900">
     <!-- Navigation -->
     <nav></nav>
 
-    <main class="container mx-auto px-4 py-8">
-        <!-- Movie Hero Section -->
-        <section class="relative mb-12">
-            <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent z-10 rounded-xl"></div>
-            <img id="movie-backdrop" src="" alt="" class="w-full h-96 object-cover rounded-xl">
+    <main class="min-h-screen">
+        <!-- Hero Section with Backdrop -->
+        <section class="relative h-screen overflow-hidden">
+            <!-- Backdrop Image -->
+            <div class="absolute inset-0">
+                <img id="movie-backdrop" src="" alt="" class="w-full h-full object-cover scale-110 blur-sm">
+                <div class="absolute inset-0 hero-gradient"></div>
+            </div>
             
-            <div class="relative z-20 p-8 -mt-24">
-                <div class="flex items-end gap-6">
-                    <img id="movie-poster" src="" alt="" class="w-48 h-72 object-cover rounded-lg shadow-xl border-4 border-white dark:border-gray-800">
-                    
-                    <div>
-                        <h1 id="movie-title" class="text-4xl font-bold text-white mb-2"></h1>
-                        <div class="flex items-center gap-4 mb-4">
-                            <span id="movie-year" class="text-white"></span>
-                            <span id="movie-rating" class="bg-yellow-400 text-gray-900 px-2 py-1 rounded-full text-sm font-bold"></span>
-                            <span id="movie-duration" class="text-white"></span>
+            <!-- Content Overlay -->
+            <div class="relative z-10 h-full flex items-center">
+                <div class="container mx-auto px-4">
+                    <div class="flex flex-col lg:flex-row items-center lg:items-end gap-8 lg:gap-12">
+                        <!-- Movie Poster -->
+                        <div class="flex-shrink-0" data-aos="fade-up" data-aos-delay="200">
+                            <div class="relative group">
+                                <img id="movie-poster" src="" alt="" 
+                                     class="w-80 h-120 lg:w-96 lg:h-144 object-cover rounded-2xl shadow-2xl border-4 border-white/20 transition-transform duration-500 group-hover:scale-105">
+                                <div class="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            </div>
                         </div>
-                        <div id="movie-genres" class="flex flex-wrap gap-2 mb-4"></div>
-                        <div class="flex gap-3">
-                            <button id="watchlist-btn" class="btn btn-outline !text-white !border-white hover:!bg-white/10">
-                                <i class="far fa-bookmark mr-2"></i> Watchlist
-                            </button>
-                            <button id="write-review-btn" class="btn btn-primary">
-                                <i class="far fa-edit mr-2"></i> Write Review
-                            </button>
+                        
+                        <!-- Movie Info -->
+                        <div class="flex-1 text-center lg:text-left" data-aos="fade-up" data-aos-delay="400">
+                            <h1 id="movie-title" class="text-4xl lg:text-6xl font-bold text-white mb-4 leading-tight"></h1>
+                            
+                            <!-- Movie Meta -->
+                            <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 mb-6">
+                                <span id="movie-year" class="text-xl text-white/90 font-medium"></span>
+                                <div class="w-1 h-1 bg-white/60 rounded-full"></div>
+                                <span id="movie-duration" class="text-xl text-white/90"></span>
+                                <div class="w-1 h-1 bg-white/60 rounded-full"></div>
+                                <div class="flex items-center gap-2">
+                                    <div class="flex text-yellow-400 text-lg">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <span id="movie-rating" class="text-xl text-white font-bold"></span>
+                                </div>
+                            </div>
+                            
+                            <!-- Genres -->
+                            <div id="movie-genres" class="flex flex-wrap justify-center lg:justify-start gap-3 mb-8"></div>
+                            
+                            <!-- Description -->
+                            <p id="movie-description" class="text-lg text-white/90 leading-relaxed mb-8 max-w-3xl"></p>
+                            
+                            <!-- Action Buttons -->
+                            <div class="flex flex-wrap justify-center lg:justify-start gap-4">
+                                <button id="watchlist-btn" class="glass-effect text-white px-6 py-3 rounded-full font-medium hover:bg-white/20 transition-all duration-300 flex items-center gap-2">
+                                    <i class="far fa-bookmark"></i>
+                                    <span>Add to Watchlist</span>
+                                </button>
+                                <button id="write-review-btn" class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-full font-medium hover:from-purple-700 hover:to-blue-700 transition-all duration-300 flex items-center gap-2">
+                                    <i class="far fa-edit"></i>
+                                    <span>Write Review</span>
+                                </button>
+                                <button id="watch-trailer-btn" class="glass-effect text-white px-6 py-3 rounded-full font-medium hover:bg-white/20 transition-all duration-300 flex items-center gap-2">
+                                    <i class="fas fa-play"></i>
+                                    <span>Watch Trailer</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            
+            <!-- Scroll Indicator -->
+            <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+                <i class="fas fa-chevron-down text-white/60 text-2xl"></i>
+            </div>
         </section>
 
-        <!-- Movie Content -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Left Column -->
-            <div class="lg:col-span-2">
-                <section class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md mb-6">
-                    <h2 class="text-2xl font-bold mb-4 dark:text-white">Overview</h2>
-                    <p id="movie-description" class="text-gray-700 dark:text-gray-300"></p>
-                </section>
-
-                <!-- Reviews Section -->
-                <section class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-bold dark:text-white">Reviews</h2>
-                        <button id="add-review-btn" class="btn btn-primary">
-                            <i class="fas fa-plus mr-2"></i> Add Review
-                        </button>
-                    </div>
+        <!-- Main Content -->
+        <div class="container mx-auto px-4 py-16">
+            <div class="grid grid-cols-1 xl:grid-cols-4 gap-12">
+                <!-- Left Column - Main Content -->
+                <div class="xl:col-span-3 space-y-12">
                     
-                    <div id="reviews-container" class="space-y-6">
-                        <!-- Reviews will be loaded here -->
-                    </div>
-                </section>
-            </div>
+                    <!-- Cast & Crew Section -->
+                    <section class="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl" data-aos="fade-up">
+                        <h2 class="text-3xl font-bold mb-8 dark:text-white flex items-center gap-3">
+                            <i class="fas fa-users text-purple-600"></i>
+                            Cast & Crew
+                        </h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <!-- Director -->
+                            <div>
+                                <h3 class="text-xl font-semibold mb-4 dark:text-white flex items-center gap-2">
+                                    <i class="fas fa-video text-blue-600"></i>
+                                    Director
+                                </h3>
+                                <div class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-600 p-4 rounded-xl">
+                                    <p id="movie-director" class="text-lg font-medium dark:text-white"></p>
+                                </div>
+                            </div>
+                            
+                            <!-- Cast -->
+                            <div>
+                                <h3 class="text-xl font-semibold mb-4 dark:text-white flex items-center gap-2">
+                                    <i class="fas fa-star text-yellow-600"></i>
+                                    Main Cast
+                                </h3>
+                                <div class="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-gray-700 dark:to-gray-600 p-4 rounded-xl">
+                                    <div id="movie-cast-list" class="space-y-2"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
-            <!-- Right Column -->
-            <div>
-                <section class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md mb-6">
-                    <h2 class="text-2xl font-bold mb-4 dark:text-white">Details</h2>
-                    <div class="space-y-3">
-                        <div>
-                            <h3 class="font-semibold text-gray-500 dark:text-gray-400">Director</h3>
-                            <p id="movie-director" class="dark:text-white"></p>
+                    <!-- Reviews Section -->
+                    <section class="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl" data-aos="fade-up" data-aos-delay="200">
+                        <div class="flex justify-between items-center mb-8">
+                            <h2 class="text-3xl font-bold dark:text-white flex items-center gap-3">
+                                <i class="fas fa-comments text-green-600"></i>
+                                Reviews
+                                <span id="review-count" class="text-sm bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-3 py-1 rounded-full"></span>
+                            </h2>
+                            <button id="add-review-btn" class="bg-gradient-to-r from-green-600 to-teal-600 text-white px-6 py-3 rounded-full font-medium hover:from-green-700 hover:to-teal-700 transition-all duration-300 flex items-center gap-2">
+                                <i class="fas fa-plus"></i>
+                                <span>Add Review</span>
+                            </button>
                         </div>
-                        <div>
-                            <h3 class="font-semibold text-gray-500 dark:text-gray-400">Cast</h3>
-                            <p id="movie-cast" class="dark:text-white"></p>
+                        
+                        <div id="reviews-container" class="space-y-6">
+                            <!-- Reviews will be loaded here -->
                         </div>
-                    </div>
-                </section>
+                        
+                        <!-- Empty State -->
+                        <div id="no-reviews" class="hidden text-center py-16">
+                            <i class="fas fa-comment-slash text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                            <h3 class="text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">No Reviews Yet</h3>
+                            <p class="text-gray-500 dark:text-gray-500 mb-6">Be the first to share your thoughts about this movie!</p>
+                            <button class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-full font-medium hover:from-purple-700 hover:to-blue-700 transition-all duration-300">
+                                Write First Review
+                            </button>
+                        </div>
+                    </section>
+                </div>
 
-                <section class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md">
-                    <h2 class="text-2xl font-bold mb-4 dark:text-white">Statistics</h2>
-                    <div class="space-y-4">
-                        <div>
-                            <div class="flex justify-between mb-1">
-                                <span class="text-gray-700 dark:text-gray-300">Average Rating</span>
-                                <span id="avg-rating" class="font-medium"></span>
+                <!-- Right Column - Sidebar -->
+                <div class="space-y-8">
+                    <!-- Movie Stats -->
+                    <section class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl" data-aos="fade-left">
+                        <h2 class="text-2xl font-bold mb-6 dark:text-white flex items-center gap-2">
+                            <i class="fas fa-chart-bar text-purple-600"></i>
+                            Statistics
+                        </h2>
+                        
+                        <div class="space-y-6">
+                            <!-- Average Rating -->
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-gray-700 dark:text-gray-300 font-medium">Average Rating</span>
+                                    <span id="avg-rating" class="font-bold text-xl text-yellow-600"></span>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+                                    <div id="rating-bar" class="bg-gradient-to-r from-yellow-400 to-orange-500 h-3 rounded-full transition-all duration-1000 ease-out"></div>
+                                </div>
                             </div>
-                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
-                                <div id="rating-bar" class="bg-yellow-400 h-2.5 rounded-full"></div>
+                            
+                            <!-- Total Reviews -->
+                            <div class="flex justify-between items-center p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-600 rounded-xl">
+                                <span class="text-gray-700 dark:text-gray-300 font-medium">Total Reviews</span>
+                                <span id="total-reviews" class="font-bold text-xl text-blue-600 dark:text-blue-400"></span>
+                            </div>
+                            
+                            <!-- Release Year -->
+                            <div class="flex justify-between items-center p-4 bg-gradient-to-r from-green-50 to-teal-50 dark:from-gray-700 dark:to-gray-600 rounded-xl">
+                                <span class="text-gray-700 dark:text-gray-300 font-medium">Release Year</span>
+                                <span id="release-year" class="font-bold text-xl text-green-600 dark:text-green-400"></span>
+                            </div>
+                            
+                            <!-- Duration -->
+                            <div class="flex justify-between items-center p-4 bg-gradient-to-r from-pink-50 to-red-50 dark:from-gray-700 dark:to-gray-600 rounded-xl">
+                                <span class="text-gray-700 dark:text-gray-300 font-medium">Duration</span>
+                                <span id="movie-duration-sidebar" class="font-bold text-xl text-pink-600 dark:text-pink-400"></span>
                             </div>
                         </div>
-                        <div>
-                            <div class="flex justify-between mb-1">
-                                <span class="text-gray-700 dark:text-gray-300">Total Reviews</span>
-                                <span id="total-reviews" class="font-medium"></span>
-                            </div>
+                    </section>
+
+                    <!-- Quick Actions -->
+                    <section class="bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl p-6 text-white shadow-xl" data-aos="fade-left" data-aos-delay="200">
+                        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                            <i class="fas fa-bolt"></i>
+                            Quick Actions
+                        </h3>
+                        <div class="space-y-3">
+                            <button class="w-full bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 text-white py-3 px-4 rounded-xl transition-all duration-300 flex items-center gap-3">
+                                <i class="fas fa-share-alt"></i>
+                                <span>Share Movie</span>
+                            </button>
+                            <button class="w-full bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 text-white py-3 px-4 rounded-xl transition-all duration-300 flex items-center gap-3">
+                                <i class="fas fa-flag"></i>
+                                <span>Report Issue</span>
+                            </button>
+                            <button class="w-full bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 text-white py-3 px-4 rounded-xl transition-all duration-300 flex items-center gap-3">
+                                <i class="fas fa-heart"></i>
+                                <span>Add to Favorites</span>
+                            </button>
                         </div>
-                    </div>
-                </section>
+                    </section>
+                </div>
             </div>
         </div>
     </main>
 
-   <footer class="bg-white dark:bg-gray-800 py-12 mt-12">
+    <footer class="bg-white dark:bg-gray-800 py-12 mt-12">
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
@@ -145,11 +295,11 @@
             </div>
         </div>
     </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="/assets/js/movies.js"></script>
-    <script src="/assets/js/reviews.js"></script>
     <script src="/assets/js/auth.js"></script>
     <script src="/assets/js/navbar.js"></script>
     <script src="/assets/js/main.js"></script>

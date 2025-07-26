@@ -50,6 +50,9 @@ window.debounce = debounce;
 // ======================
 
 const loadMovies = async (filters = {}, page = 1, append = false) => {
+    console.log('loadMovies called with:', filters, page, append);
+    console.log('API_BASE_URL:', API_BASE_URL);
+    
     if (isLoading) return;
     isLoading = true;
 
@@ -70,6 +73,9 @@ const loadMovies = async (filters = {}, page = 1, append = false) => {
         const url = `${API_BASE_URL}/movies${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
         const { data } = await axios.get(url);
         
+        console.log('API Response:', data);
+        console.log('Movies found:', data.data.movies?.length || 0);
+
         const movies = data.data.movies || [];
         totalPages = data.data.totalPages || 1;
         currentPage = page;
@@ -91,6 +97,7 @@ const loadMovies = async (filters = {}, page = 1, append = false) => {
     } finally {
         isLoading = false;
     }
+    
 };
 
 const renderMovies = (movies) => {
@@ -502,68 +509,117 @@ const updateNoResultsMessage = () => {
 
 const loadMovieDetails = async () => {
     const movieId = new URLSearchParams(window.location.search).get('id');
-    if (!movieId) return window.location.href = '/pages/movies/';
+    if (!movieId) return (window.location.href = '/pages/movies/');
 
     try {
         const { data } = await axios.get(`${API_BASE_URL}/movies/${movieId}`);
         const movie = data.data.movie;
 
-        // Update DOM elements
+        // Utilities
         const updateElement = (id, value) => {
-            const element = document.getElementById(id);
-            if (element) element.textContent = value;
+            const el = document.getElementById(id);
+            if (el) el.textContent = value;
         };
 
         const updateSrc = (id, src) => {
-            const element = document.getElementById(id);
-            if (element) element.src = src;
+            const el = document.getElementById(id);
+            if (el) el.src = src;
         };
 
+        // Basic Info
         updateElement('movie-title', movie.title);
         updateElement('movie-year', movie.year);
         updateElement('movie-rating', `${movie.averageRating?.toFixed(1) || 'N/A'}/10`);
-        updateElement('movie-duration', `${Math.floor(movie.duration / 60)}h ${movie.duration % 60}m`);
+        updateElement('avg-rating', `${movie.averageRating?.toFixed(1) || 'N/A'}/10`);
+        updateElement('total-reviews', movie.reviewCount || 0);
+        updateElement('release-year', movie.year);
+
+        // Duration
+        const formattedDuration = `${Math.floor(movie.duration / 60)}h ${movie.duration % 60}m`;
+        updateElement('movie-duration', formattedDuration);
+        updateElement('movie-duration-sidebar', formattedDuration);
+
+        // Description and Director
         updateElement('movie-description', movie.description);
         updateElement('movie-director', movie.director);
-        updateElement('movie-cast', movie.cast.join(', '));
-        
+
+        // Cast
+        const castList = document.getElementById('movie-cast-list');
+        if (castList && movie.cast) {
+            castList.innerHTML = Array.isArray(movie.cast)
+                ? movie.cast.map(actor => `<p class="text-sm dark:text-white">${actor}</p>`).join('')
+                : `<p class="text-sm dark:text-white">${movie.cast}</p>`;
+        } else {
+            updateElement('movie-cast', movie.cast?.join(', '));
+        }
+
+        // Images
         updateSrc('movie-poster', movie.poster);
         updateSrc('movie-backdrop', movie.backdrop);
 
+        // Rating bar
+        const ratingBar = document.getElementById('rating-bar');
+        if (ratingBar) {
+            const width = movie.averageRating ? `${(movie.averageRating / 10) * 100}%` : '0%';
+            ratingBar.style.width = width;
+        }
+
         // Genres
         const genresContainer = document.getElementById('movie-genres');
-        if (genresContainer) {
-            genresContainer.innerHTML = movie.genre.map(genre => 
+        if (genresContainer && movie.genre) {
+            genresContainer.innerHTML = movie.genre.map(genre =>
                 `<span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">${genre}</span>`
             ).join('');
         }
 
-        // Watchlist button
+        // Watchlist Button
         const watchlistBtn = document.getElementById('watchlist-btn');
         if (watchlistBtn) {
             watchlistBtn.addEventListener('click', () => toggleWatchlist(movieId));
             await updateWatchlistButton(movieId);
         }
 
-        // Load reviews
-        await loadReviews(movieId);
-        
-        // Initialize review modal
+        // Write Review Button
+        const heroReviewBtn = document.getElementById('write-review-btn');
+        if (heroReviewBtn) {
+            heroReviewBtn.addEventListener('click', () => initReviewModal());
+        }
+
+        // Add Review Button
         const addReviewBtn = document.getElementById('add-review-btn');
         if (addReviewBtn) {
             addReviewBtn.addEventListener('click', () => initReviewModal());
         }
 
+        // Trailer Button
+        const trailerBtn = document.getElementById('watch-trailer-btn');
+        if (trailerBtn) {
+            if (movie.trailer) {
+                trailerBtn.addEventListener('click', () => {
+                    window.open(movie.trailer, '_blank');
+                });
+            } else {
+                trailerBtn.disabled = true;
+                trailerBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                const trailerText = trailerBtn.querySelector('span');
+                if (trailerText) trailerText.textContent = 'No Trailer Available';
+            }
+        }
+
+        // Load Reviews
+        await loadReviews(movieId);
+
     } catch (err) {
         Swal.fire({
             icon: 'error',
             title: 'Failed to load movie',
-            text: err.response?.data?.message || 'Movie not found'
+            text: err.response?.data?.message || 'Movie not found',
         }).then(() => {
             window.location.href = '/pages/movies/';
         });
     }
 };
+
 
 const toggleWatchlist = async (movieId) => {
     const btn = document.getElementById('watchlist-btn');
@@ -572,21 +628,58 @@ const toggleWatchlist = async (movieId) => {
         const token = localStorage.getItem('token');
         if (!token) return window.location.href = '/pages/auth/login.html';
 
-        const { data } = await axios.post(`${API_BASE_URL}/users/watchlist/${movieId}`, {}, {
+        // First get current user data to check watchlist status
+        const userResponse = await axios.get(`${API_BASE_URL}/users/me`, {
             headers: { Authorization: `Bearer ${token}` }
         });
-
-        const isInWatchlist = data.data.user.watchLater.includes(movieId);
         
-        if (btn) {
-            btn.innerHTML = isInWatchlist 
-                ? `<i class="fas fa-bookmark mr-2"></i> In Watchlist` 
-                : `<i class="far fa-bookmark mr-2"></i> Add to Watchlist`;
-            
-            btn.classList.toggle('btn-outline', !isInWatchlist);
-            btn.classList.toggle('btn-primary', isInWatchlist);
+        const isCurrentlyInWatchlist = userResponse.data.data.user.watchLater?.includes(movieId);
+        console.log('Currently in watchlist:', isCurrentlyInWatchlist);
+        
+        // Use the correct endpoint based on current status
+        if (isCurrentlyInWatchlist) {
+            // Remove from watchlist
+            await axios.delete(`${API_BASE_URL}/users/watchlist/${movieId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+        } else {
+            // Add to watchlist
+            await axios.post(`${API_BASE_URL}/users/watchlist/${movieId}`, {}, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
         }
+        
+        // Update UI
+        if (btn) {
+            const iconEl = btn.querySelector('i');
+            const textEl = btn.querySelector('span');
+            
+            if (!isCurrentlyInWatchlist) {
+                // Just added to watchlist
+                iconEl.className = 'fas fa-bookmark';
+                textEl.textContent = 'In Watchlist';
+                btn.classList.remove('glass-effect');
+                btn.classList.add('bg-green-600', 'hover:bg-green-700');
+            } else {
+                // Just removed from watchlist
+                iconEl.className = 'far fa-bookmark';
+                textEl.textContent = 'Add to Watchlist';
+                btn.classList.add('glass-effect');
+                btn.classList.remove('bg-green-600', 'hover:bg-green-700');
+            }
+        }
+        
+        // Show success message
+        Swal.fire({
+            icon: 'success',
+            title: !isCurrentlyInWatchlist ? 'Added to Watchlist!' : 'Removed from Watchlist!',
+            showConfirmButton: false,
+            timer: 1500
+        });
+        
     } catch (err) {
+        console.error('Watchlist toggle error:', err);
+        console.error('Error response:', err.response);
         Swal.fire({
             icon: 'error',
             title: 'Failed to update watchlist',
@@ -606,14 +699,21 @@ const updateWatchlistButton = async (movieId) => {
             headers: { Authorization: `Bearer ${token}` }
         });
         
-        const isInWatchlist = data.data.user.watchLater.includes(movieId);
+        const isInWatchlist = data.data.user.watchLater?.includes(movieId);
+        const iconEl = btn.querySelector('i');
+        const textEl = btn.querySelector('span');
         
-        btn.innerHTML = isInWatchlist 
-            ? `<i class="fas fa-bookmark mr-2"></i> In Watchlist` 
-            : `<i class="far fa-bookmark mr-2"></i> Add to Watchlist`;
-        
-        btn.classList.toggle('btn-outline', !isInWatchlist);
-        btn.classList.toggle('btn-primary', isInWatchlist);
+        if (isInWatchlist) {
+            iconEl.className = 'fas fa-bookmark';
+            textEl.textContent = 'In Watchlist';
+            btn.classList.remove('glass-effect');
+            btn.classList.add('bg-green-600', 'hover:bg-green-700');
+        } else {
+            iconEl.className = 'far fa-bookmark';
+            textEl.textContent = 'Add to Watchlist';
+            btn.classList.add('glass-effect');
+            btn.classList.remove('bg-green-600', 'hover:bg-green-700');
+        }
     } catch (err) {
         console.error('Failed to check watchlist status:', err);
     }
@@ -623,6 +723,46 @@ const updateWatchlistButton = async (movieId) => {
 // Review System
 // ======================
 
+const handleDeleteReview = async (e) => {
+    const reviewId = e.target.closest('[data-review-id]').dataset.reviewId;
+    const movieId = new URLSearchParams(window.location.search).get('id');
+    
+    Swal.fire({
+        title: 'Delete Review?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            try {
+                // CORRECTED: Use the proper nested endpoint
+                await axios.delete(`${API_BASE_URL}/movies/${movieId}/reviews/${reviewId}`, {
+                    headers: { 
+                        Authorization: `Bearer ${localStorage.getItem('token')}` 
+                    }
+                });
+                await loadReviews();
+                Swal.fire('Deleted!', 'Your review has been deleted.', 'success');
+            } catch (err) {
+                console.error('Delete review error:', err);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Delete Failed',
+                    text: err.response?.data?.message || 'Please try again'
+                });
+            }
+        }
+    });
+};
+
+const handleEditReview = (e) => {
+    const reviewData = JSON.parse(e.target.closest('.edit-review-btn').dataset.review);
+    initReviewModal(reviewData);
+};
+
 const loadReviews = async (movieId) => {
     if (!movieId) {
         movieId = new URLSearchParams(window.location.search).get('id');
@@ -630,53 +770,116 @@ const loadReviews = async (movieId) => {
     if (!movieId) return;
 
     try {
-        const { data } = await axios.get(`${API_BASE_URL}/movies/${movieId}/reviews`);
+        const endpoint = `${API_BASE_URL}/movies/${movieId}/reviews`;
+        
+        let headers = { 'Content-Type': 'application/json' };
+        const token = localStorage.getItem('token');
+        if (token) {
+            headers.Authorization = `Bearer ${token}`;
+        }
+
+        const { data } = await axios.get(endpoint, { headers });
+        const reviews = data.data.reviews || [];
+        
         const container = document.getElementById('reviews-container');
+        const noReviewsElement = document.getElementById('no-reviews');
+        const reviewCountElement = document.getElementById('review-count');
+        const totalReviewsElement = document.getElementById('total-reviews');
+        
+        // Get current user data - FIXED user ID comparison
         const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+        const isLoggedIn = !!token && !!currentUser._id;
+        
+        console.log('Current user from localStorage:', currentUser);
+        console.log('Is logged in:', isLoggedIn);
 
         if (!container) return;
+        
+        // Update review count
+        if (reviewCountElement) {
+            reviewCountElement.textContent = `${reviews.length} review${reviews.length !== 1 ? 's' : ''}`;
+        }
+        if (totalReviewsElement) {
+            totalReviewsElement.textContent = reviews.length;
+        }
 
-        if (!data.data.reviews || data.data.reviews.length === 0) {
-            container.innerHTML = `<p class="text-gray-500 dark:text-gray-400 text-center py-8">No reviews yet. Be the first to review!</p>`;
+        if (reviews.length === 0) {
+            container.classList.add('hidden');
+            if (noReviewsElement) {
+                noReviewsElement.classList.remove('hidden');
+            }
             return;
         }
 
-        container.innerHTML = data.data.reviews.map(review => `
-            <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg relative" data-review-id="${review._id}">
-                <div class="flex items-center gap-3 mb-3">
-                    <img src="${review.user.photo || '/assets/images/default-avatar.jpg'}" 
-                         alt="${review.user.name}" 
-                         class="w-10 h-10 rounded-full object-cover"
-                         onerror="this.src='/assets/images/default-avatar.jpg'">
-                    <div>
-                        <h3 class="font-semibold dark:text-white">${review.user.name}</h3>
-                        <div class="flex items-center gap-1">
-                            ${Array(10).fill().map((_, i) => 
-                                `<i class="fas fa-star ${i < review.rating ? 'text-yellow-400' : 'text-gray-300'} text-sm"></i>`
-                            ).join('')}
-                            <span class="text-sm ml-1 text-gray-500">${review.rating}/10</span>
+        container.classList.remove('hidden');
+        if (noReviewsElement) {
+            noReviewsElement.classList.add('hidden');
+        }
+
+        container.innerHTML = reviews.map(review => {
+            // FIXED: Compare user IDs as strings and check populated user object
+            const reviewUserId = review.user?._id || review.user;
+            const currentUserId = currentUser._id;
+            
+            const canModifyReview = isLoggedIn && (
+                reviewUserId === currentUserId || 
+                ['admin', 'super-admin'].includes(currentUser.role)
+            );
+
+            console.log('Review user ID:', reviewUserId);
+            console.log('Current user ID:', currentUserId);
+            console.log('Current user role:', currentUser.role);
+            console.log('Can modify review:', canModifyReview);
+
+            return `
+                <div class="bg-gradient-to-r from-gray-50 to-white dark:from-gray-700 dark:to-gray-800 p-6 rounded-xl shadow-md border-l-4 border-purple-500 relative group hover:shadow-xl transition-all duration-300" data-review-id="${review._id}">
+                    <div class="flex items-start gap-4 mb-4">
+                        <div class="flex-shrink-0">
+                            <img src="${review.user?.photo || '/assets/images/default-avatar.jpg'}" 
+                                 alt="${review.user?.name || 'Anonymous'}" 
+                                 class="w-12 h-12 rounded-full object-cover border-2 border-purple-200 dark:border-purple-700"
+                                 onerror="this.src='/assets/images/default-avatar.jpg'">
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="font-bold text-lg dark:text-white">${review.user?.name || 'Anonymous'}</h3>
+                                <div class="flex items-center gap-2">
+                                    <div class="flex text-yellow-400">
+                                        ${Array(10).fill().map((_, i) => 
+                                            `<i class="fas fa-star ${i < review.rating ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600'} text-sm"></i>`
+                                        ).join('')}
+                                    </div>
+                                    <span class="text-sm font-semibold bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 px-2 py-1 rounded-full">${review.rating}/10</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-3">${review.review}</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-500 dark:text-gray-400">
+                                    <i class="far fa-calendar-alt mr-1"></i>
+                                    ${new Date(review.createdAt).toLocaleDateString('en-US', { 
+                                        year: 'numeric', 
+                                        month: 'long', 
+                                        day: 'numeric' 
+                                    })}
+                                </span>
+                                ${canModifyReview ? `
+                                <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    <button class="edit-review-btn p-2 text-blue-500 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900 rounded-full transition-all duration-200" data-review='${JSON.stringify(review).replace(/'/g, "&apos;")}' title="Edit Review">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="delete-review-btn p-2 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900 rounded-full transition-all duration-200" title="Delete Review">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                                ` : ''}
+                            </div>
                         </div>
                     </div>
                 </div>
-                <p class="text-gray-700 dark:text-gray-300 mb-4">${review.review}</p>
-                <div class="text-xs text-gray-500">
-                    ${new Date(review.createdAt).toLocaleDateString()}
-                </div>
-                
-                ${currentUser && (currentUser._id === review.user._id || currentUser.role === 'admin') ? `
-                <div class="absolute top-2 right-2 flex gap-2">
-                    <button class="edit-review-btn p-1 text-blue-500 hover:text-blue-700" data-review='${JSON.stringify(review)}'>
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="delete-review-btn p-1 text-red-500 hover:text-red-700">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-                ` : ''}
-            </div>
-        `).join('');
+            `;
+        }).join('');
 
-        // Add event listeners
+        // Add event listeners for delete and edit buttons
         container.querySelectorAll('.delete-review-btn').forEach(btn => {
             btn.addEventListener('click', handleDeleteReview);
         });
@@ -687,8 +890,20 @@ const loadReviews = async (movieId) => {
 
     } catch (err) {
         console.error('Failed to load reviews:', err);
+        console.error('Error details:', err.response);
+        
+        const container = document.getElementById('reviews-container');
+        if (container) {
+            container.innerHTML = `
+                <div class="text-center py-8">
+                    <i class="fas fa-exclamation-triangle text-4xl text-red-400 mb-4"></i>
+                    <p class="text-gray-500 dark:text-gray-400">Failed to load reviews. Please try again later.</p>
+                </div>
+            `;
+        }
     }
 };
+
 
 const initReviewModal = (reviewToEdit = null) => {
     const modal = document.createElement('div');
@@ -724,7 +939,7 @@ const initReviewModal = (reviewToEdit = null) => {
 
     document.body.appendChild(modal);
 
-    // Form submission
+    // Form submission with correct endpoints
     modal.querySelector('#review-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         const movieId = new URLSearchParams(window.location.search).get('id');
@@ -742,10 +957,12 @@ const initReviewModal = (reviewToEdit = null) => {
             };
 
             if (reviewToEdit) {
-                await axios.patch(`${API_BASE_URL}/reviews/${reviewToEdit._id}`, reviewData, {
+                // PATCH request to update existing review
+                await axios.patch(`${API_BASE_URL}/movies/${movieId}/reviews/${reviewToEdit._id}`, reviewData, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
             } else {
+                // POST request to create new review
                 await axios.post(`${API_BASE_URL}/movies/${movieId}/reviews`, reviewData, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
@@ -760,6 +977,7 @@ const initReviewModal = (reviewToEdit = null) => {
                 timer: 1500
             });
         } catch (err) {
+            console.error('Review submission error:', err);
             Swal.fire({
                 icon: 'error',
                 title: 'Failed to submit review',
@@ -768,54 +986,16 @@ const initReviewModal = (reviewToEdit = null) => {
         }
     });
 
-    // Cancel button
+    // Cancel and backdrop click handlers
     modal.querySelector('#cancel-review').addEventListener('click', () => {
         modal.remove();
     });
 
-    // Close on backdrop click
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
             modal.remove();
         }
     });
-};
-
-const handleDeleteReview = async (e) => {
-    const reviewId = e.target.closest('[data-review-id]').dataset.reviewId;
-    
-    Swal.fire({
-        title: 'Delete Review?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, delete it!'
-    }).then(async (result) => {
-        if (result.isConfirmed) {
-            try {
-                await axios.delete(`${API_BASE_URL}/reviews/${reviewId}`, {
-                    headers: { 
-                        Authorization: `Bearer ${localStorage.getItem('token')}` 
-                    }
-                });
-                await loadReviews();
-                Swal.fire('Deleted!', 'Your review has been deleted.', 'success');
-            } catch (err) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Delete Failed',
-                    text: err.response?.data?.message || 'Please try again'
-                });
-            }
-        }
-    });
-};
-
-const handleEditReview = (e) => {
-    const reviewData = JSON.parse(e.target.closest('.edit-review-btn').dataset.review);
-    initReviewModal(reviewData);
 };
 
 // ======================
