@@ -14,8 +14,10 @@ function setupUserDropdown() {
             userDropdown.classList.toggle('hidden');
         });
 
-        document.addEventListener('click', () => {
-            userDropdown.classList.add('hidden');
+        document.addEventListener('click', (e) => {
+            if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
+                userDropdown.classList.add('hidden');
+            }
         });
     }
 }
@@ -26,8 +28,10 @@ function updateAuthUI() {
     const userAvatar = document.getElementById('user-avatar');
     const userName = document.getElementById('user-name');
     const addMovieBtn = document.getElementById('add-movie-btn');
-    const adminDashboardLink = document.getElementById('admin-dashboard-link');
-    const userDashboardLink = document.getElementById('user-dashboard-link');
+    const adminDashboardLink = document.getElementById('user-dashboard-link');
+    const mobileAdminDashboardLink = document.getElementById('mobile-user-dashboard-link');
+    const mobileAuthLinks = document.getElementById('mobile-auth-links');
+    const mobileUserMenu = document.getElementById('mobile-user-menu');
 
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -37,26 +41,24 @@ function updateAuthUI() {
     const isLoggedIn = token && user?._id;
     const isAdmin = ['admin', 'super-admin'].includes(user?.role);
 
-    // Show/hide auth links with immediate effect
+    // Desktop Auth UI
     if (authLinks) {
-        if (isLoggedIn) {
-            authLinks.style.display = 'none';
-            authLinks.classList.add('hidden');
-        } else {
-            authLinks.style.display = 'flex';
-            authLinks.classList.remove('hidden');
-        }
+        authLinks.style.display = isLoggedIn ? 'none' : 'flex';
+        authLinks.classList.toggle('hidden', isLoggedIn);
     }
 
-    // Show/hide user menu with immediate effect
     if (userMenu) {
-        if (isLoggedIn) {
-            userMenu.style.display = 'flex';
-            userMenu.classList.remove('hidden', 'opacity-0');
-        } else {
-            userMenu.style.display = 'none';
-            userMenu.classList.add('hidden', 'opacity-0');
-        }
+        userMenu.style.display = isLoggedIn ? 'flex' : 'none';
+        userMenu.classList.toggle('hidden', !isLoggedIn);
+    }
+
+    // Mobile Auth UI
+    if (mobileAuthLinks) {
+        mobileAuthLinks.classList.toggle('hidden', isLoggedIn);
+    }
+
+    if (mobileUserMenu) {
+        mobileUserMenu.classList.toggle('hidden', !isLoggedIn);
     }
 
     // Set avatar and username
@@ -74,27 +76,18 @@ function updateAuthUI() {
         addMovieBtn.classList.toggle('hidden', !isAdmin);
     }
 
-    // Show/hide Admin Dashboard link
-    if (adminDashboardLink) {
-        if (isAdmin) {
-            adminDashboardLink.classList.remove('hidden');
-            adminDashboardLink.style.display = 'block';
-        } else {
-            adminDashboardLink.classList.add('hidden');
-            adminDashboardLink.style.display = 'none';
+    // Show/hide Admin Dashboard links (both desktop and mobile)
+    [adminDashboardLink, mobileAdminDashboardLink].forEach(link => {
+        if (link) {
+            if (isAdmin) {
+                link.classList.remove('hidden');
+                link.style.display = 'block';
+            } else {
+                link.classList.add('hidden');
+                link.style.display = 'none';
+            }
         }
-    }
-
-    // FIXED: Show/hide User Dashboard link - only for admin/super-admin
-    if (userDashboardLink) {
-        if (isAdmin) {
-            userDashboardLink.classList.remove('hidden');
-            userDashboardLink.style.display = 'block';
-        } else {
-            userDashboardLink.classList.add('hidden');
-            userDashboardLink.style.display = 'none';
-        }
-    }
+    });
 }
 
 function checkProtectedRoutes() {
@@ -272,14 +265,18 @@ function initializeAuth() {
         });
     }
 
-    // Logout Button
+    // Logout Buttons (both desktop and mobile)
     const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', async () => {
-            await handleLogout();
-            window.location.href = '/pages/auth/login.html';
-        });
-    }
+    const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
+    
+    [logoutBtn, mobileLogoutBtn].forEach(btn => {
+        if (btn) {
+            btn.addEventListener('click', async () => {
+                await handleLogout();
+                window.location.href = '/pages/auth/login.html';
+            });
+        }
+    });
 }
 
 // Start everything when DOM is ready

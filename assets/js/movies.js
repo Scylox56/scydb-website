@@ -1028,48 +1028,144 @@ const checkAdminStatus = async () => {
 // Featured Movies (for main index)
 // ======================
 
-const loadFeaturedMovies = async () => {
+//loadFeaturedMovies function with filter support
+const loadFeaturedMovies = async (filter = 'top-rated') => {
     try {
-        const { data } = await axios.get(`${API_BASE_URL}/movies?limit=10&sort=popular`);
-        const movies = data.data.movies || [];
-        
+        // Show loading spinner
         const container = document.getElementById('movies-grid');
         if (!container) return;
+        
+        container.innerHTML = `
+            <div class="flex justify-center items-center col-span-full">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#F76F53]"></div>
+            </div>
+        `;
 
+        // Determine API endpoint based on filter
+        let apiUrl;
+        switch(filter) {
+            case 'new':
+                apiUrl = `${API_BASE_URL}/movies?limit=10&sort=-createdAt`; // Sort by newest first
+                break;
+            case 'top-rated':
+            default:
+                apiUrl = `${API_BASE_URL}/movies?limit=10&sort=-averageRating`; // Sort by highest rating
+                break;
+        }
+
+        const { data } = await axios.get(apiUrl);
+        const movies = data.data.movies || [];
+        
         container.innerHTML = movies.map(movie => `
-            <div class="movie-card group cursor-pointer" onclick="goToMovieDetails('${movie._id}')">
-                <div class="relative overflow-hidden rounded-lg aspect-[2/3] bg-gray-200 dark:bg-gray-700">
+            <div class="movie-card group cursor-pointer bg-[#F2F0E3] dark:bg-[#2E2E2E] rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-[#e0ddd0] dark:border-[#3E3E3E]" onclick="goToMovieDetails('${movie._id}')">
+                <!-- Poster Section -->
+                <div class="relative overflow-hidden h-80 bg-[#e8e6d9] dark:bg-[#1F1F1F]">
                     <img src="${movie.poster}" 
                          alt="${movie.title}" 
-                         class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                         class="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
                          onerror="this.src='/assets/images/no-poster.jpg'">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
-                        <h3 class="text-white text-sm font-bold mb-1 line-clamp-2">${movie.title}</h3>
-                        <div class="flex items-center mb-1">
-                            <div class="flex text-yellow-400 mr-1">
-                                ${Array(5).fill().map((_, i) => 
-                                    `<i class="fas fa-star ${i < Math.floor((movie.averageRating || 0) / 2) ? 'text-yellow-400' : 'text-gray-400'} text-xs"></i>`
+                    
+                    <!-- Hover Overlay -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#2E2E2E]/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4">
+                        <div class="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                            <!-- Rating -->
+                            <div class="flex items-center mb-3">
+                                <span class="text-[#F76F53] text-lg font-bold mr-2">★</span>
+                                <span class="text-[#F2F0E3] text-sm font-medium">${movie.averageRating?.toFixed(1) || 'N/A'}</span>
+                                <span class="text-[#F2F0E3]/60 text-xs ml-1">/10</span>
+                            </div>
+                            
+                            <!-- Genres -->
+                            ${(movie.genre || []).length > 0 ? `
+                            <div class="flex flex-wrap gap-1 mb-2">
+                                ${(movie.genre || []).slice(0, 2).map(g => 
+                                    `<span class="px-2 py-1 bg-[#F2F0E3]/20 text-[#F2F0E3] text-xs rounded-md font-medium">${g}</span>`
                                 ).join('')}
                             </div>
-                            <span class="text-white text-xs">${movie.averageRating?.toFixed(1) || 'N/A'}</span>
-                        </div>
-                        <div class="flex flex-wrap gap-1">
-                            ${(movie.genre || []).slice(0, 2).map(g => 
-                                `<span class="px-1 py-0.5 bg-primary/30 text-white text-xs rounded">${g}</span>`
-                            ).join('')}
+                            ` : ''}
+                            
+                            <!-- Quick Info -->
+                            <p class="text-[#F2F0E3]/80 text-xs line-clamp-2">${movie.plot || 'No description available'}</p>
                         </div>
                     </div>
+                    
+                    <!-- Rating Badge -->
+                    <div class="absolute top-3 right-3 bg-[#F76F53] text-white px-2 py-1 rounded-full text-xs font-bold shadow-md">
+                        ${movie.averageRating?.toFixed(1) || 'N/A'}
+                    </div>
                 </div>
-                <div class="mt-2">
-                    <h3 class="text-sm font-semibold text-gray-900 dark:text-white line-clamp-1">${movie.title}</h3>
-                    <p class="text-gray-600 dark:text-gray-300 text-xs">${movie.year}</p>
+                
+                <!-- Content Section -->
+                <div class="p-4">
+                    <h3 class="text-[#2E2E2E] dark:text-[#F2F0E3] font-semibold text-base mb-1 line-clamp-1 group-hover:text-[#F76F53] transition-colors duration-200">${movie.title}</h3>
+                    
+                    <div class="flex items-center justify-between">
+                        <p class="text-[#2E2E2E]/60 dark:text-[#F2F0E3]/60 text-sm">${movie.year}</p>
+                        
+                        <!-- Genre Pills -->
+                        ${(movie.genre || []).length > 0 ? `
+                        <div class="flex gap-1">
+                            ${(movie.genre || []).slice(0, 1).map(g => 
+                                `<span class="px-2 py-1 bg-[#F76F53]/10 text-[#F76F53] text-xs rounded-md font-medium">${g}</span>`
+                            ).join('')}
+                        </div>
+                        ` : ''}
+                    </div>
+                    
+                    <!-- Bottom Stats -->
+                    <div class="flex items-center justify-between mt-3 pt-3 border-t border-[#e0ddd0] dark:border-[#3E3E3E]">
+                        <div class="flex items-center">
+                            <span class="text-[#F76F53] mr-1">★</span>
+                            <span class="text-[#2E2E2E]/60 dark:text-[#F2F0E3]/60 text-xs">${movie.averageRating?.toFixed(1) || 'N/A'}/10</span>
+                        </div>
+                        
+                        ${movie.duration ? `
+                        <div class="flex items-center">
+                            <i class="fas fa-clock text-[#2E2E2E]/40 dark:text-[#F2F0E3]/40 text-xs mr-1"></i>
+                            <span class="text-[#2E2E2E]/60 dark:text-[#F2F0E3]/60 text-xs">${movie.duration} min</span>
+                        </div>
+                        ` : ''}
+                    </div>
                 </div>
             </div>
         `).join('');
     } catch (err) {
         console.error('Failed to load featured movies:', err);
+        const container = document.getElementById('movies-grid');
+        if (container) {
+            container.innerHTML = `
+                <div class="col-span-full text-center py-8">
+                    <p class="text-[#2E2E2E]/60 dark:text-[#F2F0E3]/60">Failed to load movies. Please try again.</p>
+                </div>
+            `;
+        }
     }
 };
+
+// Initialize filter functionality
+const initializeFilters = () => {
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+        chip.addEventListener('click', function() {
+            // Remove active class from all chips
+            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+            
+            // Add active class to clicked chip
+            this.classList.add('active');
+            
+            // Get filter type and load movies
+            const filter = this.getAttribute('data-filter');
+            loadFeaturedMovies(filter);
+        });
+    });
+    
+    // Load default movies (top-rated)
+    loadFeaturedMovies('top-rated');
+};
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    initializeFilters();
+});
 
 // ======================
 // Featured Movie Filters (for main index)

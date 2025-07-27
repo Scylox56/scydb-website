@@ -18,7 +18,7 @@
   <section class="h-screen flex items-center justify-center px-4">
   <div class="container mx-auto text-center max-w-3xl">
     <h1 class="text-6xl md:text-7xl font-semibold mb-8 leading-tight" data-aos="fade-down">
-      Discover more <span class="text-orange-500 italic">films</span><br />
+      Discover more <br><span class="italic" style="color: #F76F53;">films</span>
       differently.
     </h1>
     <p class="text-xl md:text-2xl opacity-90 mb-10" data-aos="fade-up" data-aos-delay="100">
@@ -37,13 +37,15 @@
       <div class="flex flex-col md:flex-row justify-between items-center mb-12">
         <h2 class="text-3xl font-bold mb-4 md:mb-0">Featured Movies</h2>
         <div class="flex space-x-2">
-          <button class="filter-chip active">Popular</button>
-          <button class="filter-chip">Top Rated</button>
-          <button class="filter-chip">Coming Soon</button>
+          <button class="filter-chip active" data-filter="top-rated">Top Rated</button>
+          <button class="filter-chip" data-filter="new">New</button>
         </div>
       </div>
       <div id="movies-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
         <!-- Movies will be loaded here via API -->
+        <div class="flex justify-center items-center col-span-full">
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#F76F53]"></div>
+        </div>
       </div>
     </div>
   </section>
