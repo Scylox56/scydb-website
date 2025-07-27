@@ -5,8 +5,24 @@ AOS.init({
   once: true
 });
 
+ // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+        });
+        
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            html.classList.toggle('dark', savedTheme === 'dark');
+        }
+
+
 // Mobile menu toggle
-document.getElementById('mobile-menu-button')?.addEventListener('click', () => {
+document.getElementById('mobile-menu-button')?.addEventListener?.('click', () => {
   document.getElementById('mobile-menu').classList.toggle('hidden');
 });
 

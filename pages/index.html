@@ -1,97 +1,116 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScyDB - Movie Database</title>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <link href="/assets/css/dist.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ScyDB - Movie Database</title>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet" />
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+  <link href="/assets/css/dist.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 min-h-screen">
-    <!-- Navigation -->
-    <nav class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50">
-<div id="user-menu" class="relative hidden opacity-0 transition-opacity duration-300"></div>
-    </nav>
+<body class="bg-[#F2F0E3] dark:bg-[#1F1F1F] text-[#2E2E2E] dark:text-[#F2F0E3] m-0">
+  <!-- Navigation -->
+  <nav></nav>
 
-    <!-- Hero Section -->
-    <section class="bg-gradient-to-r from-primary to-secondary text-white py-20">
-        <div class="container mx-auto px-4 text-center">
-            <h1 class="text-4xl md:text-5xl font-bold mb-6 animate-fade-in">Discover Your Next Favorite Movie</h1>
-            <p class="text-xl mb-8 max-w-2xl mx-auto">Browse, review, and track movies with the most comprehensive movie database.</p>
-            
-            <div class="max-w-md mx-auto relative">
-                <input type="text" id="search-input" placeholder="Search movies..." class="w-full px-6 py-3 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary">
-                <button id="search-btn" class="absolute right-3 top-3 text-primary">
-                    <i class="fas fa-search text-xl"></i>
-                </button>
-            </div>
-        </div>
-    </section>
+  <!-- Hero Section -->
+  <section class="h-screen flex items-center justify-center px-4">
+  <div class="container mx-auto text-center max-w-3xl">
+    <h1 class="text-6xl md:text-7xl font-semibold mb-8 leading-tight" data-aos="fade-down">
+      Discover more <span class="text-orange-500 italic">films</span><br />
+      differently.
+    </h1>
+    <p class="text-xl md:text-2xl opacity-90 mb-10" data-aos="fade-up" data-aos-delay="100">
+      A minimalist, privacy-focused movie database — <br />curated with passion, powered by ScyDB API.
+    </p>
+    <div class="flex justify-center space-x-4" data-aos="fade-up" data-aos-delay="200">
+      <a href="/pages/movies/" class="btn btn-primary text-lg">Browse Movies</a>
+      <a href="/pages/about.html" class="btn btn-outline text-lg">Learn More</a>
+    </div>
+  </div>
+</section>
 
-    <!-- Featured Movies -->
-    <section class="container mx-auto px-4 py-12">
-        <div class="flex justify-between items-center mb-8">
-            <h2 class="text-3xl font-bold dark:text-white">Featured Movies</h2>
-            <div class="flex space-x-2">
-                <button class="btn btn-primary">Popular</button>
-                <button class="btn btn-outline">Top Rated</button>
-                <button class="btn btn-outline">Coming Soon</button>
-            </div>
+  <!-- Featured Movies -->
+  <section class="py-16 px-4">
+    <div class="container mx-auto">
+      <div class="flex flex-col md:flex-row justify-between items-center mb-12">
+        <h2 class="text-3xl font-bold mb-4 md:mb-0">Featured Movies</h2>
+        <div class="flex space-x-2">
+          <button class="filter-chip active">Popular</button>
+          <button class="filter-chip">Top Rated</button>
+          <button class="filter-chip">Coming Soon</button>
         </div>
-        
-        <div id="movies-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            <!-- Movies will be loaded here via JS -->
-        </div>
-    </section>
+      </div>
+      <div id="movies-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        <!-- Movies will be loaded here via API -->
+      </div>
+    </div>
+  </section>
 
-    <!-- Footer -->
-    <footer class="bg-white dark:bg-gray-800 py-12 mt-12">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div>
-                    <h3 class="text-lg font-bold mb-4 dark:text-white">ScyDB</h3>
-                    <p class="text-gray-600 dark:text-gray-300">The ultimate movie database for film enthusiasts.</p>
-                </div>
-                <div>
-                    <h3 class="text-lg font-bold mb-4 dark:text-white">Quick Links</h3>
-                    <ul class="space-y-2">
-                        <li><a href="/pages/index.html" class="text-gray-600 dark:text-gray-300 hover:text-primary">Home</a></li>
-                        <li><a href="/pages/movies/" class="text-gray-600 dark:text-gray-300 hover:text-primary">Movies</a></li>
-                        <li><a href="/pages/about.html" class="text-gray-600 dark:text-gray-300 hover:text-primary">About</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-lg font-bold mb-4 dark:text-white">Legal</h3>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary">Terms</a></li>
-                        <li><a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary">Privacy</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-lg font-bold mb-4 dark:text-white">Connect</h3>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary"><i class="fab fa-twitter text-xl"></i></a>
-                        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary"><i class="fab fa-instagram text-xl"></i></a>
-                        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary"><i class="fab fa-facebook text-xl"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="border-t border-gray-200 dark:border-gray-700 mt-8 pt-8 text-center text-gray-600 dark:text-gray-300">
-                <p>&copy; 2025 ScyDB. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+  <!-- CTA Section -->
+  <section class="py-20 px-4 bg-[#e8e6d9] dark:bg-[#2E2E2E]">
+    <div class="container mx-auto text-center max-w-3xl">
+      <h2 class="text-3xl font-bold mb-6">Ready to explore?</h2>
+      <p class="text-xl mb-8 opacity-90">Join our community of film enthusiasts.</p>
+      <div class="flex justify-center space-x-4">
+        <a href="/pages/auth/signup.html" class="btn btn-primary">Sign Up</a>
+        <a href="/pages/movies/" class="btn btn-outline">Browse Movies</a>
+      </div>
+    </div>
+  </section>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="/assets/js/auth.js"></script>
-    <script src="/assets/js/navbar.js"></script>
-    <script src="/assets/js/main.js"></script>
-    <script src="/assets/js/movies.js"></script>
+  <!-- Footer -->
+  <footer class="bg-[#F2F0E3] dark:bg-[#1F1F1F] border-t border-[#e0ddd0] dark:border-[#2E2E2E] py-12 px-4">
+    <div class="container mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div>
+          <h3 class="text-lg font-bold mb-4">ScyDB</h3>
+          <p class="opacity-80">A minimalist movie database for discerning viewers.</p>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold mb-4">Navigation</h3>
+          <ul class="space-y-2">
+            <li><a href="/pages/index.html" class="hover:text-[#F76F53] transition-colors">Home</a></li>
+            <li><a href="/pages/movies/" class="hover:text-[#F76F53] transition-colors">Movies</a></li>
+            <li><a href="/pages/about.html" class="hover:text-[#F76F53] transition-colors">About</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold mb-4">Connect</h3>
+          <div class="flex space-x-4">
+            <a href="#" class="hover:text-[#F76F53] transition-colors"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="hover:text-[#F76F53] transition-colors"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-[#e0ddd0] dark:border-[#2E2E2E] mt-8 pt-8 text-center opacity-80">
+        <p>&copy; 2025 ScyDB. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/navbar.js"></script>
+  <script src="/assets/js/main.js"></script>
+  <script src="/assets/js/movies.js"></script>
+
+  <script>
+    // Init AOS and Filters
+    document.addEventListener('DOMContentLoaded', () => {
+      AOS.init({ duration: 600, easing: 'ease-out-quad', once: true });
+
+      document.querySelectorAll('.filter-chip').forEach(chip => {
+        chip.addEventListener('click', function () {
+          document.querySelector('.filter-chip.active')?.classList.remove('active');
+          this.classList.add('active');
+        });
+      });
+    });
+  </script>
 </body>
 </html>
