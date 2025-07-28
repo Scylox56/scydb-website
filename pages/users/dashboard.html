@@ -9,142 +9,411 @@
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <link href="/assets/css/dist.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .sidebar-gradient {
+      background: linear-gradient(145deg, #2E2E2E 0%, #1F1F1F 100%);
+    }
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(247, 111, 83, 0.15);
+    }
+    .stats-glow {
+      box-shadow: 0 4px 20px rgba(247, 111, 83, 0.1);
+    }
+    .sidebar-item-active {
+      background: linear-gradient(135deg, #F76F53 0%, #FF8A70 100%);
+      box-shadow: 0 4px 12px rgba(247, 111, 83, 0.3);
+    }
+    .metric-card {
+      background: linear-gradient(135deg, rgba(247, 111, 83, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border: 1px solid rgba(247, 111, 83, 0.1);
+    }
+    .dark .metric-card {
+      background: linear-gradient(135deg, rgba(247, 111, 83, 0.08) 0%, rgba(46, 46, 46, 0.3) 100%);
+    }
+    .chart-container {
+      position: relative;
+      height: 300px;
+    }
+    .activity-item {
+      border-left: 3px solid #F76F53;
+      transition: all 0.2s ease;
+    }
+    .activity-item:hover {
+      background: rgba(247, 111, 83, 0.05);
+      border-left-width: 4px;
+    }
+    .pulse-dot {
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .notification-badge {
+      background: linear-gradient(135deg, #F76F53 0%, #FF4444 100%);
+      animation: pulse 2s infinite;
+    }
+  </style>
 </head>
 <body class="bg-[#F2F0E3] dark:bg-[#1F1F1F] text-[#2E2E2E] dark:text-[#F2F0E3] m-0">
   <!-- Navigation -->
   <nav></nav>
 
   <div class="flex min-h-screen">
-    <!-- Sidebar -->
-    <div class="w-64 bg-[#e8e6d9] dark:bg-[#2E2E2E] shadow-lg fixed left-0 top-0 h-full pt-16 z-10">
+    <!-- Enhanced Sidebar -->
+    <div class="w-72 sidebar-gradient shadow-2xl fixed left-0 top-0 h-full pt-16 z-10 border-r border-[#F76F53]/20">
       <div class="p-6">
-        <h2 class="text-xl font-bold mb-6">Admin Panel</h2>
+        <!-- Admin Profile Section -->
+        <div class="bg-[#F2F0E3]/10 dark:bg-[#2E2E2E]/30 rounded-xl p-4 mb-6">
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#F76F53] to-[#FF8A70] flex items-center justify-center">
+              <i class="fas fa-crown text-white text-lg"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-[#F2F0E3]">Admin Panel</h3>
+              <p class="text-sm opacity-70 text-[#F2F0E3]">Super Administrator</p>
+            </div>
+          </div>
+        </div>
         
-        <!-- Menu Items -->
-        <nav class="space-y-2">
-          <button id="overview-tab" class="sidebar-btn w-full flex items-center px-4 py-3 rounded-lg text-left hover:bg-[#F76F53]/10 transition-colors">
-            <i class="fas fa-chart-line mr-3 w-5"></i>
-            <span>Overview</span>
+        <!-- Menu Items with enhanced styling -->
+        <nav class="space-y-3">
+          <button id="overview-tab" class="sidebar-btn w-full flex items-center px-4 py-4 rounded-xl text-left transition-all duration-300 hover:bg-[#F76F53]/20 group">
+            <div class="w-10 h-10 rounded-lg bg-[#F76F53]/20 flex items-center justify-center mr-4 group-hover:bg-[#F76F53]/30 transition-colors">
+              <i class="fas fa-chart-line text-[#F76F53] group-hover:text-white"></i>
+            </div>
+            <div>
+              <span class="font-medium text-[#F2F0E3]">Dashboard Overview</span>
+              <p class="text-xs opacity-60 text-[#F2F0E3]">Analytics & insights</p>
+            </div>
           </button>
           
-          <button id="users-tab" class="sidebar-btn w-full flex items-center px-4 py-3 rounded-lg text-left hover:bg-[#F76F53]/10 transition-colors">
-            <i class="fas fa-users mr-3 w-5"></i>
-            <span>Users</span>
+          <button id="users-tab" class="sidebar-btn w-full flex items-center px-4 py-4 rounded-xl text-left transition-all duration-300 hover:bg-[#F76F53]/20 group">
+            <div class="w-10 h-10 rounded-lg bg-[#4CAF50]/20 flex items-center justify-center mr-4 group-hover:bg-[#4CAF50]/30 transition-colors">
+              <i class="fas fa-users text-[#4CAF50] group-hover:text-white"></i>
+            </div>
+            <div class="flex-1">
+              <span class="font-medium text-[#F2F0E3]">User Management</span>
+              <p class="text-xs opacity-60 text-[#F2F0E3]">Manage accounts & roles</p>
+            </div>
+            <div class="notification-badge w-6 h-6 rounded-full flex items-center justify-center text-xs text-white font-bold">
+              <span id="user-notification">0</span>
+            </div>
           </button>
           
-          <button id="movies-tab" class="sidebar-btn w-full flex items-center px-4 py-3 rounded-lg text-left hover:bg-[#F76F53]/10 transition-colors">
-            <i class="fas fa-film mr-3 w-5"></i>
-            <span>Movies</span>
+          <button id="movies-tab" class="sidebar-btn w-full flex items-center px-4 py-4 rounded-xl text-left transition-all duration-300 hover:bg-[#F76F53]/20 group">
+            <div class="w-10 h-10 rounded-lg bg-[#2196F3]/20 flex items-center justify-center mr-4 group-hover:bg-[#2196F3]/30 transition-colors">
+              <i class="fas fa-film text-[#2196F3] group-hover:text-white"></i>
+            </div>
+            <div>
+              <span class="font-medium text-[#F2F0E3]">Movie Library</span>
+              <p class="text-xs opacity-60 text-[#F2F0E3]">Content management</p>
+            </div>
           </button>
           
-          <button id="genres-tab" class="sidebar-btn w-full flex items-center px-4 py-3 rounded-lg text-left hover:bg-[#F76F53]/10 transition-colors">
-            <i class="fas fa-tags mr-3 w-5"></i>
-            <span>Genres</span>
+          <button id="genres-tab" class="sidebar-btn w-full flex items-center px-4 py-4 rounded-xl text-left transition-all duration-300 hover:bg-[#F76F53]/20 group">
+            <div class="w-10 h-10 rounded-lg bg-[#FF9800]/20 flex items-center justify-center mr-4 group-hover:bg-[#FF9800]/30 transition-colors">
+              <i class="fas fa-tags text-[#FF9800] group-hover:text-white"></i>
+            </div>
+            <div>
+              <span class="font-medium text-[#F2F0E3]">Genre Categories</span>
+              <p class="text-xs opacity-60 text-[#F2F0E3]">Organize content</p>
+            </div>
           </button>
           
-          <button id="roles-tab" class="sidebar-btn w-full flex items-center px-4 py-3 rounded-lg text-left hover:bg-[#F76F53]/10 transition-colors">
-            <i class="fas fa-shield-alt mr-3 w-5"></i>
-            <span>Roles</span>
+          <button id="roles-tab" class="sidebar-btn w-full flex items-center px-4 py-4 rounded-xl text-left transition-all duration-300 hover:bg-[#F76F53]/20 group">
+            <div class="w-10 h-10 rounded-lg bg-[#9C27B0]/20 flex items-center justify-center mr-4 group-hover:bg-[#9C27B0]/30 transition-colors">
+              <i class="fas fa-shield-alt text-[#9C27B0] group-hover:text-white"></i>
+            </div>
+            <div>
+              <span class="font-medium text-[#F2F0E3]">Role Permissions</span>
+              <p class="text-xs opacity-60 text-[#F2F0E3]">Access control</p>
+            </div>
+          </button>
+
+          <button id="analytics-tab" class="sidebar-btn w-full flex items-center px-4 py-4 rounded-xl text-left transition-all duration-300 hover:bg-[#F76F53]/20 group">
+            <div class="w-10 h-10 rounded-lg bg-[#E91E63]/20 flex items-center justify-center mr-4 group-hover:bg-[#E91E63]/30 transition-colors">
+              <i class="fas fa-chart-pie text-[#E91E63] group-hover:text-white"></i>
+            </div>
+            <div>
+              <span class="font-medium text-[#F2F0E3]">Advanced Analytics</span>
+              <p class="text-xs opacity-60 text-[#F2F0E3]">Deep insights</p>
+            </div>
           </button>
         </nav>
+
+        <!-- Quick Stats in Sidebar -->
+        <div class="mt-8 p-4 bg-[#F2F0E3]/5 rounded-xl border border-[#F76F53]/20">
+          <h4 class="text-sm font-bold text-[#F2F0E3] mb-3">System Status</h4>
+          <div class="space-y-2">
+            <div class="flex justify-between text-sm">
+              <span class="opacity-70 text-[#F2F0E3]">Server Status</span>
+              <div class="flex items-center">
+                <div class="w-2 h-2 bg-green-400 rounded-full pulse-dot mr-2"></div>
+                <span class="text-green-400 font-medium">Online</span>
+              </div>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="opacity-70 text-[#F2F0E3]">Database</span>
+              <span class="text-green-400 font-medium">Connected</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="opacity-70 text-[#F2F0E3]">Last Backup</span>
+              <span class="text-[#F2F0E3] font-medium">2h ago</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- Main Content -->
-    <div class="flex-1 ml-64 p-8">
-      <!-- Header -->
+    <div class="flex-1 ml-72 p-8">
+      <!-- Enhanced Header -->
       <div class="mb-8" data-aos="fade-down">
-        <h1 class="text-3xl font-bold mb-2">Admin Dashboard</h1>
-        <p class="opacity-80">Manage your movie database</p>
+        <div class="flex justify-between items-center">
+          <div>
+            <h1 class="text-4xl font-bold mb-2 bg-gradient-to-r from-[#F76F53] to-[#FF8A70] bg-clip-text text-transparent">ScyDB Control Center</h1>
+            <p class="opacity-80 text-lg">Comprehensive movie database management</p>
+          </div>
+          <div class="flex items-center space-x-4">
+            <div class="bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-xl px-4 py-2">
+              <div class="flex items-center space-x-2">
+                <i class="fas fa-clock text-[#F76F53]"></i>
+                <span class="text-sm font-medium" id="current-time"></span>
+              </div>
+            </div>
+            <button class="btn btn-primary bg-gradient-to-r from-[#F76F53] to-[#FF8A70] border-none">
+              <i class="fas fa-cog mr-2"></i> Settings
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Overview Tab -->
       <div id="overview-content" class="tab-content">
-        <!-- Statistics Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div class="bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-xl p-6 shadow-sm border-l-4 border-[#F76F53]">
+        <!-- Enhanced Statistics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div class="metric-card card-hover bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-2xl p-6 shadow-lg stats-glow">
             <div class="flex items-center justify-between">
               <div>
-                <h3 class="text-sm font-medium uppercase tracking-wide opacity-80">Total Movies</h3>
-                <p id="total-movies" class="text-3xl font-bold mt-2">-</p>
+                <h3 class="text-sm font-bold uppercase tracking-wide opacity-70 mb-2">Total Movies</h3>
+                <p id="total-movies" class="text-4xl font-bold text-[#F76F53] mb-1">-</p>
+                <div class="flex items-center text-sm">
+                  <i class="fas fa-arrow-up text-green-500 mr-1"></i>
+                  <span class="text-green-500 font-medium">+12% this month</span>
+                </div>
               </div>
-              <div class="p-3 bg-[#F76F53]/10 rounded-full">
-                <i class="fas fa-film text-[#F76F53] text-xl"></i>
+              <div class="w-16 h-16 bg-gradient-to-br from-[#F76F53] to-[#FF8A70] rounded-2xl flex items-center justify-center">
+                <i class="fas fa-film text-white text-2xl"></i>
               </div>
             </div>
           </div>
           
-          <div class="bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-xl p-6 shadow-sm border-l-4 border-[#4CAF50]">
+          <div class="metric-card card-hover bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-2xl p-6 shadow-lg">
             <div class="flex items-center justify-between">
               <div>
-                <h3 class="text-sm font-medium uppercase tracking-wide opacity-80">Total Users</h3>
-                <p id="total-users" class="text-3xl font-bold mt-2">-</p>
+                <h3 class="text-sm font-bold uppercase tracking-wide opacity-70 mb-2">Active Users</h3>
+                <p id="total-users" class="text-4xl font-bold text-[#4CAF50] mb-1">-</p>
+                <div class="flex items-center text-sm">
+                  <i class="fas fa-arrow-up text-green-500 mr-1"></i>
+                  <span class="text-green-500 font-medium">+8% this week</span>
+                </div>
               </div>
-              <div class="p-3 bg-[#4CAF50]/10 rounded-full">
-                <i class="fas fa-users text-[#4CAF50] text-xl"></i>
+              <div class="w-16 h-16 bg-gradient-to-br from-[#4CAF50] to-[#66BB6A] rounded-2xl flex items-center justify-center">
+                <i class="fas fa-users text-white text-2xl"></i>
               </div>
             </div>
           </div>
 
-          <div class="bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-xl p-6 shadow-sm border-l-4 border-[#FF9800]">
+          <div class="metric-card card-hover bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-2xl p-6 shadow-lg">
             <div class="flex items-center justify-between">
               <div>
-                <h3 class="text-sm font-medium uppercase tracking-wide opacity-80">Total Genres</h3>
-                <p id="total-genres" class="text-3xl font-bold mt-2">-</p>
+                <h3 class="text-sm font-bold uppercase tracking-wide opacity-70 mb-2">Content Categories</h3>
+                <p id="total-genres" class="text-4xl font-bold text-[#FF9800] mb-1">-</p>
+                <div class="flex items-center text-sm">
+                  <i class="fas fa-minus text-gray-500 mr-1"></i>
+                  <span class="text-gray-500 font-medium">No change</span>
+                </div>
               </div>
-              <div class="p-3 bg-[#FF9800]/10 rounded-full">
-                <i class="fas fa-tags text-[#FF9800] text-xl"></i>
+              <div class="w-16 h-16 bg-gradient-to-br from-[#FF9800] to-[#FFB74D] rounded-2xl flex items-center justify-center">
+                <i class="fas fa-tags text-white text-2xl"></i>
               </div>
             </div>
           </div>
 
-          <div class="bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-xl p-6 shadow-sm border-l-4 border-[#9C27B0]">
+          <div class="metric-card card-hover bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-2xl p-6 shadow-lg">
             <div class="flex items-center justify-between">
               <div>
-                <h3 class="text-sm font-medium uppercase tracking-wide opacity-80">Total Roles</h3>
-                <p id="total-roles" class="text-3xl font-bold mt-2">-</p>
+                <h3 class="text-sm font-bold uppercase tracking-wide opacity-70 mb-2">User Roles</h3>
+                <p id="total-roles" class="text-4xl font-bold text-[#9C27B0] mb-1">-</p>
+                <div class="flex items-center text-sm">
+                  <i class="fas fa-arrow-up text-green-500 mr-1"></i>
+                  <span class="text-green-500 font-medium">+2 new roles</span>
+                </div>
               </div>
-              <div class="p-3 bg-[#9C27B0]/10 rounded-full">
-                <i class="fas fa-shield-alt text-[#9C27B0] text-xl"></i>
+              <div class="w-16 h-16 bg-gradient-to-br from-[#9C27B0] to-[#BA68C8] rounded-2xl flex items-center justify-center">
+                <i class="fas fa-shield-alt text-white text-2xl"></i>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Quick Actions -->
-        <div class="bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-xl p-6 shadow-sm">
-          <h3 class="text-xl font-bold mb-4">Quick Actions</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <a href="/pages/movies/create.html" class="btn btn-primary bg-[#F76F53] hover:bg-[#F76F53]/90 border-[#F76F53] text-white">
-              <i class="fas fa-plus mr-2"></i> Add Movie
-            </a>
-            <button id="create-genre-btn" class="btn btn-outline border-[#FF9800] text-[#FF9800] hover:bg-[#FF9800] hover:text-white">
-              <i class="fas fa-plus mr-2"></i> Add Genre
-            </button>
-            <button id="create-role-btn" class="btn btn-outline border-[#9C27B0] text-[#9C27B0] hover:bg-[#9C27B0] hover:text-white">
-              <i class="fas fa-plus mr-2"></i> Add Role
-            </button>
-            <button id="refresh-all" class="btn btn-outline">
-              <i class="fas fa-sync-alt mr-2"></i> Refresh All
-            </button>
+        <!-- Additional Metrics Row -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div class="metric-card bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-bold text-lg">Reviews This Month</h3>
+              <i class="fas fa-star text-[#F76F53] text-xl"></i>
+            </div>
+            <p id="monthly-reviews" class="text-3xl font-bold text-[#F76F53] mb-2">-</p>
+            <p class="text-sm opacity-70">Average rating: <span class="font-bold text-[#F76F53]" id="avg-rating">-</span></p>
+          </div>
+
+          <div class="metric-card bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-bold text-lg">Storage Usage</h3>
+              <i class="fas fa-database text-[#2196F3] text-xl"></i>
+            </div>
+            <p class="text-3xl font-bold text-[#2196F3] mb-2">2.4 GB</p>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-[#2196F3] h-2 rounded-full" style="width: 45%"></div>
+            </div>
+          </div>
+
+          <div class="metric-card bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-bold text-lg">API Requests</h3>
+              <i class="fas fa-exchange-alt text-[#4CAF50] text-xl"></i>
+            </div>
+            <p class="text-3xl font-bold text-[#4CAF50] mb-2">12.5K</p>
+            <p class="text-sm opacity-70">Today: <span class="font-bold text-[#4CAF50]">1,234</span></p>
+          </div>
+        </div>
+
+        <!-- Charts and Analytics Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          <!-- User Growth Chart -->
+          <div class="bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-2xl p-6 shadow-lg">
+            <div class="flex justify-between items-center mb-6">
+              <h3 class="text-xl font-bold">User Growth</h3>
+              <select class="select select-sm bg-[#F2F0E3] dark:bg-[#1F1F1F]">
+                <option>Last 7 days</option>
+                <option>Last 30 days</option>
+                <option>Last 90 days</option>
+              </select>
+            </div>
+            <div class="chart-container">
+              <canvas id="userGrowthChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Genre Distribution -->
+          <div class="bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-2xl p-6 shadow-lg">
+            <div class="flex justify-between items-center mb-6">
+              <h3 class="text-xl font-bold">Genre Distribution</h3>
+              <button class="btn btn-sm btn-outline">
+                <i class="fas fa-download mr-2"></i> Export
+              </button>
+            </div>
+            <div class="chart-container">
+              <canvas id="genreChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity & Quick Actions -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Recent Activity -->
+          <div class="lg:col-span-2 bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-2xl p-6 shadow-lg">
+            <div class="flex justify-between items-center mb-6">
+              <h3 class="text-xl font-bold">Recent Activity</h3>
+              <button class="btn btn-sm btn-ghost">View All</button>
+            </div>
+            <div class="space-y-4" id="recent-activity">
+              <div class="activity-item p-4 rounded-lg bg-[#F2F0E3]/50 dark:bg-[#1F1F1F]/50">
+                <div class="flex items-center space-x-4">
+                  <div class="w-10 h-10 bg-[#F76F53]/20 rounded-full flex items-center justify-center">
+                    <i class="fas fa-plus text-[#F76F53]"></i>
+                  </div>
+                  <div class="flex-1">
+                    <p class="font-medium">New movie "Inception" added</p>
+                    <p class="text-sm opacity-70">2 minutes ago</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="activity-item p-4 rounded-lg bg-[#F2F0E3]/50 dark:bg-[#1F1F1F]/50">
+                <div class="flex items-center space-x-4">
+                  <div class="w-10 h-10 bg-[#4CAF50]/20 rounded-full flex items-center justify-center">
+                    <i class="fas fa-user-plus text-[#4CAF50]"></i>
+                  </div>
+                  <div class="flex-1">
+                    <p class="font-medium">New user registration</p>
+                    <p class="text-sm opacity-70">15 minutes ago</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="activity-item p-4 rounded-lg bg-[#F2F0E3]/50 dark:bg-[#1F1F1F]/50">
+                <div class="flex items-center space-x-4">
+                  <div class="w-10 h-10 bg-[#FF9800]/20 rounded-full flex items-center justify-center">
+                    <i class="fas fa-star text-[#FF9800]"></i>
+                  </div>
+                  <div class="flex-1">
+                    <p class="font-medium">New review posted</p>
+                    <p class="text-sm opacity-70">1 hour ago</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-2xl p-6 shadow-lg">
+            <h3 class="text-xl font-bold mb-6">Quick Actions</h3>
+            <div class="space-y-4">
+              <a href="/pages/movies/create.html" class="block w-full btn btn-primary bg-gradient-to-r from-[#F76F53] to-[#FF8A70] border-none">
+                <i class="fas fa-plus mr-2"></i> Add Movie
+              </a>
+              <button id="add-genre-btn" class="w-full btn btn-outline border-[#FF9800] text-[#FF9800] hover:bg-[#FF9800] hover:text-white">
+                <i class="fas fa-tags mr-2"></i> Add Genre
+              </button>
+              <button id="add-role-btn" class="w-full btn btn-outline border-[#9C27B0] text-[#9C27B0] hover:bg-[#9C27B0] hover:text-white">
+                <i class="fas fa-shield-alt mr-2"></i> Add Role
+              </button>
+              <button class="w-full btn btn-outline border-[#4CAF50] text-[#4CAF50] hover:bg-[#4CAF50] hover:text-white">
+                <i class="fas fa-download mr-2"></i> Export Data
+              </button>
+              <button id="refresh-all" class="w-full btn btn-outline">
+                <i class="fas fa-sync-alt mr-2"></i> Refresh All
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Users Management Tab -->
       <div id="users-content" class="tab-content hidden">
-        <div class="bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-xl shadow-sm overflow-hidden">
-          <div class="p-6 border-b border-[#2E2E2E]/20 dark:border-[#F2F0E3]/20">
+        <div class="bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-2xl shadow-lg overflow-hidden">
+          <div class="p-6 border-b border-[#2E2E2E]/20 dark:border-[#F2F0E3]/20 bg-gradient-to-r from-[#4CAF50]/10 to-transparent">
             <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
               <div>
-                <h2 class="text-2xl font-bold">User Management</h2>
-                <p class="opacity-80 mt-1">Manage user accounts and permissions</p>
+                <h2 class="text-3xl font-bold flex items-center">
+                  <i class="fas fa-users mr-3 text-[#4CAF50]"></i>
+                  User Management
+                </h2>
+                <p class="opacity-80 mt-2">Manage user accounts, roles, and permissions</p>
               </div>
               <div class="flex gap-3">
                 <div class="relative">
                   <input type="text" id="users-search" placeholder="Search users..." 
-                         class="pl-10 pr-4 py-2 rounded-lg border border-[#2E2E2E]/20 dark:border-[#F2F0E3]/20 bg-transparent focus:outline-none focus:ring-2 focus:ring-[#F76F53]/50">
-                  <i class="fas fa-search absolute left-3 top-3 opacity-80"></i>
+                         class="pl-12 pr-4 py-3 rounded-xl border border-[#2E2E2E]/20 dark:border-[#F2F0E3]/20 bg-[#F2F0E3] dark:bg-[#1F1F1F] focus:outline-none focus:ring-2 focus:ring-[#F76F53]/50 transition-all">
+                  <i class="fas fa-search absolute left-4 top-4 opacity-60"></i>
                 </div>
                 <button id="refresh-users" class="btn btn-outline">
                   <i class="fas fa-sync-alt mr-2"></i> Refresh
@@ -155,19 +424,19 @@
 
           <div class="overflow-x-auto">
             <table class="w-full">
-              <thead class="bg-[#F2F0E3]/30 dark:bg-[#1F1F1F]/30">
+              <thead class="bg-[#F2F0E3]/50 dark:bg-[#1F1F1F]/50">
                 <tr>
-                  <th class="text-left py-4 px-6 font-semibold">User</th>
-                  <th class="text-left py-4 px-6 font-semibold">Email</th>
-                  <th class="text-left py-4 px-6 font-semibold">Role</th>
-                  <th class="text-left py-4 px-6 font-semibold">Actions</th>
+                  <th class="text-left py-4 px-6 font-bold text-sm uppercase tracking-wide">User</th>
+                  <th class="text-left py-4 px-6 font-bold text-sm uppercase tracking-wide">Email</th>
+                  <th class="text-left py-4 px-6 font-bold text-sm uppercase tracking-wide">Role</th>
+                  <th class="text-left py-4 px-6 font-bold text-sm uppercase tracking-wide">Actions</th>
                 </tr>
               </thead>
-              <tbody id="users-table-body" class="divide-y divide-[#2E2E2E]/20 dark:divide-[#F2F0E3]/20">
+              <tbody id="users-table-body" class="divide-y divide-[#2E2E2E]/10 dark:divide-[#F2F0E3]/10">
                 <tr>
-                  <td colspan="4" class="py-8 text-center">
-                    <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#F76F53] mx-auto mb-2"></div>
-                    <span class="opacity-80">Loading users...</span>
+                  <td colspan="4" class="py-12 text-center">
+                    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#F76F53] mx-auto mb-4"></div>
+                    <span class="opacity-80 text-lg">Loading users...</span>
                   </td>
                 </tr>
               </tbody>
@@ -178,20 +447,23 @@
 
       <!-- Movies Management Tab -->
       <div id="movies-content" class="tab-content hidden">
-        <div class="bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-xl shadow-sm overflow-hidden">
-          <div class="p-6 border-b border-[#2E2E2E]/20 dark:border-[#F2F0E3]/20">
+        <div class="bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-2xl shadow-lg overflow-hidden">
+          <div class="p-6 border-b border-[#2E2E2E]/20 dark:border-[#F2F0E3]/20 bg-gradient-to-r from-[#2196F3]/10 to-transparent">
             <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
               <div>
-                <h2 class="text-2xl font-bold">Movie Management</h2>
-                <p class="opacity-80 mt-1">Add, edit, and manage your movie collection</p>
+                <h2 class="text-3xl font-bold flex items-center">
+                  <i class="fas fa-film mr-3 text-[#2196F3]"></i>
+                  Movie Library
+                </h2>
+                <p class="opacity-80 mt-2">Add, edit, and manage your complete movie collection</p>
               </div>
               <div class="flex gap-3">
                 <div class="relative">
                   <input type="text" id="movies-search" placeholder="Search movies..." 
-                         class="pl-10 pr-4 py-2 rounded-lg border border-[#2E2E2E]/20 dark:border-[#F2F0E3]/20 bg-transparent focus:outline-none focus:ring-2 focus:ring-[#F76F53]/50">
-                  <i class="fas fa-search absolute left-3 top-3 opacity-80"></i>
+                         class="pl-12 pr-4 py-3 rounded-xl border border-[#2E2E2E]/20 dark:border-[#F2F0E3]/20 bg-[#F2F0E3] dark:bg-[#1F1F1F] focus:outline-none focus:ring-2 focus:ring-[#F76F53]/50 transition-all">
+                  <i class="fas fa-search absolute left-4 top-4 opacity-60"></i>
                 </div>
-                <a href="/pages/movies/create.html" class="btn btn-primary">
+                <a href="/pages/movies/create.html" class="btn btn-primary bg-gradient-to-r from-[#F76F53] to-[#FF8A70] border-none">
                   <i class="fas fa-plus mr-2"></i> Add Movie
                 </a>
                 <button id="refresh-movies" class="btn btn-outline">
@@ -203,20 +475,20 @@
 
           <div class="overflow-x-auto">
             <table class="w-full">
-              <thead class="bg-[#F2F0E3]/30 dark:bg-[#1F1F1F]/30">
+              <thead class="bg-[#F2F0E3]/50 dark:bg-[#1F1F1F]/50">
                 <tr>
-                  <th class="text-left py-4 px-6 font-semibold">Movie</th>
-                  <th class="text-left py-4 px-6 font-semibold">Year</th>
-                  <th class="text-left py-4 px-6 font-semibold">Director</th>
-                  <th class="text-left py-4 px-6 font-semibold">Rating</th>
-                  <th class="text-left py-4 px-6 font-semibold">Actions</th>
+                  <th class="text-left py-4 px-6 font-bold text-sm uppercase tracking-wide">Movie</th>
+                  <th class="text-left py-4 px-6 font-bold text-sm uppercase tracking-wide">Year</th>
+                  <th class="text-left py-4 px-6 font-bold text-sm uppercase tracking-wide">Director</th>
+                  <th class="text-left py-4 px-6 font-bold text-sm uppercase tracking-wide">Rating</th>
+                  <th class="text-left py-4 px-6 font-bold text-sm uppercase tracking-wide">Actions</th>
                 </tr>
               </thead>
-              <tbody id="movies-table-body" class="divide-y divide-[#2E2E2E]/20 dark:divide-[#F2F0E3]/20">
+              <tbody id="movies-table-body" class="divide-y divide-[#2E2E2E]/10 dark:divide-[#F2F0E3]/10">
                 <tr>
-                  <td colspan="5" class="py-8 text-center">
-                    <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#F76F53] mx-auto mb-2"></div>
-                    <span class="opacity-80">Loading movies...</span>
+                  <td colspan="5" class="py-12 text-center">
+                    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#F76F53] mx-auto mb-4"></div>
+                    <span class="opacity-80 text-lg">Loading movies...</span>
                   </td>
                 </tr>
               </tbody>
@@ -227,20 +499,23 @@
 
       <!-- Genres Management Tab -->
       <div id="genres-content" class="tab-content hidden">
-        <div class="bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-xl shadow-sm overflow-hidden">
-          <div class="p-6 border-b border-[#2E2E2E]/20 dark:border-[#F2F0E3]/20">
+        <div class="bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-2xl shadow-lg overflow-hidden">
+          <div class="p-6 border-b border-[#2E2E2E]/20 dark:border-[#F2F0E3]/20 bg-gradient-to-r from-[#FF9800]/10 to-transparent">
             <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
               <div>
-                <h2 class="text-2xl font-bold">Genre Management</h2>
-                <p class="opacity-80 mt-1">Manage movie genres and categories</p>
+                <h2 class="text-3xl font-bold flex items-center">
+                  <i class="fas fa-tags mr-3 text-[#FF9800]"></i>
+                  Genre Management
+                </h2>
+                <p class="opacity-80 mt-2">Organize and manage movie genres and categories</p>
               </div>
               <div class="flex gap-3">
                 <div class="relative">
                   <input type="text" id="genres-search" placeholder="Search genres..." 
-                         class="pl-10 pr-4 py-2 rounded-lg border border-[#2E2E2E]/20 dark:border-[#F2F0E3]/20 bg-transparent focus:outline-none focus:ring-2 focus:ring-[#F76F53]/50">
-                  <i class="fas fa-search absolute left-3 top-3 opacity-80"></i>
+                         class="pl-12 pr-4 py-3 rounded-xl border border-[#2E2E2E]/20 dark:border-[#F2F0E3]/20 bg-[#F2F0E3] dark:bg-[#1F1F1F] focus:outline-none focus:ring-2 focus:ring-[#F76F53]/50 transition-all">
+                  <i class="fas fa-search absolute left-4 top-4 opacity-60"></i>
                 </div>
-                <button id="add-genre-btn" class="btn btn-primary">
+                <button id="add-genre-btn" class="btn btn-primary bg-gradient-to-r from-[#FF9800] to-[#FFB74D] border-none text-white">
                   <i class="fas fa-plus mr-2"></i> Add Genre
                 </button>
                 <button id="refresh-genres" class="btn btn-outline">
@@ -252,20 +527,20 @@
 
           <div class="overflow-x-auto">
             <table class="w-full">
-              <thead class="bg-[#F2F0E3]/30 dark:bg-[#1F1F1F]/30">
+              <thead class="bg-[#F2F0E3]/50 dark:bg-[#1F1F1F]/50">
                 <tr>
-                  <th class="text-left py-4 px-6 font-semibold">Name</th>
-                  <th class="text-left py-4 px-6 font-semibold">Description</th>
-                  <th class="text-left py-4 px-6 font-semibold">Movie Count</th>
-                  <th class="text-left py-4 px-6 font-semibold">Status</th>
-                  <th class="text-left py-4 px-6 font-semibold">Actions</th>
+                  <th class="text-left py-4 px-6 font-bold text-sm uppercase tracking-wide">Name</th>
+                  <th class="text-left py-4 px-6 font-bold text-sm uppercase tracking-wide">Description</th>
+                  <th class="text-left py-4 px-6 font-bold text-sm uppercase tracking-wide">Movie Count</th>
+                  <th class="text-left py-4 px-6 font-bold text-sm uppercase tracking-wide">Status</th>
+                  <th class="text-left py-4 px-6 font-bold text-sm uppercase tracking-wide">Actions</th>
                 </tr>
               </thead>
-              <tbody id="genres-table-body" class="divide-y divide-[#2E2E2E]/20 dark:divide-[#F2F0E3]/20">
+              <tbody id="genres-table-body" class="divide-y divide-[#2E2E2E]/10 dark:divide-[#F2F0E3]/10">
                 <tr>
-                  <td colspan="5" class="py-8 text-center">
-                    <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#F76F53] mx-auto mb-2"></div>
-                    <span class="opacity-80">Loading genres...</span>
+                  <td colspan="5" class="py-12 text-center">
+                    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#F76F53] mx-auto mb-4"></div>
+                    <span class="opacity-80 text-lg">Loading genres...</span>
                   </td>
                 </tr>
               </tbody>
@@ -276,20 +551,23 @@
 
       <!-- Roles Management Tab -->
       <div id="roles-content" class="tab-content hidden">
-        <div class="bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-xl shadow-sm overflow-hidden">
-          <div class="p-6 border-b border-[#2E2E2E]/20 dark:border-[#F2F0E3]/20">
+        <div class="bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-2xl shadow-lg overflow-hidden">
+          <div class="p-6 border-b border-[#2E2E2E]/20 dark:border-[#F2F0E3]/20 bg-gradient-to-r from-[#9C27B0]/10 to-transparent">
             <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
               <div>
-                <h2 class="text-2xl font-bold">Role Management</h2>
-                <p class="opacity-80 mt-1">Manage user roles and permissions</p>
+                <h2 class="text-3xl font-bold flex items-center">
+                  <i class="fas fa-shield-alt mr-3 text-[#9C27B0]"></i>
+                  Role Management
+                </h2>
+                <p class="opacity-80 mt-2">Manage user roles and access permissions</p>
               </div>
               <div class="flex gap-3">
                 <div class="relative">
                   <input type="text" id="roles-search" placeholder="Search roles..." 
-                         class="pl-10 pr-4 py-2 rounded-lg border border-[#2E2E2E]/20 dark:border-[#F2F0E3]/20 bg-transparent focus:outline-none focus:ring-2 focus:ring-[#F76F53]/50">
-                  <i class="fas fa-search absolute left-3 top-3 opacity-80"></i>
+                         class="pl-12 pr-4 py-3 rounded-xl border border-[#2E2E2E]/20 dark:border-[#F2F0E3]/20 bg-[#F2F0E3] dark:bg-[#1F1F1F] focus:outline-none focus:ring-2 focus:ring-[#F76F53]/50 transition-all">
+                  <i class="fas fa-search absolute left-4 top-4 opacity-60"></i>
                 </div>
-                <button id="add-role-btn" class="btn btn-primary">
+                <button id="add-role-btn" class="btn btn-primary bg-gradient-to-r from-[#9C27B0] to-[#BA68C8] border-none text-white">
                   <i class="fas fa-plus mr-2"></i> Add Role
                 </button>
                 <button id="refresh-roles" class="btn btn-outline">
@@ -301,19 +579,19 @@
 
           <div class="overflow-x-auto">
             <table class="w-full">
-              <thead class="bg-[#F2F0E3]/30 dark:bg-[#1F1F1F]/30">
+              <thead class="bg-[#F2F0E3]/50 dark:bg-[#1F1F1F]/50">
                 <tr>
-                  <th class="text-left py-4 px-6 font-semibold">Name</th>
-                  <th class="text-left py-4 px-6 font-semibold">Description</th>
-                  <th class="text-left py-4 px-6 font-semibold">User Count</th>
-                  <th class="text-left py-4 px-6 font-semibold">Actions</th>
+                  <th class="text-left py-4 px-6 font-bold text-sm uppercase tracking-wide">Name</th>
+                  <th class="text-left py-4 px-6 font-bold text-sm uppercase tracking-wide">Description</th>
+                  <th class="text-left py-4 px-6 font-bold text-sm uppercase tracking-wide">User Count</th>
+                  <th class="text-left py-4 px-6 font-bold text-sm uppercase tracking-wide">Actions</th>
                 </tr>
               </thead>
-              <tbody id="roles-table-body" class="divide-y divide-[#2E2E2E]/20 dark:divide-[#F2F0E3]/20">
+              <tbody id="roles-table-body" class="divide-y divide-[#2E2E2E]/10 dark:divide-[#F2F0E3]/10">
                 <tr>
-                  <td colspan="4" class="py-8 text-center">
-                    <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#F76F53] mx-auto mb-2"></div>
-                    <span class="opacity-80">Loading roles...</span>
+                  <td colspan="4" class="py-12 text-center">
+                    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#F76F53] mx-auto mb-4"></div>
+                    <span class="opacity-80 text-lg">Loading roles...</span>
                   </td>
                 </tr>
               </tbody>
@@ -321,35 +599,237 @@
           </div>
         </div>
       </div>
+
+      <!-- New Analytics Tab -->
+      <div id="analytics-content" class="tab-content hidden">
+        <div class="mb-8">
+          <h2 class="text-3xl font-bold mb-2 flex items-center">
+            <i class="fas fa-chart-pie mr-3 text-[#E91E63]"></i>
+            Advanced Analytics
+          </h2>
+          <p class="opacity-80">Deep insights into your movie database performance</p>
+        </div>
+
+        <!-- Analytics Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          <!-- Top Movies Chart -->
+          <div class="bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-2xl p-6 shadow-lg">
+            <div class="flex justify-between items-center mb-6">
+              <h3 class="text-xl font-bold">Top Rated Movies</h3>
+              <select class="select select-sm bg-[#F2F0E3] dark:bg-[#1F1F1F]">
+                <option>This Month</option>
+                <option>This Year</option>
+                <option>All Time</option>
+              </select>
+            </div>
+            <div class="chart-container">
+              <canvas id="topMoviesChart"></canvas>
+            </div>
+          </div>
+
+          <!-- User Activity Heatmap -->
+          <div class="bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-2xl p-6 shadow-lg">
+            <div class="flex justify-between items-center mb-6">
+              <h3 class="text-xl font-bold">User Activity Heatmap</h3>
+              <button class="btn btn-sm btn-outline">
+                <i class="fas fa-calendar mr-2"></i> Change Period
+              </button>
+            </div>
+            <div class="grid grid-cols-7 gap-2">
+              <!-- Heatmap will be generated here -->
+              <div class="text-xs text-center font-medium opacity-70">Mon</div>
+              <div class="text-xs text-center font-medium opacity-70">Tue</div>
+              <div class="text-xs text-center font-medium opacity-70">Wed</div>
+              <div class="text-xs text-center font-medium opacity-70">Thu</div>
+              <div class="text-xs text-center font-medium opacity-70">Fri</div>
+              <div class="text-xs text-center font-medium opacity-70">Sat</div>
+              <div class="text-xs text-center font-medium opacity-70">Sun</div>
+              <!-- Sample heatmap squares -->
+              <div class="w-8 h-8 bg-[#F76F53]/20 rounded"></div>
+              <div class="w-8 h-8 bg-[#F76F53]/40 rounded"></div>
+              <div class="w-8 h-8 bg-[#F76F53]/60 rounded"></div>
+              <div class="w-8 h-8 bg-[#F76F53]/80 rounded"></div>
+              <div class="w-8 h-8 bg-[#F76F53] rounded"></div>
+              <div class="w-8 h-8 bg-[#F76F53]/30 rounded"></div>
+              <div class="w-8 h-8 bg-[#F76F53]/10 rounded"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detailed Analytics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div class="bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-2xl p-6 shadow-lg">
+            <h3 class="font-bold text-lg mb-4 flex items-center">
+              <i class="fas fa-eye mr-3 text-[#2196F3]"></i>
+              Most Viewed Genres
+            </h3>
+            <div class="space-y-3">
+              <div class="flex justify-between items-center">
+                <span>Action</span>
+                <div class="flex items-center">
+                  <div class="w-16 h-2 bg-gray-200 rounded-full mr-2">
+                    <div class="w-12 h-2 bg-[#F76F53] rounded-full"></div>
+                  </div>
+                  <span class="text-sm font-medium">75%</span>
+                </div>
+              </div>
+              <div class="flex justify-between items-center">
+                <span>Drama</span>
+                <div class="flex items-center">
+                  <div class="w-16 h-2 bg-gray-200 rounded-full mr-2">
+                    <div class="w-10 h-2 bg-[#4CAF50] rounded-full"></div>
+                  </div>
+                  <span class="text-sm font-medium">62%</span>
+                </div>
+              </div>
+              <div class="flex justify-between items-center">
+                <span>Comedy</span>
+                <div class="flex items-center">
+                  <div class="w-16 h-2 bg-gray-200 rounded-full mr-2">
+                    <div class="w-8 h-2 bg-[#FF9800] rounded-full"></div>
+                  </div>
+                  <span class="text-sm font-medium">48%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-2xl p-6 shadow-lg">
+            <h3 class="font-bold text-lg mb-4 flex items-center">
+              <i class="fas fa-clock mr-3 text-[#9C27B0]"></i>
+              Peak Usage Hours
+            </h3>
+            <div class="space-y-3">
+              <div class="flex justify-between items-center">
+                <span>8:00 PM - 10:00 PM</span>
+                <span class="px-2 py-1 bg-[#F76F53] text-white rounded text-sm">Peak</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span>6:00 PM - 8:00 PM</span>
+                <span class="px-2 py-1 bg-[#4CAF50] text-white rounded text-sm">High</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span>2:00 PM - 4:00 PM</span>
+                <span class="px-2 py-1 bg-[#FF9800] text-white rounded text-sm">Medium</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-2xl p-6 shadow-lg">
+            <h3 class="font-bold text-lg mb-4 flex items-center">
+              <i class="fas fa-trophy mr-3 text-[#FFD700]"></i>
+              Top Contributors
+            </h3>
+            <div class="space-y-3">
+              <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                  <div class="w-8 h-8 bg-[#F76F53] rounded-full flex items-center justify-center mr-3">
+                    <span class="text-white text-sm font-bold">1</span>
+                  </div>
+                  <span>Admin User</span>
+                </div>
+                <span class="text-sm font-medium">42 reviews</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                  <div class="w-8 h-8 bg-[#4CAF50] rounded-full flex items-center justify-center mr-3">
+                    <span class="text-white text-sm font-bold">2</span>
+                  </div>
+                  <span>Movie Critic</span>
+                </div>
+                <span class="text-sm font-medium">38 reviews</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                  <div class="w-8 h-8 bg-[#FF9800] rounded-full flex items-center justify-center mr-3">
+                    <span class="text-white text-sm font-bold">3</span>
+                  </div>
+                  <span>Film Lover</span>
+                </div>
+                <span class="text-sm font-medium">29 reviews</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Performance Metrics -->
+        <div class="bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-2xl p-6 shadow-lg">
+          <h3 class="text-xl font-bold mb-6">System Performance Metrics</h3>
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="text-center">
+              <div class="w-16 h-16 bg-[#4CAF50]/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                <i class="fas fa-tachometer-alt text-[#4CAF50] text-xl"></i>
+              </div>
+              <p class="text-2xl font-bold text-[#4CAF50]">99.9%</p>
+              <p class="text-sm opacity-70">Uptime</p>
+            </div>
+            <div class="text-center">
+              <div class="w-16 h-16 bg-[#2196F3]/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                <i class="fas fa-bolt text-[#2196F3] text-xl"></i>
+              </div>
+              <p class="text-2xl font-bold text-[#2196F3]">1.2s</p>
+              <p class="text-sm opacity-70">Avg Response</p>
+            </div>
+            <div class="text-center">
+              <div class="w-16 h-16 bg-[#FF9800]/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                <i class="fas fa-memory text-[#FF9800] text-xl"></i>
+              </div>
+              <p class="text-2xl font-bold text-[#FF9800]">2.1GB</p>
+              <p class="text-sm opacity-70">Memory Usage</p>
+            </div>
+            <div class="text-center">
+              <div class="w-16 h-16 bg-[#9C27B0]/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                <i class="fas fa-hdd text-[#9C27B0] text-xl"></i>
+              </div>
+              <p class="text-2xl font-bold text-[#9C27B0]">45%</p>
+              <p class="text-sm opacity-70">Disk Usage</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- Footer -->
-  <footer class="bg-[#F2F0E3] dark:bg-[#1F1F1F] border-t border-[#e0ddd0] dark:border-[#2E2E2E] py-12 px-4 ml-64">
+  <footer class="bg-[#F2F0E3] dark:bg-[#1F1F1F] border-t border-[#e0ddd0] dark:border-[#2E2E2E] py-12 px-4 ml-72">
     <div class="container mx-auto">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div>
-          <h3 class="text-lg font-bold mb-4">ScyDB</h3>
-          <p class="opacity-80">A minimalist movie database for discerning viewers.</p>
+          <h3 class="text-lg font-bold mb-4 flex items-center">
+            <i class="fas fa-database mr-2 text-[#F76F53]"></i>
+            ScyDB Admin
+          </h3>
+          <p class="opacity-80">Comprehensive movie database management system with advanced analytics and user control.</p>
         </div>
         <div>
-          <h3 class="text-lg font-bold mb-4">Navigation</h3>
-          <ul class="space-y-2">
-            <li><a href="/pages/index.html" class="hover:text-[#F76F53] transition-colors">Home</a></li>
-            <li><a href="/pages/movies/" class="hover:text-[#F76F53] transition-colors">Movies</a></li>
-            <li><a href="/pages/about.html" class="hover:text-[#F76F53] transition-colors">About</a></li>
-          </ul>
-        </div>
-        <div>
-          <h3 class="text-lg font-bold mb-4">Connect</h3>
-          <div class="flex space-x-4">
-            <a href="#" class="hover:text-[#F76F53] transition-colors"><i class="fab fa-twitter"></i></a>
-            <a href="#" class="hover:text-[#F76F53] transition-colors"><i class="fab fa-instagram"></i></a>
+          <h3 class="text-lg font-bold mb-4">System Health</h3>
+          <div class="space-y-2">
+            <div class="flex items-center">
+              <div class="w-2 h-2 bg-green-400 rounded-full pulse-dot mr-3"></div>
+              <span class="opacity-80">All systems operational</span>
+            </div>
+            <div class="flex items-center">
+              <div class="w-2 h-2 bg-blue-400 rounded-full mr-3"></div>
+              <span class="opacity-80">Database connected</span>
+            </div>
+            <div class="flex items-center">
+              <div class="w-2 h-2 bg-green-400 rounded-full mr-3"></div>
+              <span class="opacity-80">API endpoints active</span>
+            </div>
           </div>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold mb-4">Quick Links</h3>
+          <ul class="space-y-2">
+            <li><a href="/pages/index.html" class="hover:text-[#F76F53] transition-colors opacity-80 hover:opacity-100">Main Site</a></li>
+            <li><a href="#" class="hover:text-[#F76F53] transition-colors opacity-80 hover:opacity-100">API Documentation</a></li>
+            <li><a href="#" class="hover:text-[#F76F53] transition-colors opacity-80 hover:opacity-100">System Logs</a></li>
+            <li><a href="#" class="hover:text-[#F76F53] transition-colors opacity-80 hover:opacity-100">Backup & Recovery</a></li>
+          </ul>
         </div>
       </div>
       <div class="border-t border-[#e0ddd0] dark:border-[#2E2E2E] mt-8 pt-8 text-center opacity-80">
-        <p>&copy; 2025 ScyDB. All rights reserved.</p>
+        <p>&copy; 2025 ScyDB Admin Panel. All rights reserved. | Last updated: <span id="last-updated"></span></p>
       </div>
     </div>
   </footer>
@@ -364,42 +844,168 @@
   <script src="/assets/js/admin.js"></script>
 
   <script>
-    // Init AOS
+    // Enhanced initialization
     document.addEventListener('DOMContentLoaded', () => {
       AOS.init({ duration: 600, easing: 'ease-out-quad', once: true });
       
-      // Sidebar navigation
+      // Initialize real-time clock
+      function updateTime() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('en-US', { 
+          hour12: true, 
+          hour: '2-digit', 
+          minute: '2-digit' 
+        });
+        const timeElement = document.getElementById('current-time');
+        if (timeElement) {
+          timeElement.textContent = timeString;
+        }
+      }
+      updateTime();
+      setInterval(updateTime, 1000);
+      
+      // Update last updated timestamp
+      const lastUpdatedElement = document.getElementById('last-updated');
+      if (lastUpdatedElement) {
+        lastUpdatedElement.textContent = new Date().toLocaleString();
+      }
+
+      // Enhanced sidebar navigation
       const sidebarBtns = document.querySelectorAll('.sidebar-btn');
       const tabContents = document.querySelectorAll('.tab-content');
       
       function switchTab(activeBtn, targetId) {
         // Remove active class from all buttons
         sidebarBtns.forEach(btn => {
-          btn.classList.remove('bg-[#F76F53]', 'text-white');
-          btn.classList.add('text-[#2E2E2E]', 'dark:text-[#F2F0E3]');
+          btn.classList.remove('sidebar-item-active', 'text-white');
+          btn.classList.add('text-[#F2F0E3]');
         });
         
         // Hide all content
         tabContents.forEach(content => content.classList.add('hidden'));
         
         // Activate clicked button
-        activeBtn.classList.add('bg-[#F76F53]', 'text-white');
-        activeBtn.classList.remove('text-[#2E2E2E]', 'dark:text-[#F2F0E3]');
+        activeBtn.classList.add('sidebar-item-active', 'text-white');
+        activeBtn.classList.remove('text-[#F2F0E3]');
         
         // Show target content
-        document.getElementById(targetId).classList.remove('hidden');
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+          targetElement.classList.remove('hidden');
+        }
+
+        // Load specific data based on tab
+        const tabName = targetId.replace('-content', '');
+        if (window[`load${tabName.charAt(0).toUpperCase() + tabName.slice(1)}Table`]) {
+          window[`load${tabName.charAt(0).toUpperCase() + tabName.slice(1)}Table`]();
+        }
       }
       
-      // Add click listeners
-      document.getElementById('overview-tab').addEventListener('click', () => switchTab(document.getElementById('overview-tab'), 'overview-content'));
-      document.getElementById('users-tab').addEventListener('click', () => switchTab(document.getElementById('users-tab'), 'users-content'));
-      document.getElementById('movies-tab').addEventListener('click', () => switchTab(document.getElementById('movies-tab'), 'movies-content'));
-      document.getElementById('genres-tab').addEventListener('click', () => switchTab(document.getElementById('genres-tab'), 'genres-content'));
-      document.getElementById('roles-tab').addEventListener('click', () => switchTab(document.getElementById('roles-tab'), 'roles-content'));
+      // Add click listeners for all tabs
+      document.getElementById('overview-tab')?.addEventListener('click', () => {
+        switchTab(document.getElementById('overview-tab'), 'overview-content');
+        initializeCharts();
+      });
+      document.getElementById('users-tab')?.addEventListener('click', () => switchTab(document.getElementById('users-tab'), 'users-content'));
+      document.getElementById('movies-tab')?.addEventListener('click', () => switchTab(document.getElementById('movies-tab'), 'movies-content'));
+      document.getElementById('genres-tab')?.addEventListener('click', () => switchTab(document.getElementById('genres-tab'), 'genres-content'));
+      document.getElementById('roles-tab')?.addEventListener('click', () => switchTab(document.getElementById('roles-tab'), 'roles-content'));
+      document.getElementById('analytics-tab')?.addEventListener('click', () => {
+        switchTab(document.getElementById('analytics-tab'), 'analytics-content');
+        initializeAnalyticsCharts();
+      });
       
       // Initialize with overview tab active
       switchTab(document.getElementById('overview-tab'), 'overview-content');
+      
+      // Initialize charts after a short delay
+      setTimeout(() => {
+        initializeCharts();
+      }, 500);
     });
-  </script>
-</body>
-</html>
+
+    // Chart initialization functions
+    function initializeCharts() {
+      // User Growth Chart
+      const userGrowthCtx = document.getElementById('userGrowthChart');
+      if (userGrowthCtx) {
+        new Chart(userGrowthCtx, {
+          type: 'line',
+          data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [{
+              label: 'New Users',
+              data: [12, 19, 8, 15, 22, 13, 18],
+              borderColor: '#F76F53',
+              backgroundColor: 'rgba(247, 111, 83, 0.1)',
+              tension: 0.4,
+              fill: true
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: {
+                  color: 'rgba(247, 111, 83, 0.1)'
+                }
+              },
+              x: {
+                grid: {
+                  display: false
+                }
+              }
+            }
+          }
+        });
+      }
+
+      // Genre Distribution Chart
+      const genreCtx = document.getElementById('genreChart');
+      if (genreCtx) {
+        new Chart(genreCtx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Action', 'Drama', 'Comedy', 'Thriller', 'Sci-Fi'],
+            datasets: [{
+              data: [30, 25, 20, 15, 10],
+              backgroundColor: [
+                '#F76F53',
+                '#4CAF50',
+                '#FF9800',
+                '#2196F3',
+                '#9C27B0'
+              ]
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom'
+              }
+            }
+          }
+        });
+      }
+    }
+
+    function initializeAnalyticsCharts() {
+      // Top Movies Chart
+      const topMoviesCtx = document.getElementById('topMoviesChart');
+      if (topMoviesCtx) {
+        new Chart(topMoviesCtx, {
+          type: 'bar',
+          data: {
+            labels: ['Inception', 'The Matrix', 'Interstellar', 'Pulp Fiction', 'The Godfather'],
+            datasets: [{
+              label: 'Rating',
+              data
