@@ -26,7 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
             </span>
         `).join('');
 
-        // Add event listeners to remove buttons
         document.querySelectorAll('[data-genre]').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 genres.delete(e.currentTarget.dataset.genre);

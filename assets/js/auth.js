@@ -110,7 +110,7 @@ function saveSession(data) {
         localStorage.setItem('user', JSON.stringify(data.data.user));
     }
     updateAuthUI();
-    window.location.href = '/'; // Redirect to home page after login
+    window.location.href = '/pages/index.html'; // Redirect to home page after login
 }
 
 // ======================

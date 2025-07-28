@@ -1,146 +1,226 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScyDB - Movie Database</title>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <link href="/assets/css/dist.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="/assets/js/auth.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ScyDB - Login</title>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet" />
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+  <link href="/assets/css/dist.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .floating {
+      animation: float 6s ease-in-out infinite;
+    }
+    .input-field {
+      transition: all 0.3s ease;
+      background-color: white;
+      border: 1px solid #d4d4d4;
+      color: #333333;
+    }
+    .dark .input-field {
+      background-color: #2a2a2a;
+      border-color: #444444;
+      color: #e5e5e5;
+    }
+    .input-field::placeholder {
+      color: #999999;
+    }
+    .dark .input-field::placeholder {
+      color: #777777;
+    }
+    .input-field:focus {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(247, 111, 83, 0.2);
+      border-color: #F76F53;
+    }
+    .btn-primary {
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      box-shadow: 0 2px 8px rgba(247, 111, 83, 0.3);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(247, 111, 83, 0.4);
+    }
+    .form-container {
+      background-color: white;
+      border: 1px solid #e0e0e0;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    }
+    .dark .form-container {
+      background-color: #252525;
+      border-color: #3d3d3d;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    }
+    .divider {
+      position: relative;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
+    }
+    .dark .divider {
+      background: linear-gradient(90deg, transparent, #3d3d3d, transparent);
+    }
+    .text-primary {
+      color: #F76F53;
+    }
+    .text-secondary {
+      color: #666666;
+    }
+    .dark .text-secondary {
+      color: #a0a0a0;
+    }
+    .text-label {
+      color: #444444;
+    }
+    .dark .text-label {
+      color: #d0d0d0;
+    }
+  </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 min-h-screen">
-    <!-- Navigation -->
-    <nav class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50">
-        <div class="container mx-auto px-4 py-3">
-            <div class="flex justify-between items-center">
-                <!-- Logo -->
-                <a href="/pages/index.html" class="flex items-center space-x-2">
-                    <span class="text-2xl font-bold text-primary dark:text-white">ScyDB</span>
-                </a>
+<body class="bg-[#f8f7f2] dark:bg-[#1a1a1a] text-[#333333] dark:text-[#e5e5e5] min-h-screen">
+  <nav></nav>
 
-                <!-- Desktop Navigation -->
-                <div class="hidden md:flex items-center space-x-6">
-                    <a href="/pages/index.html" class="nav-link">Home</a>
-                    <a href="/pages/movies/" class="nav-link">Movies</a>
-                    <a href="/pages/about.html" class="nav-link">About</a>
-                </div>
+  <main class="container mx-auto px-4 py-16 flex justify-center items-center">
+    <div class="w-full max-w-md form-container rounded-xl p-8" data-aos="zoom-in" data-aos-duration="600">
+      <!-- Floating film icon -->
+      <div class="text-center mb-6 floating" data-aos="fade-down" data-aos-delay="100">
+        <i class="fas fa-film text-4xl text-[#F76F53] opacity-90"></i>
+      </div>
+      
+      <div class="text-center mb-8" data-aos="fade-down" data-aos-delay="200">
+        <h2 class="text-3xl font-bold mb-2">Welcome Back</h2>
+        <p class="text-secondary">Continue your cinematic journey</p>
+      </div>
+      
+      <div class="divider my-6" data-aos="fade" data-aos-delay="300"></div>
 
-                <!-- Auth Section -->
-                <div class="flex items-center space-x-4">
-                    <!-- Auth Links -->
-                    <div id="auth-links" class="items-center space-x-4">
-                        <a href="/pages/auth/login.html" class="btn btn-outline">Login</a>
-                        <a href="/pages/auth/signup.html" class="btn btn-primary">Sign Up</a>
-                    </div>
-
-                    <!-- User Menu -->
-                    <div id="user-menu" class="relative hidden">
-                        <button id="user-menu-button" class="flex items-center space-x-2 focus:outline-none">
-                            <img id="user-avatar" src="/assets/images/default-avatar.jpg" alt="User" class="w-10 h-10 rounded-full">
-                            <span id="user-name" class="font-medium dark:text-white"></span>
-                            <i class="fas fa-chevron-down text-sm"></i>
-                        </button>
-                        <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-50">
-                            <a href="/pages/users/profile.html" class="block px-4 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600">Profile</a>
-                            <a href="/pages/users/watchlist.html" class="block px-4 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600">Watchlist</a>
-                            <button id="logout-btn" class="w-full text-left px-4 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600">Logout</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Mobile menu button -->
-                <button id="mobile-menu-button" class="md:hidden focus:outline-none">
-                    <i class="fas fa-bars text-gray-800 dark:text-white text-2xl"></i>
-                </button>
-            </div>
-
-            <!-- Mobile menu -->
-            <div id="mobile-menu" class="hidden md:hidden mt-4">
-                <a href="/pages/index.html" class="block py-2 text-gray-800 dark:text-white">Home</a>
-                <a href="/pages/movies/" class="block py-2 text-gray-800 dark:text-white">Movies</a>
-                <a href="/pages/about.html" class="block py-2 text-gray-800 dark:text-white">About</a>
-            </div>
+      
+      <form id="login-form" class="space-y-5">
+        <div data-aos="fade-right" data-aos-delay="400">
+          <label for="email" class="block text-sm font-medium mb-2 text-label">Email</label>
+          <input 
+            type="email" 
+            id="email" 
+            required 
+            class="w-full px-4 py-3 input-field rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F76F53]"
+            placeholder="your@email.com">
         </div>
-    </nav>
 
-    <main class="container mx-auto px-4 py-12 flex justify-center">
-        <div class="w-full max-w-md bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
-            <h2 class="text-3xl font-bold text-center mb-8 dark:text-white">Login to ScyDB</h2>
-            
-            <form id="login-form" class="space-y-6">
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
-                    <input type="email" id="email" required class="input-field">
-                </div>
-                
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
-                    <input type="password" id="password" required class="input-field">
-                </div>
-                
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <input type="checkbox" id="remember" class="rounded text-primary focus:ring-primary">
-                        <label for="remember" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Remember me</label>
-                    </div>
-                    
-                    <a href="#" class="text-sm text-primary hover:underline">Forgot password?</a>
-                </div>
-                
-                <button type="submit" class="btn btn-primary w-full py-3">Login</button>
-                
-                <p class="text-center text-gray-600 dark:text-gray-300">
-                    Don't have an account? 
-                    <a href="/pages/auth/signup.html" class="text-primary hover:underline">Sign up</a>
-                </p>
-            </form>
+        <div data-aos="fade-right" data-aos-delay="450">
+          <label for="password" class="block text-sm font-medium mb-2 text-label">Password</label>
+          <input 
+            type="password" 
+            id="password" 
+            required 
+            class="w-full px-4 py-3 input-field rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F76F53]"
+            placeholder="••••••••">
         </div>
-    </main>
 
-    <footer class="bg-white dark:bg-gray-800 py-12 mt-12">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div>
-                    <h3 class="text-lg font-bold mb-4 dark:text-white">ScyDB</h3>
-                    <p class="text-gray-600 dark:text-gray-300">The ultimate movie database for film enthusiasts.</p>
-                </div>
-                <div>
-                    <h3 class="text-lg font-bold mb-4 dark:text-white">Quick Links</h3>
-                    <ul class="space-y-2">
-                        <li><a href="/pages/index.html" class="text-gray-600 dark:text-gray-300 hover:text-primary">Home</a></li>
-                        <li><a href="/pages/movies/" class="text-gray-600 dark:text-gray-300 hover:text-primary">Movies</a></li>
-                        <li><a href="/pages/about.html" class="text-gray-600 dark:text-gray-300 hover:text-primary">About</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-lg font-bold mb-4 dark:text-white">Legal</h3>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary">Terms</a></li>
-                        <li><a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary">Privacy</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-lg font-bold mb-4 dark:text-white">Connect</h3>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary"><i class="fab fa-twitter text-xl"></i></a>
-                        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary"><i class="fab fa-instagram text-xl"></i></a>
-                        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary"><i class="fab fa-facebook text-xl"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="border-t border-gray-200 dark:border-gray-700 mt-8 pt-8 text-center text-gray-600 dark:text-gray-300">
-                <p>&copy; 2025 ScyDB. All rights reserved.</p>
-            </div>
+        <div class="flex items-center justify-between" data-aos="fade-right" data-aos-delay="500">
+          <div class="flex items-center">
+            <input type="checkbox" id="remember" class="rounded text-[#F76F53] focus:ring-[#F76F53]">
+            <label for="remember" class="ml-2 text-sm text-label">Remember me</label>
+          </div>
+          <a href="#" class="text-sm text-primary hover:underline">Forgot password?</a>
         </div>
-    </footer>
-    <script src="/assets/js/auth.js"></script>
-    <script src="/assets/js/navbar.js"></script>
-    <script src="/assets/js/main.js"></script>
+
+        <div data-aos="fade-up" data-aos-delay="550">
+          <button type="submit" class="btn btn-primary w-full py-3 text-lg font-medium bg-[#F76F53] hover:bg-[#e65a3f] border-none text-white">
+            Login
+          </button>
+        </div>
+
+        <div class="divider my-6" data-aos="fade" data-aos-delay="600"></div>
+
+        <p class="text-center text-secondary" data-aos="fade-up" data-aos-delay="650">
+          Don't have an account? 
+          <a href="/pages/auth/signup.html" class="text-primary hover:underline font-medium">Sign up</a>
+        </p>
+      </form>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-[#f0eee3] dark:bg-[#1a1a1a] border-t border-[#e0e0e0] dark:border-[#3d3d3d] py-12 px-4">
+    <div class="container mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div data-aos="fade-up" data-aos-delay="100">
+          <h3 class="text-lg font-bold mb-4">ScyDB</h3>
+          <p class="text-secondary">A minimalist movie database for discerning viewers.</p>
+        </div>
+        <div data-aos="fade-up" data-aos-delay="200">
+          <h3 class="text-lg font-bold mb-4">Navigation</h3>
+          <ul class="space-y-2">
+            <li><a href="/pages/index.html" class="text-secondary hover:text-primary transition-colors">Home</a></li>
+            <li><a href="/pages/movies/" class="text-secondary hover:text-primary transition-colors">Movies</a></li>
+            <li><a href="/pages/about.html" class="text-secondary hover:text-primary transition-colors">About</a></li>
+          </ul>
+        </div>
+        <div data-aos="fade-up" data-aos-delay="300">
+          <h3 class="text-lg font-bold mb-4">Connect</h3>
+          <div class="flex space-x-4">
+            <a href="#" class="text-secondary hover:text-primary transition-colors"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="text-secondary hover:text-primary transition-colors"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-[#e0e0e0] dark:border-[#3d3d3d] mt-8 pt-8 text-center text-secondary" data-aos="fade-up">
+        <p>&copy; 2025 ScyDB. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/navbar.js"></script>
+  <script src="/assets/js/main.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      AOS.init({
+        duration: 600,
+        easing: 'ease-out-quad',
+        once: true,
+        offset: 20
+      });
+      
+      // Ripple effect for login button
+      const loginBtn = document.querySelector('#login-form button[type="submit"]');
+      if(loginBtn) {
+        loginBtn.addEventListener('click', function(e) {
+          const rect = this.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          
+          const ripple = document.createElement('span');
+          ripple.style.left = `${x}px`;
+          ripple.style.top = `${y}px`;
+          ripple.style.background = 'rgba(255,255,255,0.3)';
+          ripple.style.transform = 'scale(0)';
+          ripple.classList.add('ripple-effect', 'absolute', 'rounded-full', 'pointer-events-none');
+          
+          this.style.overflow = 'hidden';
+          this.appendChild(ripple);
+          
+          setTimeout(() => {
+            ripple.style.transform = 'scale(4)';
+            ripple.style.opacity = '0';
+          }, 10);
+          
+          setTimeout(() => {
+            ripple.remove();
+          }, 600);
+        });
+      }
+    });
+  </script>
 </body>
 </html>

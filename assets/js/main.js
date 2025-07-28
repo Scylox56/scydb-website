@@ -77,7 +77,7 @@ const updateUIForLoggedInUser = (user) => {
   const mobileUserMenu = document.getElementById('mobile-user-menu');   // Burger User Dropdown
 
   if (!user) {
-    // 🔓 Guest (not logged in)
+    // Guest (not logged in)
 
     // Show desktop auth buttons on md+ only (hidden by Tailwind on mobile)
 
@@ -115,7 +115,7 @@ return;
     return;
   }
 
-  // 🔐 Logged-in user
+  //  Logged-in user
 const isAdmin = user && ['admin', 'super-admin'].includes(user.role);
   // Hide desktop auth links (completely)
   if (authLinks) {

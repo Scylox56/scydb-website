@@ -1028,7 +1028,6 @@ const checkAdminStatus = async () => {
 // Featured Movies (for main index)
 // ======================
 
-//loadFeaturedMovies function with filter support
 const loadFeaturedMovies = async (filter = 'top-rated') => {
     try {
         // Show loading spinner

@@ -1008,4 +1008,415 @@
             labels: ['Inception', 'The Matrix', 'Interstellar', 'Pulp Fiction', 'The Godfather'],
             datasets: [{
               label: 'Rating',
-              data
+              data: [9.2, 8.9, 8.8, 8.7, 9.1],
+              backgroundColor: [
+                '#F76F53',
+                '#4CAF50', 
+                '#FF9800',
+                '#2196F3',
+                '#9C27B0'
+              ],
+              borderRadius: 8
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 10,
+                grid: {
+                  color: 'rgba(247, 111, 83, 0.1)'
+                }
+              },
+              x: {
+                grid: {
+                  display: false
+                }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    // Load data functions for each tab
+    async function loadOverviewData() {
+      try {
+        // Load stats
+        const [moviesRes, usersRes, genresRes, rolesRes, reviewsRes] = await Promise.all([
+          fetch('/api/v1/movies'),
+          fetch('/api/v1/users'),
+          fetch('/api/v1/genres'),
+          fetch('/api/v1/roles'),
+          fetch('/api/v1/reviews/admin')
+        ]);
+
+        const [movies, users, genres, roles, reviews] = await Promise.all([
+          moviesRes.json(),
+          usersRes.json(),
+          genresRes.json(),
+          rolesRes.json(),
+          reviewsRes.json()
+        ]);
+
+        // Update stats
+        document.getElementById('total-movies').textContent = movies.results || 0;
+        document.getElementById('total-users').textContent = users.results || 0;
+        document.getElementById('total-genres').textContent = genres.results || 0;
+        document.getElementById('total-roles').textContent = roles.results || 0;
+        document.getElementById('monthly-reviews').textContent = reviews.results || 0;
+        
+        // Calculate average rating
+        if (reviews.data && reviews.data.reviews) {
+          const avgRating = reviews.data.reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.data.reviews.length;
+          document.getElementById('avg-rating').textContent = avgRating ? avgRating.toFixed(1) : '0';
+        }
+
+      } catch (error) {
+        console.error('Error loading overview data:', error);
+      }
+    }
+
+    async function loadUsersTable() {
+      try {
+        const response = await fetch('/api/v1/users');
+        const data = await response.json();
+        
+        const tableBody = document.getElementById('users-table-body');
+        if (!data.data || !data.data.users) {
+          tableBody.innerHTML = '<tr><td colspan="4" class="py-8 text-center opacity-70">No users found</td></tr>';
+          return;
+        }
+
+        tableBody.innerHTML = data.data.users.map(user => `
+          <tr class="hover:bg-[#F2F0E3]/30 dark:hover:bg-[#1F1F1F]/50 transition-colors">
+            <td class="py-4 px-6">
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-[#F76F53] to-[#FF8A70] rounded-full flex items-center justify-center">
+                  <span class="text-white font-bold text-sm">${user.name.charAt(0).toUpperCase()}</span>
+                </div>
+                <div>
+                  <p class="font-medium">${user.name}</p>
+                  <p class="text-sm opacity-70">ID: ${user._id.substring(0, 8)}...</p>
+                </div>
+              </div>
+            </td>
+            <td class="py-4 px-6">
+              <span class="font-medium">${user.email}</span>
+            </td>
+            <td class="py-4 px-6">
+              <span class="px-3 py-1 rounded-full text-xs font-medium ${getRoleColor(user.role)}">
+                ${user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+              </span>
+            </td>
+            <td class="py-4 px-6">
+              <div class="flex space-x-2">
+                <button onclick="editUser('${user._id}')" class="btn btn-sm btn-outline border-[#2196F3] text-[#2196F3] hover:bg-[#2196F3] hover:text-white">
+                  <i class="fas fa-edit"></i>
+                </button>
+                ${user.role !== 'super-admin' ? `
+                  <button onclick="deleteUser('${user._id}')" class="btn btn-sm btn-outline border-red-500 text-red-500 hover:bg-red-500 hover:text-white">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                ` : ''}
+              </div>
+            </td>
+          </tr>
+        `).join('');
+
+        // Update notification badge
+        document.getElementById('user-notification').textContent = data.results;
+
+      } catch (error) {
+        console.error('Error loading users:', error);
+        document.getElementById('users-table-body').innerHTML = '<tr><td colspan="4" class="py-8 text-center text-red-500">Error loading users</td></tr>';
+      }
+    }
+
+    async function loadMoviesTable() {
+      try {
+        const response = await fetch('/api/v1/movies');
+        const data = await response.json();
+        
+        const tableBody = document.getElementById('movies-table-body');
+        if (!data.data || !data.data.movies) {
+          tableBody.innerHTML = '<tr><td colspan="5" class="py-8 text-center opacity-70">No movies found</td></tr>';
+          return;
+        }
+
+        tableBody.innerHTML = data.data.movies.map(movie => `
+          <tr class="hover:bg-[#F2F0E3]/30 dark:hover:bg-[#1F1F1F]/50 transition-colors">
+            <td class="py-4 px-6">
+              <div class="flex items-center space-x-3">
+                <img src="${movie.poster}" alt="${movie.title}" class="w-12 h-16 object-cover rounded-lg">
+                <div>
+                  <p class="font-medium">${movie.title}</p>
+                  <p class="text-sm opacity-70">${movie.duration} min</p>
+                </div>
+              </div>
+            </td>
+            <td class="py-4 px-6">
+              <span class="font-medium">${movie.year}</span>
+            </td>
+            <td class="py-4 px-6">
+              <span class="opacity-80">${movie.director}</span>
+            </td>
+            <td class="py-4 px-6">
+              <div class="flex items-center">
+                <i class="fas fa-star text-yellow-400 mr-1"></i>
+                <span class="font-medium">${movie.averageRating ? movie.averageRating.toFixed(1) : 'N/A'}</span>
+              </div>
+            </td>
+            <td class="py-4 px-6">
+              <div class="flex space-x-2">
+                <button onclick="editMovie('${movie._id}')" class="btn btn-sm btn-outline border-[#2196F3] text-[#2196F3] hover:bg-[#2196F3] hover:text-white">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button onclick="deleteMovie('${movie._id}')" class="btn btn-sm btn-outline border-red-500 text-red-500 hover:bg-red-500 hover:text-white">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+
+      } catch (error) {
+        console.error('Error loading movies:', error);
+        document.getElementById('movies-table-body').innerHTML = '<tr><td colspan="5" class="py-8 text-center text-red-500">Error loading movies</td></tr>';
+      }
+    }
+
+    async function loadGenresTable() {
+      try {
+        const response = await fetch('/api/v1/genres');
+        const data = await response.json();
+        
+        const tableBody = document.getElementById('genres-table-body');
+        if (!data.data || !data.data.genres) {
+          tableBody.innerHTML = '<tr><td colspan="5" class="py-8 text-center opacity-70">No genres found</td></tr>';
+          return;
+        }
+
+        tableBody.innerHTML = data.data.genres.map(genre => `
+          <tr class="hover:bg-[#F2F0E3]/30 dark:hover:bg-[#1F1F1F]/50 transition-colors">
+            <td class="py-4 px-6">
+              <div class="flex items-center space-x-3">
+                <div class="w-4 h-4 rounded-full" style="background-color: ${genre.color}"></div>
+                <span class="font-medium">${genre.name}</span>
+              </div>
+            </td>
+            <td class="py-4 px-6">
+              <span class="opacity-80">${genre.description || 'No description'}</span>
+            </td>
+            <td class="py-4 px-6">
+              <span class="font-medium">${genre.movieCount || 0}</span>
+            </td>
+            <td class="py-4 px-6">
+              <span class="px-2 py-1 rounded-full text-xs font-medium ${genre.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                ${genre.isActive ? 'Active' : 'Inactive'}
+              </span>
+            </td>
+            <td class="py-4 px-6">
+              <div class="flex space-x-2">
+                <button onclick="editGenre('${genre._id}')" class="btn btn-sm btn-outline border-[#FF9800] text-[#FF9800] hover:bg-[#FF9800] hover:text-white">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button onclick="deleteGenre('${genre._id}')" class="btn btn-sm btn-outline border-red-500 text-red-500 hover:bg-red-500 hover:text-white">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+
+      } catch (error) {
+        console.error('Error loading genres:', error);
+        document.getElementById('genres-table-body').innerHTML = '<tr><td colspan="5" class="py-8 text-center text-red-500">Error loading genres</td></tr>';
+      }
+    }
+
+    async function loadRolesTable() {
+      try {
+        const response = await fetch('/api/v1/roles');
+        const data = await response.json();
+        
+        const tableBody = document.getElementById('roles-table-body');
+        if (!data.data || !data.data.roles) {
+          tableBody.innerHTML = '<tr><td colspan="4" class="py-8 text-center opacity-70">No roles found</td></tr>';
+          return;
+        }
+
+        tableBody.innerHTML = data.data.roles.map(role => `
+          <tr class="hover:bg-[#F2F0E3]/30 dark:hover:bg-[#1F1F1F]/50 transition-colors">
+            <td class="py-4 px-6">
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-[#9C27B0] to-[#BA68C8] rounded-full flex items-center justify-center">
+                  <i class="fas fa-shield-alt text-white"></i>
+                </div>
+                <span class="font-medium capitalize">${role.name}</span>
+              </div>
+            </td>
+            <td class="py-4 px-6">
+              <span class="opacity-80">${role.description || 'No description'}</span>
+            </td>
+            <td class="py-4 px-6">
+              <span class="font-medium">0</span>
+            </td>
+            <td class="py-4 px-6">
+              <div class="flex space-x-2">
+                <button onclick="editRole('${role._id}')" class="btn btn-sm btn-outline border-[#9C27B0] text-[#9C27B0] hover:bg-[#9C27B0] hover:text-white">
+                  <i class="fas fa-edit"></i>
+                </button>
+                ${!['client', 'admin', 'super-admin'].includes(role.name) ? `
+                  <button onclick="deleteRole('${role._id}')" class="btn btn-sm btn-outline border-red-500 text-red-500 hover:bg-red-500 hover:text-white">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                ` : ''}
+              </div>
+            </td>
+          </tr>
+        `).join('');
+
+      } catch (error) {
+        console.error('Error loading roles:', error);
+        document.getElementById('roles-table-body').innerHTML = '<tr><td colspan="4" class="py-8 text-center text-red-500">Error loading roles</td></tr>';
+      }
+    }
+
+    // Utility functions
+    function getRoleColor(role) {
+      switch(role) {
+        case 'super-admin': return 'bg-red-100 text-red-800';
+        case 'admin': return 'bg-blue-100 text-blue-800';
+        case 'client': return 'bg-green-100 text-green-800';
+        default: return 'bg-gray-100 text-gray-800';
+      }
+    }
+
+    // Action functions
+    async function editUser(userId) {
+      // Implement user editing modal/form
+      console.log('Edit user:', userId);
+    }
+
+    async function deleteUser(userId) {
+      if (confirm('Are you sure you want to delete this user?')) {
+        try {
+          await fetch(`/api/v1/users/${userId}`, { method: 'DELETE' });
+          loadUsersTable();
+        } catch (error) {
+          console.error('Error deleting user:', error);
+        }
+      }
+    }
+
+    async function editMovie(movieId) {
+      // Implement movie editing
+      window.location.href = `/pages/movies/edit.html?id=${movieId}`;
+    }
+
+    async function deleteMovie(movieId) {
+      if (confirm('Are you sure you want to delete this movie?')) {
+        try {
+          await fetch(`/api/v1/movies/${movieId}`, { method: 'DELETE' });
+          loadMoviesTable();
+        } catch (error) {
+          console.error('Error deleting movie:', error);
+        }
+      }
+    }
+
+    async function editGenre(genreId) {
+      // Implement genre editing modal
+      console.log('Edit genre:', genreId);
+    }
+
+    async function deleteGenre(genreId) {
+      if (confirm('Are you sure you want to delete this genre?')) {
+        try {
+          await fetch(`/api/v1/genres/${genreId}`, { method: 'DELETE' });
+          loadGenresTable();
+        } catch (error) {
+          console.error('Error deleting genre:', error);
+        }
+      }
+    }
+
+    async function editRole(roleId) {
+      // Implement role editing modal
+      console.log('Edit role:', roleId);
+    }
+
+    async function deleteRole(roleId) {
+      if (confirm('Are you sure you want to delete this role?')) {
+        try {
+          await fetch(`/api/v1/roles/${roleId}`, { method: 'DELETE' });
+          loadRolesTable();
+        } catch (error) {
+          console.error('Error deleting role:', error);
+        }
+      }
+    }
+
+    // Search functionality
+    document.getElementById('users-search')?.addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      const rows = document.querySelectorAll('#users-table-body tr');
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+      });
+    });
+
+    document.getElementById('movies-search')?.addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      const rows = document.querySelectorAll('#movies-table-body tr');
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+      });
+    });
+
+    document.getElementById('genres-search')?.addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      const rows = document.querySelectorAll('#genres-table-body tr');
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+      });
+    });
+
+    document.getElementById('roles-search')?.addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      const rows = document.querySelectorAll('#roles-table-body tr');
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+      });
+    });
+
+    // Refresh buttons
+    document.getElementById('refresh-users')?.addEventListener('click', loadUsersTable);
+    document.getElementById('refresh-movies')?.addEventListener('click', loadMoviesTable);
+    document.getElementById('refresh-genres')?.addEventListener('click', loadGenresTable);
+    document.getElementById('refresh-roles')?.addEventListener('click', loadRolesTable);
+    document.getElementById('refresh-all')?.addEventListener('click', () => {
+      loadOverviewData();
+      loadUsersTable();
+      loadMoviesTable();
+      loadGenresTable();
+      loadRolesTable();
+    });
+
+    // Load initial data when overview tab is active
+    loadOverviewData();
+  </script>
+</body>
+</html>

@@ -238,6 +238,5 @@ document.addEventListener('DOMContentLoaded', async () => {
         `).join('');
     }
 
-    // Make removeGenre available globally for the onclick handler
     window.removeGenre = removeGenre;
 });
