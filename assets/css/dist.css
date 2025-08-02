@@ -3548,3 +3548,42 @@ html {
 .contact-btn:hover {
     animation: float 2s ease-in-out infinite;
 }
+
+
+
+.logo{
+    color: #F76F53;
+}
+
+
+
+/* Brand logo icon in footer */
+
+
+
+.brand-logo-icon {
+    width: 2rem;
+    height: 2rem;
+    background: linear-gradient(135deg, #F76F53 0%, #FF8A70 100%);
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.75rem;
+    box-shadow: 0 4px 12px rgba(247, 111, 83, 0.3);
+    transition: all 0.3s ease;
+}
+
+
+
+.brand-logo-icon:hover {
+    transform: scale(1.05) rotate(5deg);
+    box-shadow: 0 6px 16px rgba(247, 111, 83, 0.4);
+}
+
+
+
+.brand-logo-icon i {
+    color: white;
+    font-size: 1.125rem;
+}
