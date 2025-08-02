@@ -99,35 +99,118 @@
   </main>
 
   <!-- Footer -->
-  <footer class="bg-[#F2F0E3] dark:bg-[#1F1F1F] border-t border-[#e0ddd0] dark:border-[#2E2E2E] py-12 px-4">
-    <div class="container mx-auto">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div>
-          <h3 class="text-lg font-bold mb-4">ScyDB</h3>
-          <p class="opacity-80">A minimalist movie database for discerning viewers.</p>
-        </div>
-        <div>
-          <h3 class="text-lg font-bold mb-4">Navigation</h3>
-          <ul class="space-y-2">
-            <li><a href="/pages/index.html" class="hover:text-[#F76F53] transition-colors">Home</a></li>
-            <li><a href="/pages/movies/" class="hover:text-[#F76F53] transition-colors">Movies</a></li>
-            <li><a href="/pages/about.html" class="hover:text-[#F76F53] transition-colors">About</a></li>
-          </ul>
-        </div>
-        <div>
-          <h3 class="text-lg font-bold mb-4">Connect</h3>
-          <div class="flex space-x-4">
-            <a href="#" class="hover:text-[#F76F53] transition-colors"><i class="fab fa-twitter"></i></a>
-            <a href="#" class="hover:text-[#F76F53] transition-colors"><i class="fab fa-instagram"></i></a>
+  <!-- Footer -->
+ <footer class="bg-[#F2F0E3] dark:bg-[#1F1F1F] border-t border-[#e0ddd0] dark:border-[#2E2E2E] relative overflow-hidden">
+  <!-- Background Pattern -->
+  <div class="absolute inset-0 opacity-5">
+    <div class="absolute top-0 left-0 w-full h-full">
+      <div class="film-pattern"></div>
+    </div>
+  </div>
+  
+  <div class="container mx-auto px-4 py-16 relative z-10">
+    <!-- Main Footer Content -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+      <!-- Brand Section -->
+      <div class="lg:col-span-1">
+        <div class="flex items-center mb-4">
+          <div class="w-8 h-8 bg-gradient-to-br from-[#F76F53] to-[#FF8A70] rounded-lg flex items-center justify-center mr-3">
+            <i class="fas fa-film text-white text-lg"></i>
           </div>
+          <h3 class="text-2xl font-bold">ScyDB</h3>
         </div>
+        <p class="opacity-80 leading-relaxed">
+          A minimalist movie database for discerning viewers. Discover, explore, and curate your perfect film collection.
+        </p>
       </div>
-      <div class="border-t border-[#e0ddd0] dark:border-[#2E2E2E] mt-8 pt-8 text-center opacity-80">
-        <p>&copy; 2025 ScyDB. All rights reserved.</p>
+      
+      <!-- Navigation -->
+      <div>
+        <h3 class="text-lg font-bold mb-6 flex items-center">
+          <i class="fas fa-compass text-[#F76F53] mr-2"></i>
+          Explore
+        </h3>
+        <ul class="space-y-3">
+          <li><a href="/pages/index.html" class="footer-link">Home</a></li>
+          <li><a href="/pages/movies/" class="footer-link">All Movies</a></li>
+          <li><a href="#" class="footer-link" onclick="handleQuickFilter('rating'); return false;">Top Rated</a></li>
+          <li><a href="#" class="footer-link" onclick="handleQuickFilter('newest'); return false;">Latest Releases</a></li>
+          <li><a href="/pages/about.html" class="footer-link">About ScyDB</a></li>
+        </ul>
+      </div>
+      
+      <!-- Popular Genres -->
+      <div>
+        <h3 class="text-lg font-bold mb-6 flex items-center">
+          <i class="fas fa-tags text-[#F76F53] mr-2"></i>
+          Popular Genres
+        </h3>
+        <ul class="space-y-3">
+          <li><a href="#" class="footer-link" onclick="handleQuickGenre('Action'); return false;">Action</a></li>
+          <li><a href="#" class="footer-link" onclick="handleQuickGenre('Drama'); return false;">Drama</a></li>
+          <li><a href="#" class="footer-link" onclick="handleQuickGenre('Comedy'); return false;">Comedy</a></li>
+          <li><a href="#" class="footer-link" onclick="handleQuickGenre('Sci-Fi'); return false;">Sci-Fi</a></li>
+          <li><a href="#" class="footer-link" onclick="handleQuickGenre('Horror'); return false;">Horror</a></li>
+        </ul>
+      </div>
+      
+      <!-- Connect & Support -->
+      <div>
+        <h3 class="text-lg font-bold mb-6 flex items-center">
+          <i class="fas fa-heart text-[#F76F53] mr-2"></i>
+          Connect
+        </h3>
+        
+        <!-- Social Links -->
+        <div class="flex space-x-3 mb-6">
+          <a href="#" class="social-icon">
+            <i class="fab fa-twitter"></i>
+          </a>
+          <a href="#" class="social-icon">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href="#" class="social-icon">
+            <i class="fab fa-github"></i>
+          </a>
+          <a href="#" class="social-icon">
+            <i class="fab fa-discord"></i>
+          </a>
+        </div>
+        
+        <!-- Contact Button -->
+        <a href="/pages/contact.html" class="contact-btn">
+          <i class="fas fa-envelope mr-2"></i>
+          Contact Us
+        </a>
+        
+        <!-- Quick Links -->
+        <ul class="space-y-2 mt-4">
+          <li><a href="#" class="footer-link text-sm">Privacy Policy</a></li>
+          <li><a href="#" class="footer-link text-sm">Terms of Service</a></li>
+        </ul>
       </div>
     </div>
-  </footer>
-
+    
+    <!-- Bottom Bar -->
+    <div class="border-t border-[#e0ddd0] dark:border-[#2E2E2E] pt-8">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="flex items-center gap-6">
+          <p class="opacity-80 text-sm">&copy; 2025 ScyDB. Crafted with passion for cinema.</p>
+          <div class="flex items-center gap-2 text-sm opacity-70">
+            <i class="fas fa-database text-[#F76F53]"></i>
+            <span>Powered by ScyDB API</span>
+          </div>
+        </div>
+        
+        <!-- Back to Top -->
+        <button onclick="scrollToTop()" class="back-to-top">
+          <i class="fas fa-arrow-up"></i>
+          <span class="ml-2 hidden sm:inline">Back to Top</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</footer>
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -136,6 +219,7 @@
   <script src="/assets/js/users.js"></script>
   <script src="/assets/js/auth.js"></script>
   <script src="/assets/js/navbar.js"></script>
+  <script src="/assets/js/footer.js"></script>
 
   <script>
     // Init AOS

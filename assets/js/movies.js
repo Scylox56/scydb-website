@@ -1634,14 +1634,13 @@ const showSearchSuggestions = async (query) => {
     }
     
     try {
-        // You can implement this with your movie API
         const { data } = await axios.get(`${API_BASE_URL}/movies?search=${query}&limit=5`);
         const movies = data.data.movies || [];
         
         const suggestionsContainer = document.getElementById('search-suggestions');
         if (suggestionsContainer && movies.length > 0) {
             suggestionsContainer.innerHTML = movies.map(movie => `
-                <div class="suggestion-item" onclick="selectSuggestion('${movie.title}')">
+                <div class="suggestion-item" onclick="selectSuggestion('${movie._id}', '${movie.title.replace(/'/g, "\\'")}')">
                     <strong>${movie.title}</strong> (${movie.year})
                     <small class="block text-xs opacity-70">${movie.director}</small>
                 </div>
@@ -1660,12 +1659,8 @@ const hideSearchSuggestions = () => {
     }
 };
 
-const selectSuggestion = (title) => {
-    const searchInput = document.getElementById('search-input');
-    if (searchInput) {
-        searchInput.value = title;
-        doSearch(title);
-    }
+const selectSuggestion = (movieId, title) => {
+    window.location.href = `/pages/movies/details.html?id=${movieId}`;
     hideSearchSuggestions();
 };
 
@@ -1763,6 +1758,51 @@ window.selectSuggestion = selectSuggestion;
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+    const quickSearchGenre = sessionStorage.getItem('quickSearchGenre');
+    const quickSearchFilter = sessionStorage.getItem('quickSearchFilter');
+    
+    if ((quickSearchGenre || quickSearchFilter) && window.location.pathname.includes('/movies/')) {
+        // Clear the session storage
+        sessionStorage.removeItem('quickSearchGenre');
+        sessionStorage.removeItem('quickSearchFilter');
+        
+        if (quickSearchGenre) {
+            // Set the genre filter
+            currentFilters.genre = quickSearchGenre;
+            
+            // Update the genre dropdown
+            const genreSelect = document.getElementById('genre-filter');
+            if (genreSelect) {
+                genreSelect.value = quickSearchGenre;
+            }
+            
+            // Update genre chips
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.classList.remove('active');
+                if (chip.dataset.genre === quickSearchGenre) {
+                    chip.classList.add('active');
+                }
+            });
+        }
+        
+        if (quickSearchFilter) {
+            // Set the sort filter
+            currentFilters.sort = quickSearchFilter;
+            
+            // Update the sort dropdown
+            const sortSelect = document.getElementById('sort-by');
+            if (sortSelect) {
+                sortSelect.value = quickSearchFilter;
+            }
+        }
+        
+        // Load movies with the filters
+        setTimeout(() => {
+            loadMovies(currentFilters, 1);
+            updateActiveFilters();
+        }, 500);
+    }
+    
     enhanceSearchBar();
     initMoviesPage();
 });
