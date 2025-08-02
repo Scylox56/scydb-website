@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ScyDB - Profile</title>
+  <title>Profile - ScyDB</title>
   <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -14,93 +14,352 @@
   <!-- Navigation -->
   <nav></nav>
 
-  <main class="container mx-auto px-4 py-8">
-    <div class="flex flex-col md:flex-row gap-8">
-      <!-- Sidebar -->
-      <div class="md:w-1/4">
-        <div class="bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-xl p-6 shadow-sm sticky top-6">
-          <div class="flex flex-col items-center text-center mb-6">
-            <img id="user-avatar" src="/assets/images/default-avatar.jpg" alt="User" class="w-24 h-24 rounded-full mb-4 border-4 border-[#F76F53]/20">
-            <h2 id="user-name" class="text-xl font-bold"></h2>
-            <p id="user-email" class="opacity-80 text-sm"></p>
+  <!-- Profile Hero Section -->
+  <section class="profile-hero-section py-12 px-4">
+    <div class="container mx-auto max-w-7xl">
+      <!-- Profile Header -->
+      <div class="profile-header-card" data-aos="fade-down">
+        <!-- Background Pattern (reduced opacity for better text visibility) -->
+        <div class="profile-background">
+          <div class="profile-pattern opacity-30"></div>
+        </div>
+        
+        <div class="profile-content">
+          <!-- Avatar and Basic Info -->
+          <div class="profile-main-info">
+            <div class="profile-avatar-container">
+              <img id="user-avatar" src="/assets/images/default-avatar.jpg" alt="User" class="profile-avatar">
+              <div class="avatar-status-badge">
+                <i class="fas fa-check"></i>
+              </div>
+              <button class="avatar-change-btn" id="avatar-change-btn">
+                <i class="fas fa-camera"></i>
+              </button>
+            </div>
+            
+            <div class="profile-info">
+              <h1 id="user-name" class="profile-name text-white dark:text-white drop-shadow-lg">Loading...</h1>
+              <div class="profile-badges mt-2">
+                <span id="user-role" class="role-badge">Member</span>
+                <span id="join-date" class="join-date text-white/80 dark:text-white/80 drop-shadow-lg ml-3">Loading...</span>
+              </div>
+              <p id="user-email" class="profile-email text-white/75 dark:text-white/75 drop-shadow-lg text-sm mt-2">Loading...</p>
+            </div>
           </div>
           
-          <nav class="space-y-2">
-            <a href="/pages/users/profile.html" class="block px-4 py-3 rounded-lg bg-[#F76F53]/10 text-[#F76F53] font-medium transition-colors">
-              <i class="fas fa-user mr-2"></i> Profile
+          <!-- Profile Completion -->
+          <div class="profile-completion bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border border-white/20">
+            <div class="completion-header">
+              <span class="completion-text text-gray-700 dark:text-gray-300 font-semibold">Profile Completion</span>
+              <span id="completion-percentage" class="completion-percentage text-[#F76F53] font-bold">75%</span>
+            </div>
+            <div class="completion-bar">
+              <div id="completion-progress" class="completion-progress" style="width: 75%"></div>
+            </div>
+            <p class="completion-tip text-gray-600 dark:text-gray-400">Add an avatar to reach 100%!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="container mx-auto px-4 pb-8 max-w-7xl">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      
+      <!-- Sidebar -->
+      <div class="lg:col-span-1">
+        <!-- Stats Cards -->
+        <div class="stats-grid grid grid-cols-1 gap-4 mb-6" data-aos="fade-right">
+          <div class="stat-card p-4">
+            <div class="stat-icon reviews">
+              <i class="fas fa-star"></i>
+            </div>
+            <div class="stat-content">
+              <span class="stat-number" id="reviews-written">0</span>
+              <span class="stat-label">Reviews Written</span>
+            </div>
+          </div>
+          
+          <div class="stat-card p-4">
+            <div class="stat-icon watchlist">
+              <i class="fas fa-bookmark"></i>
+            </div>
+            <div class="stat-content">
+              <span class="stat-number" id="watchlist-count">0</span>
+              <span class="stat-label">Watchlist</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Navigation Menu -->
+        <div class="profile-nav-card" data-aos="fade-right" data-aos-delay="100">
+          <h3 class="nav-title">Account</h3>
+          <nav class="profile-nav">
+            <a href="/pages/users/profile.html" class="nav-item active">
+              <i class="fas fa-user"></i>
+              <span>Profile Settings</span>
             </a>
-            <a href="/pages/users/dashboard.html" 
-              id="admin-dashboard-link"
-              class="hidden px-4 py-3 rounded-lg hover:bg-[#F76F53]/10 text-[#F76F53] font-medium transition-colors">
-              <i class="fas fa-cog mr-2"></i> Admin Dashboard
+            <a href="/pages/users/watchlist.html" class="nav-item">
+              <i class="fas fa-bookmark"></i>
+              <span>My Watchlist</span>
             </a>
-            <a href="/pages/users/watchlist.html" class="block px-4 py-3 rounded-lg hover:bg-[#F76F53]/10 transition-colors">
-              <i class="fas fa-bookmark mr-2"></i> Watchlist
+            <a href="/pages/users/dashboard.html" id="admin-dashboard-link" class="nav-item hidden admin-only">
+              <i class="fas fa-cog"></i>
+              <span>Admin Dashboard</span>
             </a>
-            <button id="logout-btn" class="w-full text-left px-4 py-3 rounded-lg hover:bg-[#F76F53]/10 text-[#F76F53] transition-colors">
-              <i class="fas fa-sign-out-alt mr-2"></i> Logout
+            <button id="logout-btn" class="nav-item logout">
+              <i class="fas fa-sign-out-alt"></i>
+              <span>Logout</span>
             </button>
           </nav>
         </div>
       </div>
       
       <!-- Main Content -->
-      <div class="md:w-3/4 space-y-6">
-        <!-- Profile Information Card -->
-        <div class="bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-xl shadow-sm p-6" data-aos="fade-up">
-          <h2 class="text-2xl font-bold mb-6">Profile Information</h2>
+      <div class="lg:col-span-3 space-y-8">
+        
+        <!-- Profile Settings -->
+        <div class="settings-card" data-aos="fade-up">
+          <div class="card-header">
+            <h2 class="card-title">
+              <i class="fas fa-user-edit text-[#F76F53] mr-3"></i>
+              Profile Information
+            </h2>
+            <p class="card-subtitle">Update your personal information and preferences</p>
+          </div>
           
-          <form id="profile-form" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium mb-2 opacity-80">Name</label>
-                <input type="text" id="profile-name" class="w-full px-4 py-2 rounded-lg border border-[#2E2E2E]/20 dark:border-[#F2F0E3]/20 bg-transparent focus:outline-none focus:ring-2 focus:ring-[#F76F53]/50">
-              </div>
-              <div>
-                <label class="block text-sm font-medium mb-2 opacity-80">Email</label>
-                <input type="email" id="profile-email" class="w-full px-4 py-2 rounded-lg border border-[#2E2E2E]/20 dark:border-[#F2F0E3]/20 bg-transparent focus:outline-none focus:ring-2 focus:ring-[#F76F53]/50">
+          <form id="profile-form" class="enhanced-form">
+            <div class="form-section">
+              <h3 class="section-title">Basic Information</h3>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label">
+                    <i class="fas fa-user text-[#F76F53] mr-2"></i>
+                    Full Name
+                  </label>
+                  <input type="text" id="profile-name" class="form-input" placeholder="Enter your full name" required>
+                  <div class="input-feedback"></div>
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label">
+                    <i class="fas fa-envelope text-[#F76F53] mr-2"></i>
+                    Email Address
+                  </label>
+                  <input type="email" id="profile-email" class="form-input" placeholder="your.email@example.com" required>
+                  <div class="input-feedback"></div>
+                </div>
               </div>
             </div>
             
-            <div>
-              <label class="block text-sm font-medium mb-2 opacity-80">Avatar URL</label>
-              <input type="url" id="profile-avatar" class="w-full px-4 py-2 rounded-lg border border-[#2E2E2E]/20 dark:border-[#F2F0E3]/20 bg-transparent focus:outline-none focus:ring-2 focus:ring-[#F76F53]/50">
+            <div class="form-section">
+              <h3 class="section-title">Avatar</h3>
+              <div class="form-grid single-column">
+                <div class="form-group">
+                  <label class="form-label">
+                    <i class="fas fa-image text-[#F76F53] mr-2"></i>
+                    Profile Picture
+                  </label>
+                  <div class="avatar-input-container">
+                    <input type="url" id="profile-avatar" class="form-input" placeholder="https://example.com/avatar.jpg">
+                    <button type="button" class="avatar-preview-btn" id="preview-avatar-btn">
+                      <i class="fas fa-eye mr-1"></i>
+                      Preview
+                    </button>
+                  </div>
+                  <div class="input-feedback"></div>
+                  <div class="mt-4">
+                    <label class="form-label">
+                      <i class="fas fa-upload text-[#F76F53] mr-2"></i>
+                      Or Upload File
+                    </label>
+                    <input type="file" id="avatar-file-input" class="form-input" accept="image/*">
+                    <p class="text-sm text-gray-500 mt-1">Maximum file size: 5MB. Supported formats: JPG, PNG, GIF</p>
+                  </div>
+                </div>
+              </div>
             </div>
             
-            <button type="submit" class="btn btn-primary mt-4">Update Profile</button>
+            <div class="form-actions">
+              <button type="button" class="btn btn-outline" id="reset-profile-btn">
+                <i class="fas fa-undo mr-2"></i>
+                Reset Changes
+              </button>
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save mr-2"></i>
+                Update Profile
+              </button>
+            </div>
           </form>
         </div>
         
-        <!-- Change Password Card -->
-        <div class="bg-[#e8e6d9] dark:bg-[#2E2E2E] rounded-xl shadow-sm p-6" data-aos="fade-up" data-aos-delay="100">
-          <h2 class="text-2xl font-bold mb-6">Change Password</h2>
+        <!-- Security Settings -->
+        <div class="settings-card" data-aos="fade-up" data-aos-delay="100">
+          <div class="card-header">
+            <h2 class="card-title">
+              <i class="fas fa-shield-alt text-[#F76F53] mr-3"></i>
+              Security Settings
+            </h2>
+            <p class="card-subtitle">Keep your account secure with a strong password</p>
+          </div>
           
-          <form id="password-form" class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium mb-2 opacity-80">Current Password</label>
-              <input type="password" id="current-password" class="w-full px-4 py-2 rounded-lg border border-[#2E2E2E]/20 dark:border-[#F2F0E3]/20 bg-transparent focus:outline-none focus:ring-2 focus:ring-[#F76F53]/50">
+          <form id="password-form" class="enhanced-form">
+            <div class="form-section">
+              <div class="form-grid single-column">
+                <div class="form-group">
+                  <label class="form-label">
+                    <i class="fas fa-lock text-[#F76F53] mr-2"></i>
+                    Current Password
+                  </label>
+                  <div class="password-input-container">
+                    <input type="password" id="current-password" class="form-input" placeholder="Enter your current password" required>
+                    <button type="button" class="password-toggle" data-target="current-password">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label">
+                    <i class="fas fa-key text-[#F76F53] mr-2"></i>
+                    New Password
+                  </label>
+                  <div class="password-input-container">
+                    <input type="password" id="new-password" class="form-input" placeholder="Enter a strong new password" required>
+                    <button type="button" class="password-toggle" data-target="new-password">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                  <div class="password-strength">
+                    <div class="strength-bars">
+                      <div class="strength-bar"></div>
+                      <div class="strength-bar"></div>
+                      <div class="strength-bar"></div>
+                      <div class="strength-bar"></div>
+                    </div>
+                    <span class="strength-text">Password strength</span>
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label">
+                    <i class="fas fa-check text-[#F76F53] mr-2"></i>
+                    Confirm New Password
+                  </label>
+                  <div class="password-input-container">
+                    <input type="password" id="new-password-confirm" class="form-input" placeholder="Confirm your new password" required>
+                    <button type="button" class="password-toggle" data-target="new-password-confirm">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                  <div class="input-feedback"></div>
+                </div>
+              </div>
             </div>
             
-            <div>
-              <label class="block text-sm font-medium mb-2 opacity-80">New Password</label>
-              <input type="password" id="new-password" class="w-full px-4 py-2 rounded-lg border border-[#2E2E2E]/20 dark:border-[#F2F0E3]/20 bg-transparent focus:outline-none focus:ring-2 focus:ring-[#F76F53]/50">
+            <div class="form-actions">
+              <button type="button" class="btn btn-outline" id="reset-password-btn">
+                <i class="fas fa-times mr-2"></i>
+                Cancel
+              </button>
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-shield-alt mr-2"></i>
+                Change Password
+              </button>
             </div>
-            
-            <div>
-              <label class="block text-sm font-medium mb-2 opacity-80">Confirm New Password</label>
-              <input type="password" id="new-password-confirm" class="w-full px-4 py-2 rounded-lg border border-[#2E2E2E]/20 dark:border-[#F2F0E3]/20 bg-transparent focus:outline-none focus:ring-2 focus:ring-[#F76F53]/50">
-            </div>
-            
-            <button type="submit" class="btn btn-primary mt-4">Change Password</button>
           </form>
+        </div>
+        
+        <!-- User Activity Summary -->
+        <div class="settings-card" data-aos="fade-up" data-aos-delay="200">
+          <div class="card-header">
+            <h2 class="card-title">
+              <i class="fas fa-chart-line text-[#F76F53] mr-3"></i>
+              Account Summary
+            </h2>
+            <p class="card-subtitle">Overview of your ScyDB activity</p>
+          </div>
+          
+          <div class="summary-stats">
+            <div class="summary-item">
+              <div class="summary-icon">
+                <i class="fas fa-star text-yellow-500"></i>
+              </div>
+              <div class="summary-content">
+                <span class="summary-number" id="summary-reviews">0</span>
+                <span class="summary-label">Reviews Written</span>
+              </div>
+            </div>
+            
+            <div class="summary-item">
+              <div class="summary-icon">
+                <i class="fas fa-bookmark text-purple-500"></i>
+              </div>
+              <div class="summary-content">
+                <span class="summary-number" id="summary-watchlist">0</span>
+                <span class="summary-label">Movies in Watchlist</span>
+              </div>
+            </div>
+            
+            <div class="summary-item">
+              <div class="summary-icon">
+                <i class="fas fa-calendar text-blue-500"></i>
+              </div>
+              <div class="summary-content">
+                <span class="summary-number" id="days-active">0</span>
+                <span class="summary-label">Days on ScyDB</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </main>
 
+  <!-- Avatar Modal -->
+  <div id="avatar-modal" class="modal-overlay hidden">
+    <div class="avatar-modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Change Avatar</h3>
+        <button class="modal-close" id="modal-close-btn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="avatar-options">
+          <div class="avatar-upload-option">
+            <div class="upload-area" id="upload-area">
+              <i class="fas fa-cloud-upload-alt"></i>
+              <span>Upload Image</span>
+              <small>JPG, PNG up to 5MB</small>
+            </div>
+            <input type="file" id="avatar-file" accept="image/*" style="display: none;">
+          </div>
+          
+          <div class="divider"><span>OR</span></div>
+          
+          <div class="avatar-url-option">
+            <label class="form-label">Image URL</label>
+            <input type="url" id="avatar-url-input" class="form-input" placeholder="https://example.com/avatar.jpg">
+            <button type="button" class="btn btn-outline btn-sm" id="preview-modal-avatar-btn">Preview</button>
+          </div>
+        </div>
+        
+        <div class="avatar-preview-container">
+          <img id="avatar-preview" src="/assets/images/default-avatar.jpg" alt="Avatar Preview" class="avatar-preview">
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="cancel-avatar-btn">Cancel</button>
+        <button class="btn btn-primary" id="save-avatar-btn">Save Avatar</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Footer -->
- <footer class="bg-[#F2F0E3] dark:bg-[#1F1F1F] border-t border-[#e0ddd0] dark:border-[#2E2E2E] relative overflow-hidden">
+  <footer class="bg-[#F2F0E3] dark:bg-[#1F1F1F] border-t border-[#e0ddd0] dark:border-[#2E2E2E] relative overflow-hidden">
   <!-- Background Pattern -->
   <div class="absolute inset-0 opacity-5">
     <div class="absolute top-0 left-0 w-full h-full">
@@ -123,7 +382,7 @@
           A minimalist movie database for discerning viewers. Discover, explore, and curate your perfect film collection.
         </p>
       </div>
-      
+            
       <!-- Navigation -->
       <div>
         <h3 class="text-lg font-bold mb-6 flex items-center">
@@ -163,16 +422,16 @@
         
         <!-- Social Links -->
         <div class="flex space-x-3 mb-6">
-          <a href="#" class="social-icon">
+          <a href="https://x.com/lox_alpha" class="social-icon">
             <i class="fab fa-twitter"></i>
           </a>
-          <a href="#" class="social-icon">
+          <a href="https://www.instagram.com/scylox56" class="social-icon">
             <i class="fab fa-instagram"></i>
           </a>
-          <a href="#" class="social-icon">
+          <a href="https://github.com/Scylox56" class="social-icon">
             <i class="fab fa-github"></i>
           </a>
-          <a href="#" class="social-icon">
+          <a href="https://discord.gg/jzbT56dqvj" class="social-icon">
             <i class="fab fa-discord"></i>
           </a>
         </div>
@@ -211,6 +470,7 @@
     </div>
   </div>
 </footer>
+
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -220,12 +480,5 @@
   <script src="/assets/js/auth.js"></script>
   <script src="/assets/js/navbar.js"></script>
   <script src="/assets/js/footer.js"></script>
-
-  <script>
-    // Init AOS
-    document.addEventListener('DOMContentLoaded', () => {
-      AOS.init({ duration: 600, easing: 'ease-out-quad', once: true });
-    });
-  </script>
 </body>
 </html>

@@ -3,243 +3,404 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScyDB - Movie Database</title>
+    <title>Contact Us - ScyDB</title>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link href="/assets/css/dist.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 min-h-screen">
-   <!-- Navigation -->
-    <nav class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50">
-        <div class="container mx-auto px-4 py-3">
-            <div class="flex justify-between items-center">
-                <!-- Logo -->
-                <a href="/pages/index.html" class="flex items-center space-x-2">
-                    <span class="text-2xl font-bold text-primary dark:text-white">ScyDB</span>
-                </a>
+<body class="bg-[#F2F0E3] dark:bg-[#1F1F1F] text-[#2E2E2E] dark:text-[#F2F0E3] m-0">
+    <!-- Navigation (loaded dynamically) -->
+    <nav></nav>
 
-                <!-- Desktop Navigation -->
-                <div class="hidden md:flex items-center space-x-6">
-                    <a href="/pages/index.html" class="nav-link">Home</a>
-                    <a href="/pages/movies/" class="nav-link">Movies</a>
-                    <a href="/pages/about.html" class="nav-link">About</a>
-                </div>
-
-                <!-- Auth Section -->
-                <div class="flex items-center space-x-4">
-                    <!-- Auth Links -->
-                    <div id="auth-links" class="items-center space-x-4">
-                        <a href="/pages/auth/login.html" class="btn btn-outline">Login</a>
-                        <a href="/pages/auth/signup.html" class="btn btn-primary">Sign Up</a>
-                    </div>
-
-                    <!-- User Menu -->
-                    <div id="user-menu" class="relative hidden">
-                        <button id="user-menu-button" class="flex items-center space-x-2 focus:outline-none">
-                            <img id="user-avatar" src="/assets/images/default-avatar.jpg" alt="User" class="w-10 h-10 rounded-full">
-                            <span id="user-name" class="font-medium dark:text-white"></span>
-                            <i class="fas fa-chevron-down text-sm"></i>
-                        </button>
-                        <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-50">
-                            <a href="/pages/users/profile.html" class="block px-4 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600">Profile</a>
-                            <a href="/pages/users/watchlist.html" class="block px-4 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600">Watchlist</a>
-                            <button id="logout-btn" class="w-full text-left px-4 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600">Logout</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Mobile menu button -->
-                <button id="mobile-menu-button" class="md:hidden focus:outline-none">
-                    <i class="fas fa-bars text-gray-800 dark:text-white text-2xl"></i>
-                </button>
-            </div>
-
-            <!-- Mobile menu -->
-            <div id="mobile-menu" class="hidden md:hidden mt-4">
-                <a href="/pages/index.html" class="block py-2 text-gray-800 dark:text-white">Home</a>
-                <a href="/pages/movies/" class="block py-2 text-gray-800 dark:text-white">Movies</a>
-                <a href="/pages/about.html" class="block py-2 text-gray-800 dark:text-white">About</a>
-            </div>
-        </div>
-    </nav>
-
-    <main class="container mx-auto px-4 py-12 max-w-4xl">
-        <section class="text-center mb-12">
-            <h1 class="text-4xl font-bold mb-4 dark:text-white">Contact Us</h1>
-            <p class="text-xl text-gray-600 dark:text-gray-300">
-                Have questions? We'd love to hear from you.
+    <!-- Hero Section -->
+    <section class="hero-contact-section py-20 px-4">
+        <div class="container mx-auto text-center max-w-4xl">
+            <h1 class="text-5xl md:text-6xl font-semibold mb-6 leading-tight" data-aos="fade-down">
+                Let's start a <br><span class="italic" style="color: #F76F53;">conversation</span>
+            </h1>
+            <p class="text-xl md:text-2xl opacity-90 mb-12" data-aos="fade-up" data-aos-delay="100">
+                Have questions about movies or our platform? <br />We'd love to hear from you.
             </p>
-        </section>
-
-        <div class="grid md:grid-cols-2 gap-8">
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-8">
-                <h2 class="text-2xl font-bold mb-6 dark:text-white">Get in Touch</h2>
-                <form id="contact-form" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium mb-1 dark:text-gray-300">Name</label>
-                        <input type="text" required class="input-field">
+            
+            <!-- Quick Contact Options -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16" data-aos="fade-up" data-aos-delay="200">
+                <div class="contact-quick-option">
+                    <div class="contact-icon-wrapper">
+                        <i class="fas fa-comments"></i>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1 dark:text-gray-300">Email</label>
-                        <input type="email" required class="input-field">
+                    <h3 class="font-semibold mb-2">General Inquiries</h3>
+                    <p class="opacity-80 text-sm">Questions about ScyDB</p>
+                </div>
+                <div class="contact-quick-option">
+                    <div class="contact-icon-wrapper">
+                        <i class="fas fa-bug"></i>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1 dark:text-gray-300">Message</label>
-                        <textarea rows="5" required class="input-field"></textarea>
+                    <h3 class="font-semibold mb-2">Report a Bug</h3>
+                    <p class="opacity-80 text-sm">Found an issue?</p>
+                </div>
+                <div class="contact-quick-option">
+                    <div class="contact-icon-wrapper">
+                        <i class="fas fa-lightbulb"></i>
                     </div>
-                    <button type="submit" class="btn btn-primary">Send Message</button>
-                </form>
-            </div>
-
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-8">
-                <h2 class="text-2xl font-bold mb-6 dark:text-white">Contact Info</h2>
-                <div class="space-y-4">
-                    <div class="flex items-start gap-4">
-                        <i class="fas fa-map-marker-alt text-primary mt-1"></i>
-                        <div>
-                            <h3 class="font-bold dark:text-white">Address</h3>
-                            <p class="text-gray-600 dark:text-gray-300">
-                                123 Movie Street<br>Film City, FC 10001
-                            </p>
-                        </div>
-                    </div>
-                    <!-- More contact methods... -->
+                    <h3 class="font-semibold mb-2">Feature Request</h3>
+                    <p class="opacity-80 text-sm">Share your ideas</p>
                 </div>
             </div>
         </div>
-    </main>
+    </section>
 
+    <!-- Contact Form Section -->
+    <section class="contact-form-section py-16 px-4">
+        <div class="container mx-auto max-w-6xl">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                
+                <!-- Contact Form -->
+                <div class="lg:col-span-2">
+                    <div class="contact-form-container" data-aos="fade-right">
+                        <div class="form-header">
+                            <h2 class="text-3xl font-bold mb-2">Send us a message</h2>
+                            <p class="opacity-80 mb-8">Fill out the form below and we'll get back to you as soon as possible.</p>
+                        </div>
+                        
+                        <form netlify id="contact-form" class="contact-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-user text-[#F76F53] mr-2"></i>
+                                        Name
+                                    </label>
+                                    <input type="text" id="contact-name" required class="form-input" placeholder="Your full name">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-envelope text-[#F76F53] mr-2"></i>
+                                        Email
+                                    </label>
+                                    <input type="email" id="contact-email" required class="form-input" placeholder="your.email@example.com">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-tag text-[#F76F53] mr-2"></i>
+                                    Subject
+                                </label>
+                                <select id="contact-subject" required class="form-select">
+                                    <option value="">Select a topic</option>
+                                    <option value="general">General Inquiry</option>
+                                    <option value="bug">Bug Report</option>
+                                    <option value="feature">Feature Request</option>
+                                    <option value="movie">Movie Suggestion</option>
+                                    <option value="account">Account Issue</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-message text-[#F76F53] mr-2"></i>
+                                    Message
+                                </label>
+                                <textarea id="contact-message" rows="6" required class="form-textarea" placeholder="Tell us what's on your mind..."></textarea>
+                            </div>
+                            
+                            <!-- Form Actions -->
+                            <div class="form-actions">
+                                <button type="button" id="clear-form" class="btn btn-outline">
+                                    <i class="fas fa-redo mr-2"></i>
+                                    Clear Form
+                                </button>
+                                <button type="submit" id="submit-btn" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane mr-2"></i>
+                                    Send Message
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Contact Info Sidebar -->
+                <div class="lg:col-span-1">
+                    <div class="contact-info-container" data-aos="fade-left" data-aos-delay="200">
+                        <h3 class="text-2xl font-bold mb-8">Get in Touch</h3>
+                        
+                        <!-- Contact Methods -->
+                        <div class="contact-methods">
+                            <div class="contact-method">
+                                <div class="method-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="method-content">
+                                    <h4 class="font-semibold">Email Us</h4>
+                                    <p class="opacity-80">bodykhaled06@gmail.com</p>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-method">
+                                <div class="method-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="method-content">
+                                    <h4 class="font-semibold">Response Time</h4>
+                                    <p class="opacity-80">Usually within 24 hours</p>
+                                    <p class="opacity-80 text-sm">Mon-Fri, 9AM-6PM EST</p>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-method">
+                                <div class="method-icon">
+                                    <i class="fab fa-discord"></i>
+                                </div>
+                                <div class="method-content">
+                                    <h4 class="font-semibold">Join Our Community</h4>
+                                    <p class="opacity-80">Chat with other movie enthusiasts</p>
+                                    <a href="https://discord.gg/jzbT56dqvj" class="text-[#F76F53] hover:underline text-sm">Join Discord Server</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- FAQ Link -->
+                        <div class="faq-section">
+                            <h4 class="font-semibold mb-4">Frequently Asked Questions</h4>
+                            <p class="opacity-80 text-sm mb-4">
+                                Check out our FAQ section for quick answers to common questions.
+                            </p>
+                            <a href="#" class="btn btn-outline btn-sm">
+                                <i class="fas fa-question-circle mr-2"></i>
+                                View FAQ
+                            </a>
+                        </div>
+                        
+                        <!-- Social Links -->
+                        <div class="social-section">
+                            <h4 class="font-semibold mb-4">Follow Us</h4>
+                            <div class="flex space-x-3">
+                                <a href="https://x.com/lox_alpha" class="social-icon">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                                <a href="https://www.instagram.com/scylox56" class="social-icon">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                                <a href="https://github.com/Scylox56" class="social-icon">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Footer -->
- <footer class="bg-[#F2F0E3] dark:bg-[#1F1F1F] border-t border-[#e0ddd0] dark:border-[#2E2E2E] relative overflow-hidden">
-  <!-- Background Pattern -->
-  <div class="absolute inset-0 opacity-5">
-    <div class="absolute top-0 left-0 w-full h-full">
-      <div class="film-pattern"></div>
-    </div>
-  </div>
-  
-  <div class="container mx-auto px-4 py-16 relative z-10">
-    <!-- Main Footer Content -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-      <!-- Brand Section -->
-      <div class="lg:col-span-1">
-  <div class="flex items-center mb-4">
-    <div class="brand-logo-icon">
-      <i class="fas fa-film text-white text-lg"></i>
-    </div>
-    <h3 class="text-2xl font-bold">ScyDB</h3>
-  </div>
-  <p class="opacity-80 leading-relaxed">
-    A minimalist movie database for discerning viewers. Discover, explore, and curate your perfect film collection.
-  </p>
-</div>
-      
-      <!-- Navigation -->
-      <div>
-        <h3 class="text-lg font-bold mb-6 flex items-center">
-          <i class="fas fa-compass text-[#F76F53] mr-2"></i>
-          Explore
-        </h3>
-        <ul class="space-y-3">
-          <li><a href="/pages/index.html" class="footer-link">Home</a></li>
-          <li><a href="/pages/movies/" class="footer-link">All Movies</a></li>
-          <li><a href="#" class="footer-link" onclick="handleQuickFilter('rating'); return false;">Top Rated</a></li>
-          <li><a href="#" class="footer-link" onclick="handleQuickFilter('newest'); return false;">Latest Releases</a></li>
-          <li><a href="/pages/about.html" class="footer-link">About ScyDB</a></li>
-        </ul>
-      </div>
-      
-      <!-- Popular Genres -->
-      <div>
-        <h3 class="text-lg font-bold mb-6 flex items-center">
-          <i class="fas fa-tags text-[#F76F53] mr-2"></i>
-          Popular Genres
-        </h3>
-        <ul class="space-y-3">
-          <li><a href="#" class="footer-link" onclick="handleQuickGenre('Action'); return false;">Action</a></li>
-          <li><a href="#" class="footer-link" onclick="handleQuickGenre('Drama'); return false;">Drama</a></li>
-          <li><a href="#" class="footer-link" onclick="handleQuickGenre('Comedy'); return false;">Comedy</a></li>
-          <li><a href="#" class="footer-link" onclick="handleQuickGenre('Sci-Fi'); return false;">Sci-Fi</a></li>
-          <li><a href="#" class="footer-link" onclick="handleQuickGenre('Horror'); return false;">Horror</a></li>
-        </ul>
-      </div>
-      
-      <!-- Connect & Support -->
-      <div>
-        <h3 class="text-lg font-bold mb-6 flex items-center">
-          <i class="fas fa-heart text-[#F76F53] mr-2"></i>
-          Connect
-        </h3>
-        
-        <!-- Social Links -->
-        <div class="flex space-x-3 mb-6">
-          <a href="#" class="social-icon">
-            <i class="fab fa-twitter"></i>
-          </a>
-          <a href="#" class="social-icon">
-            <i class="fab fa-instagram"></i>
-          </a>
-          <a href="#" class="social-icon">
-            <i class="fab fa-github"></i>
-          </a>
-          <a href="#" class="social-icon">
-            <i class="fab fa-discord"></i>
-          </a>
+    <footer class="bg-[#F2F0E3] dark:bg-[#1F1F1F] border-t border-[#e0ddd0] dark:border-[#2E2E2E] relative overflow-hidden">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 opacity-5">
+            <div class="absolute top-0 left-0 w-full h-full">
+                <div class="film-pattern"></div>
+            </div>
         </div>
         
-        <!-- Contact Button -->
-        <a href="/pages/contact.html" class="contact-btn">
-          <i class="fas fa-envelope mr-2"></i>
-          Contact Us
-        </a>
-        
-        <!-- Quick Links -->
-        <ul class="space-y-2 mt-4">
-          <li><a href="#" class="footer-link text-sm">Privacy Policy</a></li>
-          <li><a href="#" class="footer-link text-sm">Terms of Service</a></li>
-        </ul>
-      </div>
-    </div>
-    
-    <!-- Bottom Bar -->
-    <div class="border-t border-[#e0ddd0] dark:border-[#2E2E2E] pt-8">
-      <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-        <div class="flex items-center gap-6">
-          <p class="opacity-80 text-sm">&copy; 2025 ScyDB. Crafted with passion for cinema.</p>
-          <div class="flex items-center gap-2 text-sm opacity-70">
-            <i class="fas fa-database text-[#F76F53]"></i>
-            <span>Powered by ScyDB API</span>
-          </div>
+        <div class="container mx-auto px-4 py-16 relative z-10">
+            <!-- Main Footer Content -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                <!-- Brand Section -->
+                <div class="lg:col-span-1">
+                    <div class="flex items-center mb-4">
+                        <div class="brand-logo-icon">
+                            <i class="fas fa-film text-white text-lg"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold">ScyDB</h3>
+                    </div>
+                    <p class="opacity-80 leading-relaxed">
+                        A minimalist movie database for discerning viewers. Discover, explore, and curate your perfect film collection.
+                    </p>
+                </div>
+                
+                <!-- Navigation -->
+                <div>
+                    <h3 class="text-lg font-bold mb-6 flex items-center">
+                        <i class="fas fa-compass text-[#F76F53] mr-2"></i>
+                        Explore
+                    </h3>
+                    <ul class="space-y-3">
+                        <li><a href="/pages/index.html" class="footer-link">Home</a></li>
+                        <li><a href="/pages/movies/" class="footer-link">All Movies</a></li>
+                        <li><a href="#" class="footer-link" onclick="handleQuickFilter('rating'); return false;">Top Rated</a></li>
+                        <li><a href="#" class="footer-link" onclick="handleQuickFilter('newest'); return false;">Latest Releases</a></li>
+                        <li><a href="/pages/about.html" class="footer-link">About ScyDB</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Popular Genres -->
+                <div>
+                    <h3 class="text-lg font-bold mb-6 flex items-center">
+                        <i class="fas fa-tags text-[#F76F53] mr-2"></i>
+                        Popular Genres
+                    </h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="footer-link" onclick="handleQuickGenre('Action'); return false;">Action</a></li>
+                        <li><a href="#" class="footer-link" onclick="handleQuickGenre('Drama'); return false;">Drama</a></li>
+                        <li><a href="#" class="footer-link" onclick="handleQuickGenre('Comedy'); return false;">Comedy</a></li>
+                        <li><a href="#" class="footer-link" onclick="handleQuickGenre('Sci-Fi'); return false;">Sci-Fi</a></li>
+                        <li><a href="#" class="footer-link" onclick="handleQuickGenre('Horror'); return false;">Horror</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Connect & Support -->
+                <div>
+                    <h3 class="text-lg font-bold mb-6 flex items-center">
+                        <i class="fas fa-heart text-[#F76F53] mr-2"></i>
+                        Connect
+                    </h3>
+                    
+                    <!-- Social Links -->
+                    <div class="flex space-x-3 mb-6">
+                    <a href="https://x.com/lox_alpha" class="social-icon">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="https://www.instagram.com/scylox56" class="social-icon">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://github.com/Scylox56" class="social-icon">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="https://discord.gg/jzbT56dqvj" class="social-icon">
+                        <i class="fab fa-discord"></i>
+                    </a>
+                    </div>
+                    
+                    <!-- Contact Button -->
+                    <a href="/pages/contact.html" class="contact-btn">
+                        <i class="fas fa-envelope mr-2"></i>
+                        Contact Us
+                    </a>
+                    
+                    <!-- Quick Links -->
+                    <ul class="space-y-2 mt-4">
+                        <li><a href="#" class="footer-link text-sm">Privacy Policy</a></li>
+                        <li><a href="#" class="footer-link text-sm">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Bottom Bar -->
+            <div class="border-t border-[#e0ddd0] dark:border-[#2E2E2E] pt-8">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div class="flex items-center gap-6">
+                        <p class="opacity-80 text-sm">&copy; 2025 ScyDB. Crafted with passion for cinema.</p>
+                        <div class="flex items-center gap-2 text-sm opacity-70">
+                            <i class="fas fa-database text-[#F76F53]"></i>
+                            <span>Powered by ScyDB API</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Back to Top -->
+                    <button onclick="scrollToTop()" class="back-to-top">
+                        <i class="fas fa-arrow-up"></i>
+                        <span class="ml-2 hidden sm:inline">Back to Top</span>
+                    </button>
+                </div>
+            </div>
         </div>
-        
-        <!-- Back to Top -->
-        <button onclick="scrollToTop()" class="back-to-top">
-          <i class="fas fa-arrow-up"></i>
-          <span class="ml-2 hidden sm:inline">Back to Top</span>
-        </button>
-      </div>
-    </div>
-  </div>
-</footer>
-        <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-        <script src="/assets/js/auth.js"></script>
-        <script src="/assets/js/navbar.js"></script>
-        <script src="/assets/js/main.js"></script>
-        <script src="/assets//js/footer.js"></script>
+
+        <script>
+            // Footer functionality
+            function scrollToTop() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }
+
+            function handleQuickGenre(genre) {
+                sessionStorage.setItem('quickSearchGenre', genre);
+                window.location.href = '/pages/movies/';
+            }
+
+            function handleQuickFilter(filterType) {
+                sessionStorage.setItem('quickSearchFilter', filterType);
+                window.location.href = '/pages/movies/';
+            }
+        </script>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/navbar.js"></script>
+    <script src="/assets/js/main.js"></script>
 
     <script>
-        document.getElementById('contact-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            Swal.fire({
-                icon: 'success',
-                title: 'Message Sent!',
-                text: 'We\'ll get back to you soon',
-                timer: 2000
-            }).then(() => {
-                e.target.reset();
+        // Initialize AOS and Contact Form
+        document.addEventListener('DOMContentLoaded', () => {
+            AOS.init({ duration: 600, easing: 'ease-out-quad', once: true });
+            
+            // Form functionality
+            const form = document.getElementById('contact-form');
+            const clearBtn = document.getElementById('clear-form');
+            const submitBtn = document.getElementById('submit-btn');
+            
+            // Clear form
+            clearBtn.addEventListener('click', () => {
+                form.reset();
+                // Add some animation
+                clearBtn.innerHTML = '<i class="fas fa-check mr-2"></i>Cleared';
+                setTimeout(() => {
+                    clearBtn.innerHTML = '<i class="fas fa-redo mr-2"></i>Clear Form';
+                }, 1000);
+            });
+            
+            // Form submission
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                // Show loading state
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sending...';
+                submitBtn.disabled = true;
+                
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Show success message
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Message Sent!',
+                    text: 'Thank you for reaching out. We\'ll get back to you within 24 hours.',
+                    confirmButtonColor: '#F76F53',
+                    timer: 3000
+                }).then(() => {
+                    form.reset();
+                });
+                
+                // Reset button
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>Send Message';
+                submitBtn.disabled = false;
+            });
+            
+            // Quick contact option interactions
+            document.querySelectorAll('.contact-quick-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    const text = option.querySelector('h3').textContent;
+                    const subjectSelect = document.getElementById('contact-subject');
+                    
+                    if (text.includes('General')) {
+                        subjectSelect.value = 'general';
+                    } else if (text.includes('Bug')) {
+                        subjectSelect.value = 'bug';
+                    } else if (text.includes('Feature')) {
+                        subjectSelect.value = 'feature';
+                    }
+                    
+                    // Scroll to form
+                    document.querySelector('.contact-form-container').scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
             });
         });
     </script>
