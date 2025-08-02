@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('profile-name').value = user.name;
             document.getElementById('profile-email').value = user.email;
             document.getElementById('profile-avatar').value = user.photo || '';
-            
+            document.title = `${user.name} - ScyDB`;
             if (user.photo) {
                 document.getElementById('user-avatar').src = user.photo;
             }

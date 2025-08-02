@@ -19,16 +19,27 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function doSearch(query) {
-  console.log('Searching for:', query);
-  
-  // Update the global filters
-  if (window.currentFilters) {
-    window.currentFilters.search = query;
-    window.currentFilters.genre = document.getElementById('genre-filter')?.value || '';
+    console.log('Searching for:', query);
     
-    // Call loadMovies directly
-    if (window.loadMovies) {
-      window.loadMovies(window.currentFilters, 1);
+    // Show loading state
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+        searchInput.classList.add('search-loading');
     }
-  }
+    
+    // Update the global filters
+    if (window.currentFilters) {
+        window.currentFilters.search = query;
+        window.currentFilters.genre = document.getElementById('genre-filter')?.value || '';
+        
+        // Call loadMovies directly
+        if (window.loadMovies) {
+            window.loadMovies(window.currentFilters, 1).finally(() => {
+                // Remove loading state after search completes
+                if (searchInput) {
+                    searchInput.classList.remove('search-loading');
+                }
+            });
+        }
+    }
 }

@@ -10,234 +10,181 @@
     <link href="/assets/css/dist.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 min-h-screen">
+<body class="bg-[#F2F0E3] dark:bg-[#1F1F1F] text-[#2E2E2E] dark:text-[#F2F0E3] m-0">
     <!-- Navigation -->
-    <nav class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50"></nav>
+    <nav></nav>
 
-    <main class="container mx-auto px-4 py-8">
-        <!-- Header Section -->
-        <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-8 gap-4">
-            <div>
-                <h1 class="text-3xl font-bold dark:text-white mb-2">Discover Movies</h1>
-                <p class="text-gray-600 dark:text-gray-400">Explore our collection of amazing films</p>
-                <p id="results-count" class="text-sm text-gray-500 dark:text-gray-400 mt-1">Loading...</p>
-            </div>
+    <!-- Hero Section with Search -->
+    <section class="hero-search-section py-20 px-4">
+        <div class="container mx-auto text-center max-w-4xl">
+            <h1 class="text-5xl md:text-6xl font-semibold mb-6 leading-tight" data-aos="fade-down">
+                Discover your next <br><span class="italic" style="color: #F76F53;">favorite</span> film.
+            </h1>
+            <p class="text-xl md:text-2xl opacity-90 mb-12" data-aos="fade-up" data-aos-delay="100">
+                Explore our curated collection of cinema — <br />search, filter, and find films that inspire.
+            </p>
             
-            <div class="flex flex-col sm:flex-row gap-3">
-                <!-- Sort Dropdown -->
-                <div class="relative">
-                    <select id="sort-by" class="appearance-none bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 pr-8 text-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+            <!-- Enhanced Search Bar -->
+            <div class="search-container max-w-2xl mx-auto mb-8" data-aos="fade-up" data-aos-delay="200">
+                <form id="search-form" class="relative">
+                    <input type="text" id="search-input" 
+                        placeholder="Search movies, directors, actors..." 
+                        class="hero-search-input">
+                    <button type="submit" id="search-btn" class="search-btn">
+                        <i class="fas fa-search text-2xl"></i>
+                    </button>
+                </form>
+                <div id="search-suggestions" class="search-suggestions"></div>
+            </div>
+
+            <!-- Filter Chips -->
+            <div class="filter-section" data-aos="fade-up" data-aos-delay="300">
+                <div class="flex flex-wrap justify-center gap-3 mb-6">
+                    <select id="genre-filter" 
+                            class="genre-select">
+                        <option value="">All Genres</option>
+                        <!-- Genres will be loaded dynamically -->
+                    </select>
+
+                    <select id="sort-by" 
+                            class="sort-select">
                         <option value="popular">Most Popular</option>
                         <option value="rating">Highest Rated</option>
                         <option value="newest">Newest First</option>
                         <option value="oldest">Oldest First</option>
                         <option value="title">A-Z</option>
                     </select>
-                    <div class="absolute right-3 top-3 text-gray-400 pointer-events-none">
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
+                    
+                    <button id="advanced-search" 
+                            class="filter-chip active px-6 py-3 bg-[#F76F53] text-white rounded-full hover:bg-[#e65a3e] transition-all duration-300">
+                        <i class="fas fa-sliders-h mr-2"></i> Advanced
+                    </button>
                 </div>
                 
-                <!-- Add Movie Button (Admin Only) -->
-                <a href="/pages/movies/create.html" id="add-movie-btn" class="btn btn-primary hidden">
-                    <i class="fas fa-plus mr-2"></i> Add Movie
-                </a>
-            </div>
-        </div>
-        
-        <!-- Search and Filter Section -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-8">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-                <!-- Search Bar -->
-                <div class="lg:col-span-2">
-  <div class="search-container">
-    <form id="search-form" class="relative">
-  <input type="text" id="search-input" placeholder="Search movies, directors, actors..." 
-         class="w-full px-4 py-3 pr-12 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200">
-  <button type="submit" id="search-btn" class="absolute right-3 top-3 text-gray-400 hover:text-primary transition-colors">
-    <i class="fas fa-search text-xl"></i>
-  </button>
-</form>
-    <div id="search-suggestions" class="search-suggestions"></div>
-  </div>
-</div>
-                
-                <!-- Genre Filter -->
-                <div class="relative">
-                    <select id="genre-filter" class="appearance-none w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent pr-8">
-                        <option value="">All Genres</option>
-                        <option value="Action">Action</option>
-                        <option value="Adventure">Adventure</option>
-                        <option value="Animation">Animation</option>
-                        <option value="Comedy">Comedy</option>
-                        <option value="Crime">Crime</option>
-                        <option value="Documentary">Documentary</option>
-                        <option value="Drama">Drama</option>
-                        <option value="Family">Family</option>
-                        <option value="Fantasy">Fantasy</option>
-                        <option value="Horror">Horror</option>
-                        <option value="Musical">Musical</option>
-                        <option value="Mystery">Mystery</option>
-                        <option value="Romance">Romance</option>
-                        <option value="Sci-Fi">Sci-Fi</option>
-                        <option value="Thriller">Thriller</option>
-                        <option value="War">War</option>
-                        <option value="Western">Western</option>
-                    </select>
-                    <div class="absolute right-3 top-4 text-gray-400 pointer-events-none">
-                        <i class="fas fa-chevron-down"></i>
+                <!-- Quick Genre Chips -->
+                <div class="genre-chips-container">
+                    <div class="flex flex-wrap justify-center gap-2" id="genre-chips">
+                        <!-- Genre chips will be loaded dynamically -->
                     </div>
                 </div>
             </div>
-            
-            <!-- Active Filters & Quick Actions -->
-            <div class="flex flex-wrap items-center justify-between gap-4">
-                <div id="active-filters" class="flex flex-wrap gap-2">
-                    <!-- Active filter chips will appear here -->
-                </div>
-                
-                <div class="flex gap-2">
-                    <button id="clear-filters" class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors" style="display: none;">
-                        <i class="fas fa-times mr-1"></i> Clear Filters
-                    </button>
-                    <button id="advanced-search" class="text-sm text-primary hover:text-primary-dark transition-colors">
-                        <i class="fas fa-sliders-h mr-1"></i> Advanced
-                    </button>
-                </div>
-            </div>
-        </div>
 
-        <!-- Quick Genre Filter Chips -->
-        <div class="mb-8">
-            <h3 class="text-lg font-semibold dark:text-white mb-4">Popular Genres</h3>
-            <div class="flex flex-wrap gap-2">
-                <button class="genre-chip filter-chip px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-primary hover:text-white transition-all" data-genre="">
-                    All
-                </button>
-                <button class="genre-chip filter-chip px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-primary hover:text-white transition-all" data-genre="Action">
-                    Action
-                </button>
-                <button class="genre-chip filter-chip px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-primary hover:text-white transition-all" data-genre="Comedy">
-                    Comedy
-                </button>
-                <button class="genre-chip filter-chip px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-primary hover:text-white transition-all" data-genre="Drama">
-                    Drama
-                </button>
-                <button class="genre-chip filter-chip px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-primary hover:text-white transition-all" data-genre="Horror">
-                    Horror
-                </button>
-                <button class="genre-chip filter-chip px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-primary hover:text-white transition-all" data-genre="Sci-Fi">
-                    Sci-Fi
-                </button>
-                <button class="genre-chip filter-chip px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-primary hover:text-white transition-all" data-genre="Thriller">
-                    Thriller
-                </button>
+            <!-- Active Filters -->
+            <div id="active-filters" class="flex flex-wrap justify-center gap-2 mb-6">
+                <!-- Active filter chips will appear here -->
             </div>
         </div>
-        
-        <!-- Movies Grid -->
-        <div id="movies-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-8">
-            <!-- Movies will be loaded here -->
-        </div>
-        
-        <!-- Load More Section -->
-        <div class="text-center">
-            <button id="load-more" class="btn btn-outline btn-lg hidden">
-                <i class="fas fa-plus mr-2"></i> Load More Movies
-            </button>
-            
-            <!-- No Results Message -->
-            <div id="no-results" class="hidden py-12">
-                <div class="text-gray-400 mb-4">
-                    <i class="fas fa-search text-6xl"></i>
+    </section>
+
+    <!-- Results Section -->
+    <section class="results-section py-16 px-4">
+        <div class="container mx-auto">
+            <!-- Results Header -->
+            <div class="flex flex-col md:flex-row justify-between items-center mb-12">
+                <div class="text-center md:text-left mb-4 md:mb-0">
+                    <p id="results-count" class="text-lg opacity-80">Loading movies...</p>
                 </div>
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">No movies found</h3>
-                <p class="text-gray-600 dark:text-gray-400 mb-4">Try adjusting your search or filters</p>
-                <button onclick="clearFilters()" class="btn btn-primary">
-                    <i class="fas fa-redo mr-2"></i> Reset Filters
+            </div>
+            
+            <!-- Movies Grid -->
+            <div id="movies-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-12">
+                <!-- Movies will be loaded here -->
+                <div class="flex justify-center items-center col-span-full">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#F76F53]"></div>
+                </div>
+            </div>
+            
+            <!-- Load More Section -->
+            <div class="text-center">
+                <button id="load-more" class="btn btn-outline btn-lg hidden" style="display: none;">
+                    <i class="fas fa-plus mr-2"></i> Load More Movies
                 </button>
+                
+                <!-- No Results Message -->
+                <div id="no-results" class="hidden py-12">
+                    <div class="text-[#F76F53] mb-4">
+                        <i class="fas fa-search text-6xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-4">No movies found</h3>
+                    <p class="text-lg opacity-80 mb-6">Try adjusting your search or filters</p>
+                    <button onclick="clearAllFilters()" class="btn btn-primary">
+                        <i class="fas fa-redo mr-2"></i> Reset Filters
+                    </button>
+                </div>
             </div>
         </div>
-    </main>
+    </section>
 
     <!-- Footer -->
-    <footer class="bg-white dark:bg-gray-800 py-12 mt-12">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer class="bg-[#F2F0E3] dark:bg-[#1F1F1F] border-t border-[#e0ddd0] dark:border-[#2E2E2E] py-12 px-4">
+        <div class="container mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
-                    <h3 class="text-lg font-bold mb-4 dark:text-white">ScyDB</h3>
-                    <p class="text-gray-600 dark:text-gray-300">The ultimate movie database for film enthusiasts.</p>
+                    <h3 class="text-lg font-bold mb-4">ScyDB</h3>
+                    <p class="opacity-80">A minimalist movie database for discerning viewers.</p>
                 </div>
                 <div>
-                    <h3 class="text-lg font-bold mb-4 dark:text-white">Quick Links</h3>
+                    <h3 class="text-lg font-bold mb-4">Navigation</h3>
                     <ul class="space-y-2">
-                        <li><a href="/pages/index.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Home</a></li>
-                        <li><a href="/pages/movies/" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Movies</a></li>
-                        <li><a href="/pages/about.html" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">About</a></li>
+                        <li><a href="/pages/index.html" class="hover:text-[#F76F53] transition-colors">Home</a></li>
+                        <li><a href="/pages/movies/" class="hover:text-[#F76F53] transition-colors">Movies</a></li>
+                        <li><a href="/pages/about.html" class="hover:text-[#F76F53] transition-colors">About</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h3 class="text-lg font-bold mb-4 dark:text-white">Legal</h3>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Terms</a></li>
-                        <li><a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Privacy</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-lg font-bold mb-4 dark:text-white">Connect</h3>
+                    <h3 class="text-lg font-bold mb-4">Connect</h3>
                     <div class="flex space-x-4">
-                        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors"><i class="fab fa-twitter text-xl"></i></a>
-                        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors"><i class="fab fa-instagram text-xl"></i></a>
-                        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors"><i class="fab fa-facebook text-xl"></i></a>
+                        <a href="#" class="hover:text-[#F76F53] transition-colors"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="hover:text-[#F76F53] transition-colors"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
             </div>
-            <div class="border-t border-gray-200 dark:border-gray-700 mt-8 pt-8 text-center text-gray-600 dark:text-gray-300">
+            <div class="border-t border-[#e0ddd0] dark:border-[#2E2E2E] mt-8 pt-8 text-center opacity-80">
                 <p>&copy; 2025 ScyDB. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
     <!-- Advanced Search Modal -->
-    <div id="advanced-search-modal" class="fixed inset-0 bg-black/50 z-50 items-center justify-center p-4 hidden">
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between mb-6">
-                <h3 class="text-xl font-bold dark:text-white">Advanced Search</h3>
-                <button id="close-advanced-search" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                    <i class="fas fa-times text-xl"></i>
+    <div id="advanced-search-modal" class="modal-overlay fixed inset-0 bg-black/50 backdrop-blur-sm z-50 items-center justify-center p-4 hidden">
+        <div class="modal-content rounded-2xl shadow-2xl w-full max-w-2xl p-8 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-8">
+                <h3 class="text-2xl font-bold">Advanced Search</h3>
+                <button id="close-advanced-search" class="modal-close-btn">
+                    <i class="fas fa-times text-2xl"></i>
                 </button>
             </div>
             
-            <form id="advanced-search-form" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium mb-1 dark:text-gray-300">Title</label>
-                        <input type="text" id="adv-title" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+            <form id="advanced-search-form" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="form-group">
+                        <label class="form-label">Title</label>
+                        <input type="text" id="adv-title" class="form-input" placeholder="Movie title">
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1 dark:text-gray-300">Director</label>
-                        <input type="text" id="adv-director" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <div class="form-group">
+                        <label class="form-label">Director</label>
+                        <input type="text" id="adv-director" class="form-input" placeholder="Director name">
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1 dark:text-gray-300">Year From</label>
-                        <input type="number" id="adv-year-from" min="1900" max="2030" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <div class="form-group">
+                        <label class="form-label">Year From</label>
+                        <input type="number" id="adv-year-from" min="1900" max="2030" class="form-input" placeholder="1990">
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1 dark:text-gray-300">Year To</label>
-                        <input type="number" id="adv-year-to" min="1900" max="2030" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <div class="form-group">
+                        <label class="form-label">Year To</label>
+                        <input type="number" id="adv-year-to" min="1900" max="2030" class="form-input" placeholder="2024">
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1 dark:text-gray-300">Minimum Rating</label>
-                        <input type="range" id="adv-rating" min="0" max="10" step="0.1" class="w-full accent-primary">
-                        <div class="flex justify-between text-xs text-gray-500 mt-1">
+                    <div class="form-group">
+                        <label class="form-label">Minimum Rating</label>
+                        <input type="range" id="adv-rating" min="0" max="10" step="0.1" value="5" class="form-range">
+                        <div class="flex justify-between text-sm opacity-70 mt-2">
                             <span>0</span>
-                            <span id="rating-value">5</span>
+                            <span id="rating-value" class="font-semibold text-primary">5.0</span>
                             <span>10</span>
                         </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1 dark:text-gray-300">Duration (minutes)</label>
-                        <select id="adv-duration" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <div class="form-group">
+                        <label class="form-label">Duration</label>
+                        <select id="adv-duration" class="form-select">
                             <option value="">Any Duration</option>
                             <option value="0-90">Short (< 90 min)</option>
                             <option value="90-120">Standard (90-120 min)</option>
@@ -247,13 +194,15 @@
                     </div>
                 </div>
                 
-                <div>
-                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Cast</label>
-                    <input type="text" id="adv-cast" placeholder="Actor names separated by commas" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <div class="form-group">
+                    <label class="form-label">Cast</label>
+                    <input type="text" id="adv-cast" class="form-input" placeholder="Actor names separated by commas">
                 </div>
                 
-                <div class="flex justify-end gap-3 pt-4">
-                    <button type="button" id="clear-advanced" class="btn btn-outline">Clear</button>
+                <div class="flex justify-end gap-4 pt-6 border-t border-border">
+                    <button type="button" id="clear-advanced" class="btn btn-outline">
+                        Clear
+                    </button>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-search mr-2"></i> Search
                     </button>
@@ -262,15 +211,22 @@
         </div>
     </div>
     
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="/assets/js/auth.js"></script>
     <script src="/assets/js/navbar.js"></script>
     <script src="/assets/js/main.js"></script>
-   
     <script src="/assets/js/movies.js"></script>
-     <script src="/assets/js/movie-index.js"></script>
-     
+    <script src="/assets/js/movie-index.js"></script>
+
+    <script>
+        // Initialize AOS and load genres
+        document.addEventListener('DOMContentLoaded', () => {
+            AOS.init({ duration: 600, easing: 'ease-out-quad', once: true });
+            loadGenres();
+        });
+    </script>
 </body>
 </html>

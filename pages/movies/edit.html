@@ -1,127 +1,212 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScyDB - Movie Database</title>
+    <title>ScyDB - Edit Movie</title>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <link href="/assets/css/dist.css" rel="stylesheet">
+    <link href="/assets/css/style.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 min-h-screen">
+<body class="bg-[#F2F0E3] dark:bg-[#1F1F1F] text-[#2E2E2E] dark:text-[#F2F0E3] min-h-screen">
     <!-- Navigation -->
-    <nav class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50">
-        <div class="container mx-auto px-4 py-3">
-            <div class="flex justify-between items-center">
-                <!-- Logo -->
-                <a href="/pages/index.html" class="flex items-center space-x-2">
-                    <span class="text-2xl font-bold text-primary dark:text-white">ScyDB</span>
-                </a>
+    <nav></nav>
 
-                <!-- Desktop Navigation -->
-                <div class="hidden md:flex items-center space-x-6">
-                    <a href="/pages/index.html" class="nav-link">Home</a>
-                    <a href="/pages/movies/" class="nav-link">Movies</a>
-                    <a href="/pages/about.html" class="nav-link">About</a>
-                </div>
-
-                <!-- Auth Section -->
-                <div class="flex items-center space-x-4">
-                    <!-- Auth Links -->
-                    <div id="auth-links" class="items-center space-x-4">
-                        <a href="/pages/auth/login.html" class="btn btn-outline">Login</a>
-                        <a href="/pages/auth/signup.html" class="btn btn-primary">Sign Up</a>
-                    </div>
-
-                    <!-- User Menu -->
-                    <div id="user-menu" class="relative hidden">
-                        <button id="user-menu-button" class="flex items-center space-x-2 focus:outline-none">
-                            <img id="user-avatar" src="/assets/images/default-avatar.jpg" alt="User" class="w-10 h-10 rounded-full">
-                            <span id="user-name" class="font-medium dark:text-white"></span>
-                            <i class="fas fa-chevron-down text-sm"></i>
-                        </button>
-                        <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-50">
-                            <a href="/pages/users/profile.html" class="block px-4 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600">Profile</a>
-                            <a href="/pages/users/watchlist.html" class="block px-4 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600">Watchlist</a>
-                            <button id="logout-btn" class="w-full text-left px-4 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600">Logout</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Mobile menu button -->
-                <button id="mobile-menu-button" class="md:hidden focus:outline-none">
-                    <i class="fas fa-bars text-gray-800 dark:text-white text-2xl"></i>
-                </button>
-            </div>
-
-            <!-- Mobile menu -->
-            <div id="mobile-menu" class="hidden md:hidden mt-4">
-                <a href="/pages/index.html" class="block py-2 text-gray-800 dark:text-white">Home</a>
-                <a href="/pages/movies/" class="block py-2 text-gray-800 dark:text-white">Movies</a>
-                <a href="/pages/about.html" class="block py-2 text-gray-800 dark:text-white">About</a>
-            </div>
+    <main class="container mx-auto px-4 py-8 max-w-6xl mt-8">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold mb-4 bg-gradient-to-r from-[#F76F53] to-[#FF8A70] bg-clip-text text-transparent">
+                Edit Movie
+            </h1>
+            <p class="text-lg opacity-80">Update movie information in the ScyDB database</p>
         </div>
-    </nav>
-
-    <main class="container mx-auto px-4 py-8 max-w-4xl">
-        <h1 class="text-3xl font-bold mb-8 dark:text-white">Edit Movie</h1>
         
-        <form id="edit-movie-form" class="space-y-6 bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+        <form id="edit-movie-form" class="form-container rounded-2xl p-8 shadow-2xl">
+            <!-- Loading Spinner -->
             <div id="loading-spinner" class="text-center py-12">
-                <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto"></div>
+                <div class="loading-spinner mx-auto mb-4" style="width: 48px; height: 48px; border-width: 4px;"></div>
+                <p class="text-lg opacity-70">Loading movie data...</p>
             </div>
             
             <div id="movie-form-fields" class="hidden space-y-6">
-                <!-- Form fields same as create.html but pre-populated -->
-                <button type="submit" class="btn btn-primary w-full py-3">
-                    <i class="fas fa-save mr-2"></i> Save Changes
-                </button>
+                <!-- Basic Information Section -->
+                <div class="form-section fade-in">
+                    <h2 class="section-title">
+                        <i class="fas fa-info-circle"></i>
+                        Basic Information
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 opacity-90">Movie Title *</label>
+                            <input type="text" id="movie-title" required class="input-field" placeholder="Enter movie title">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 opacity-90">Release Year *</label>
+                            <input type="number" id="movie-year" min="1900" max="2030" required class="input-field" placeholder="2024">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 opacity-90">Duration (minutes) *</label>
+                            <input type="number" id="movie-duration" min="1" required class="input-field" placeholder="120">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 opacity-90">Director *</label>
+                            <input type="text" id="movie-director" required class="input-field" placeholder="Director name">
+                        </div>
+                    </div>
+                </div>
                 
-                <button type="button" id="delete-movie-btn" class="btn btn-outline !text-red-500 !border-red-500 hover:!bg-red-50 w-full">
-                    <i class="fas fa-trash mr-2"></i> Delete Movie
-                </button>
+                <!-- Genres Section -->
+                <div class="form-section fade-in">
+                    <h2 class="section-title">
+                        <i class="fas fa-tags"></i>
+                        Genres
+                    </h2>
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold mb-2 opacity-90">Select Genres *</label>
+                        <div class="relative" id="genre-search">
+                            <input type="text" id="genre-search-input" class="input-field" placeholder="Search and select genres..." autocomplete="off">
+                            <div id="genre-dropdown" class="genre-dropdown hidden">
+                                <!-- Genre options will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2" id="selected-genres">
+                        <!-- Selected genres will appear here -->
+                    </div>
+                    <p class="text-sm opacity-60 mt-2">Search and click to add genres. Click the × to remove.</p>
+                </div>
+                
+                <!-- Cast Section -->
+                <div class="form-section fade-in">
+                    <h2 class="section-title">
+                        <i class="fas fa-users"></i>
+                        Cast & Crew
+                    </h2>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 opacity-90">Cast Members *</label>
+                        <textarea id="movie-cast" required class="input-field" rows="3" placeholder="Enter cast members separated by commas (e.g., John Doe, Jane Smith, Mike Johnson)"></textarea>
+                        <p class="text-sm opacity-60 mt-1">Separate each cast member with a comma</p>
+                    </div>
+                    <div id="cast-preview" class="mt-4 hidden">
+                        <p class="text-sm font-semibold mb-2 opacity-90">Cast Preview:</p>
+                        <div id="cast-tags" class="flex flex-wrap gap-2"></div>
+                    </div>
+                </div>
+                
+                <!-- Description Section -->
+                <div class="form-section fade-in">
+                    <h2 class="section-title">
+                        <i class="fas fa-file-text"></i>
+                        Description
+                    </h2>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 opacity-90">Movie Description *</label>
+                        <textarea id="movie-description" rows="5" required class="input-field" placeholder="Enter a detailed description of the movie..."></textarea>
+                        <div class="flex justify-between items-center mt-2">
+                            <p class="text-sm opacity-60">Provide a compelling description</p>
+                            <span id="desc-counter" class="text-sm opacity-60">0 characters</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Media Section -->
+                <div class="form-section fade-in">
+                    <h2 class="section-title">
+                        <i class="fas fa-images"></i>
+                        Media Assets
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 opacity-90">Poster URL *</label>
+                            <input type="url" id="movie-poster" required class="input-field" placeholder="https://example.com/poster.jpg">
+                            <div id="poster-preview" class="preview-container mt-4 hidden">
+                                <img id="poster-img" class="max-w-full h-48 object-cover rounded-lg mx-auto" alt="Poster preview">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 opacity-90">Backdrop URL *</label>
+                            <input type="url" id="movie-backdrop" required class="input-field" placeholder="https://example.com/backdrop.jpg">
+                            <div id="backdrop-preview" class="preview-container mt-4 hidden">
+                                <img id="backdrop-img" class="max-w-full h-32 object-cover rounded-lg mx-auto" alt="Backdrop preview">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <label class="block text-sm font-semibold mb-2 opacity-90">Trailer URL *</label>
+                        <input type="url" id="movie-trailer" required class="input-field" placeholder="https://youtube.com/watch?v=...">
+                        <p class="text-sm opacity-60 mt-1">YouTube, Vimeo, or direct video URL</p>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons Section -->
+                <div class="form-section fade-in">
+                    <h2 class="section-title">
+                        <i class="fas fa-cog"></i>
+                        Actions
+                    </h2>
+                    <div class="space-y-4">
+                        <button type="submit" id="submit-btn" class="btn btn-primary w-full py-4 text-lg">
+                            <i class="fas fa-save mr-2"></i>
+                            <span id="btn-text">Save Changes</span>
+                            <div id="submit-loading-spinner" class="loading-spinner ml-2 hidden"></div>
+                        </button>
+                        
+                        <button type="button" id="delete-movie-btn" class="btn btn-outline w-full py-4 text-lg !text-red-500 !border-red-500 hover:!bg-red-50 dark:hover:!bg-red-900/20">
+                            <i class="fas fa-trash mr-2"></i>
+                            Delete Movie
+                        </button>
+                    </div>
+                    <p class="text-sm opacity-60 mt-4 text-center">All fields marked with * are required</p>
+                </div>
             </div>
         </form>
     </main>
 
-   <footer class="bg-white dark:bg-gray-800 py-12 mt-12">
+    <footer class="card border-0 shadow-lg py-12 mt-12 rounded-none">
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
-                    <h3 class="text-lg font-bold mb-4 dark:text-white">ScyDB</h3>
-                    <p class="text-gray-600 dark:text-gray-300">The ultimate movie database for film enthusiasts.</p>
+                    <h3 class="text-lg font-bold mb-4 bg-gradient-to-r from-[#F76F53] to-[#FF8A70] bg-clip-text text-transparent">ScyDB</h3>
+                    <p class="opacity-80">The ultimate movie database for film enthusiasts.</p>
                 </div>
                 <div>
-                    <h3 class="text-lg font-bold mb-4 dark:text-white">Quick Links</h3>
+                    <h3 class="text-lg font-bold mb-4">Quick Links</h3>
                     <ul class="space-y-2">
-                        <li><a href="/pages/index.html" class="text-gray-600 dark:text-gray-300 hover:text-primary">Home</a></li>
-                        <li><a href="/pages/movies/" class="text-gray-600 dark:text-gray-300 hover:text-primary">Movies</a></li>
-                        <li><a href="/pages/about.html" class="text-gray-600 dark:text-gray-300 hover:text-primary">About</a></li>
+                        <li><a href="/pages/index.html" class="nav-link">Home</a></li>
+                        <li><a href="/pages/movies/" class="nav-link">Movies</a></li>
+                        <li><a href="/pages/about.html" class="nav-link">About</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h3 class="text-lg font-bold mb-4 dark:text-white">Legal</h3>
+                    <h3 class="text-lg font-bold mb-4">Legal</h3>
                     <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary">Terms</a></li>
-                        <li><a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary">Privacy</a></li>
+                        <li><a href="#" class="nav-link">Terms</a></li>
+                        <li><a href="#" class="nav-link">Privacy</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h3 class="text-lg font-bold mb-4 dark:text-white">Connect</h3>
+                    <h3 class="text-lg font-bold mb-4">Connect</h3>
                     <div class="flex space-x-4">
-                        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary"><i class="fab fa-twitter text-xl"></i></a>
-                        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary"><i class="fab fa-instagram text-xl"></i></a>
-                        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary"><i class="fab fa-facebook text-xl"></i></a>
+                        <a href="#" class="nav-link text-xl"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="nav-link text-xl"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="nav-link text-xl"><i class="fab fa-facebook"></i></a>
                     </div>
                 </div>
             </div>
-            <div class="border-t border-gray-200 dark:border-gray-700 mt-8 pt-8 text-center text-gray-600 dark:text-gray-300">
+            <div class="border-t border-opacity-20 mt-8 pt-8 text-center opacity-60">
                 <p>&copy; 2025 ScyDB. All rights reserved.</p>
             </div>
         </div>
     </footer>
+
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -129,6 +214,5 @@
     <script src="/assets/js/auth.js"></script>
     <script src="/assets/js/navbar.js"></script>
     <script src="/assets/js/main.js"></script>
-
 </body>
 </html>

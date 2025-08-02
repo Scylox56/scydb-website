@@ -69,6 +69,9 @@ const loadMovies = async (filters = {}, page = 1, append = false) => {
         if (filters.director) queryParams.append('director', filters.director);
         if (filters.cast) queryParams.append('cast', filters.cast);
         if (page > 1) queryParams.append('page', page);
+        
+        // Set limit for pagination
+        queryParams.append('limit', 10); // Load 10 movies at a time
 
         const url = `${API_BASE_URL}/movies${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
         const { data } = await axios.get(url);
@@ -77,8 +80,15 @@ const loadMovies = async (filters = {}, page = 1, append = false) => {
         console.log('Movies found:', data.data.movies?.length || 0);
 
         const movies = data.data.movies || [];
-        totalPages = data.data.totalPages || 1;
-        currentPage = page;
+        const pagination = {
+            totalResults: data.data.totalResults || 0,
+            totalPages: data.data.totalPages || 1,
+            currentPage: data.data.currentPage || page,
+            hasNextPage: data.data.hasNextPage || false
+        };
+
+        totalPages = pagination.totalPages;
+        currentPage = pagination.currentPage;
 
         if (append) {
             allMovies = [...allMovies, ...movies];
@@ -87,8 +97,8 @@ const loadMovies = async (filters = {}, page = 1, append = false) => {
         }
 
         renderMovies(allMovies);
-        updateResultsCount(data.data.totalResults || movies.length);
-        updateLoadMoreButton();
+        updateResultsCount(pagination.totalResults);
+        updateLoadMoreButton(pagination.hasNextPage, pagination.totalResults);
         updateNoResultsMessage();
 
     } catch (err) {
@@ -97,7 +107,6 @@ const loadMovies = async (filters = {}, page = 1, append = false) => {
     } finally {
         isLoading = false;
     }
-    
 };
 
 const renderMovies = (movies) => {
@@ -110,41 +119,57 @@ const renderMovies = (movies) => {
     }
 
     container.innerHTML = movies.map(movie => `
-        <div class="movie-card group cursor-pointer" onclick="goToMovieDetails('${movie._id}')">
-            <div class="relative overflow-hidden rounded-lg aspect-[2/3] bg-gray-200 dark:bg-gray-700">
+        <div class="movie-card-enhanced group" onclick="goToMovieDetails('${movie._id}')">
+            <div class="movie-poster-container">
                 <img src="${movie.poster}" 
                      alt="${movie.title}" 
-                     class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                     class="w-full h-full object-cover"
                      onerror="this.src='/assets/images/no-poster.jpg'">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
-                    <h3 class="text-white text-lg font-bold mb-2 line-clamp-2">${movie.title}</h3>
-                    <div class="flex items-center mb-2">
-                        <div class="flex text-yellow-400 mr-2">
-                            ${Array(5).fill().map((_, i) => 
-                                `<i class="fas fa-star ${i < Math.floor((movie.averageRating || 0) / 2) ? 'text-yellow-400' : 'text-gray-400'} text-sm"></i>`
+                
+                <!-- Rating Badge -->
+                <div class="movie-rating-badge">
+                    ${movie.averageRating?.toFixed(1) || 'N/A'}
+                </div>
+                
+                <!-- Hover Overlay -->
+                <div class="movie-overlay">
+                    <div class="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                        <h3 class="text-white text-lg font-bold mb-2 line-clamp-2">${movie.title}</h3>
+                        <div class="movie-genres mb-2">
+                            ${(movie.genre || []).slice(0, 2).map(g => 
+                                `<span class="px-2 py-1 bg-white/20 text-white text-xs rounded-full">${g}</span>`
                             ).join('')}
                         </div>
-                        <span class="text-white text-sm font-medium">${movie.averageRating?.toFixed(1) || 'N/A'}</span>
+                        <p class="text-desc text-sm line-clamp-2">${movie.description || ''}</p>
                     </div>
-                    <div class="flex flex-wrap gap-1 mb-2">
-                        ${(movie.genre || []).slice(0, 2).map(g => 
-                            `<span class="px-2 py-1 bg-primary/30 text-white text-xs rounded-full">${g}</span>`
-                        ).join('')}
-                        ${movie.genre && movie.genre.length > 2 ? `<span class="text-white text-xs">+${movie.genre.length - 2}</span>` : ''}
-                    </div>
-                    <p class="text-gray-300 text-sm line-clamp-2">${movie.description || ''}</p>
                 </div>
             </div>
-            <div class="mt-3">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white line-clamp-1">${movie.title}</h3>
-                <p class="text-gray-600 dark:text-gray-300 text-sm">${movie.year} • ${movie.director}</p>
-                <div class="flex items-center mt-1">
-                    <div class="flex text-yellow-400 mr-2">
-                        ${Array(5).fill().map((_, i) => 
-                            `<i class="fas fa-star ${i < Math.floor((movie.averageRating || 0) / 2) ? 'text-yellow-400' : 'text-gray-300'} text-xs"></i>`
-                        ).join('')}
+            
+            <div class="movie-content">
+                <h3 class="movie-title line-clamp-1">${movie.title}</h3>
+                <div class="movie-meta">
+                    <span>${movie.year}</span>
+                    <span>${movie.director}</span>
+                </div>
+                
+                <div class="movie-genres">
+                    ${(movie.genre || []).slice(0, 2).map(g => 
+                        `<span class="movie-genre-tag">${g}</span>`
+                    ).join('')}
+                </div>
+                
+                <div class="movie-stats">
+                    <div class="movie-rating-display">
+                        <span class="text-[#F76F53]">★</span>
+                        <span class="font-medium">${movie.averageRating?.toFixed(1) || 'N/A'}</span>
                     </div>
-                    <span class="text-gray-500 dark:text-gray-400 text-sm">${movie.averageRating?.toFixed(1) || 'N/A'}</span>
+                    
+                    ${movie.duration ? `
+                    <div class="movie-duration">
+                        <i class="fas fa-clock"></i>
+                        <span>${movie.duration} min</span>
+                    </div>
+                    ` : ''}
                 </div>
             </div>
         </div>
@@ -246,42 +271,66 @@ const initAdvancedSearch = () => {
     const ratingSlider = document.getElementById('adv-rating');
     const ratingValue = document.getElementById('rating-value');
 
+    // Open modal
     if (advancedBtn && modal) {
         advancedBtn.addEventListener('click', () => {
             modal.classList.remove('hidden');
             modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+            
+            // Focus trap
+            const firstInput = modal.querySelector('input, select, button');
+            if (firstInput) firstInput.focus();
         });
     }
 
-    if (closeBtn && modal) {
-        closeBtn.addEventListener('click', () => {
+    // Close modal function
+    const closeModal = () => {
+        if (modal) {
             modal.classList.add('hidden');
             modal.classList.remove('flex');
-        });
+            document.body.style.overflow = '';
+        }
+    };
+
+    // Close button
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeModal);
     }
 
+    // Click outside to close
     if (modal) {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
+                closeModal();
             }
         });
     }
 
+    // Escape key to close
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+            closeModal();
+        }
+    });
+
+    // Rating slider
     if (ratingSlider && ratingValue) {
         ratingSlider.addEventListener('input', (e) => {
             ratingValue.textContent = parseFloat(e.target.value).toFixed(1);
         });
     }
 
+    // Form submission
     if (form) {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             handleAdvancedSearch();
+            closeModal();
         });
     }
 
+    // Clear form
     if (clearBtn && form) {
         clearBtn.addEventListener('click', () => {
             form.reset();
@@ -337,14 +386,14 @@ const updateActiveFilters = () => {
 
     if (currentFilters.search) {
         filters.push({
-            label: `Search: "${currentFilters.search}"`,
+            label: `"${currentFilters.search}"`,
             key: 'search'
         });
     }
 
     if (currentFilters.genre) {
         filters.push({
-            label: `Genre: ${currentFilters.genre}`,
+            label: currentFilters.genre,
             key: 'genre'
         });
     }
@@ -357,7 +406,7 @@ const updateActiveFilters = () => {
             'title': 'A-Z'
         };
         filters.push({
-            label: `Sort: ${sortLabels[currentFilters.sort]}`,
+            label: sortLabels[currentFilters.sort],
             key: 'sort'
         });
     }
@@ -381,10 +430,10 @@ const updateActiveFilters = () => {
     }
 
     container.innerHTML = filters.map(filter => `
-        <span class="inline-flex items-center px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
+        <span class="active-filter-tag">
             ${filter.label}
-            <button class="ml-2 text-primary/70 hover:text-primary" onclick="removeFilter('${filter.key}')">
-                <i class="fas fa-times text-xs"></i>
+            <button onclick="removeFilter('${filter.key}')">
+                <i class="fas fa-times"></i>
             </button>
         </span>
     `).join('');
@@ -465,15 +514,49 @@ const updateResultsCount = (count) => {
     }
 };
 
-const updateLoadMoreButton = () => {
+const updateLoadMoreButton = (hasNextPage = false, totalResults = 0) => {
     const loadMoreBtn = document.getElementById('load-more');
-    if (loadMoreBtn) {
-        if (currentPage < totalPages) {
-            loadMoreBtn.classList.remove('hidden');
-            loadMoreBtn.onclick = () => loadMovies(currentFilters, currentPage + 1, true);
-        } else {
-            loadMoreBtn.classList.add('hidden');
-        }
+    if (!loadMoreBtn) {
+        console.log('Movies page load more button not found');
+        return;
+    }
+    
+    console.log('Movies load more check:', {
+        hasNextPage,
+        totalResults,
+        currentMoviesShowing: allMovies.length,
+        shouldShow: hasNextPage && totalResults > allMovies.length && totalResults > 10
+    });
+    
+    // Show button only if:
+    // 1. There are more pages available (hasNextPage = true)
+    // 2. We have more total results than currently showing
+    // 3. We have a reasonable number of movies (more than 10 to justify pagination)
+    const shouldShow = hasNextPage && totalResults > allMovies.length && totalResults > 10;
+    
+    // FORCE HIDE - be more aggressive
+    if (!shouldShow) {
+        console.log('FORCING MOVIES LOAD MORE BUTTON TO HIDE');
+        loadMoreBtn.style.display = 'none';
+        loadMoreBtn.classList.add('hidden');
+        return; // Exit early
+    }
+    
+    // Only show if conditions are met
+    if (shouldShow) {
+        console.log('SHOWING MOVIES LOAD MORE BUTTON');
+        loadMoreBtn.style.display = 'block';
+        loadMoreBtn.classList.remove('hidden');
+        const remaining = totalResults - allMovies.length;
+        loadMoreBtn.innerHTML = `
+            <i class="fas fa-plus mr-2"></i> 
+            Load More Movies (${remaining} remaining)
+        `;
+        
+        // Remove any existing event listeners and add new one
+        loadMoreBtn.replaceWith(loadMoreBtn.cloneNode(true));
+        const newBtn = document.getElementById('load-more');
+        newBtn.onclick = () => loadMovies(currentFilters, currentPage + 1, true);
     }
 };
 
@@ -534,6 +617,9 @@ const loadMovieDetails = async () => {
         updateElement('total-reviews', movie.reviewCount || 0);
         updateElement('release-year', movie.year);
 
+        // Update browser title with movie name
+        document.title = `${movie.title} (${movie.year}) - ScyDB`;
+
         // Duration
         const formattedDuration = `${Math.floor(movie.duration / 60)}h ${movie.duration % 60}m`;
         updateElement('movie-duration', formattedDuration);
@@ -547,10 +633,16 @@ const loadMovieDetails = async () => {
         const castList = document.getElementById('movie-cast-list');
         if (castList && movie.cast) {
             castList.innerHTML = Array.isArray(movie.cast)
-                ? movie.cast.map(actor => `<p class="text-sm dark:text-white">${actor}</p>`).join('')
-                : `<p class="text-sm dark:text-white">${movie.cast}</p>`;
-        } else {
-            updateElement('movie-cast', movie.cast?.join(', '));
+                ? movie.cast.map(actor => `
+                    <div class="cast-member flex items-center gap-3 p-3 bg-white/50 dark:bg-black/20 rounded-lg border border-[#2E2E2E]/10 dark:border-[#F2F0E3]/10 hover:border-[#F76F53]/30 transition-all duration-300">
+                        <i class="fas fa-user text-[#F76F53]"></i>
+                        <span class="font-medium text-[#2E2E2E] dark:text-[#F2F0E3]">${actor}</span>
+                    </div>
+                `).join('')
+                : `<div class="cast-member flex items-center gap-3 p-3 bg-white/50 dark:bg-black/20 rounded-lg border border-[#2E2E2E]/10 dark:border-[#F2F0E3]/10">
+                    <i class="fas fa-user text-[#F76F53]"></i>
+                    <span class="font-medium text-[#2E2E2E] dark:text-[#F2F0E3]">${movie.cast}</span>
+                </div>`;
         }
 
         // Images
@@ -568,8 +660,34 @@ const loadMovieDetails = async () => {
         const genresContainer = document.getElementById('movie-genres');
         if (genresContainer && movie.genre) {
             genresContainer.innerHTML = movie.genre.map(genre =>
-                `<span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">${genre}</span>`
+                `<span class="genre-tag">${genre}</span>`
             ).join('');
+        }
+
+        updateElement('sidebar-director', movie.director);
+
+        // Update sidebar genres
+        const sidebarGenres = document.getElementById('sidebar-genres');
+        if (sidebarGenres && movie.genre) {
+            sidebarGenres.innerHTML = movie.genre.map(genre =>
+                `<span class="sidebar-genre-tag">${genre}</span>`
+            ).join('');
+        }
+
+        // Update cast count
+        const castCount = document.getElementById('cast-count');
+        if (castCount && movie.cast) {
+            const count = Array.isArray(movie.cast) ? movie.cast.length : 1;
+            castCount.textContent = `${count} actors`;
+        }
+
+        // Handle same genre button
+        const sameGenreBtn = document.getElementById('same-genre-btn');
+        if (sameGenreBtn && movie.genre && movie.genre.length > 0) {
+            sameGenreBtn.addEventListener('click', () => {
+                const firstGenre = movie.genre[0];
+                window.location.href = `/pages/movies/?genre=${encodeURIComponent(firstGenre)}`;
+            });
         }
 
         // Watchlist Button
@@ -619,7 +737,6 @@ const loadMovieDetails = async () => {
         });
     }
 };
-
 
 const toggleWatchlist = async (movieId) => {
     const btn = document.getElementById('watchlist-btn');
@@ -817,67 +934,63 @@ const loadReviews = async (movieId) => {
         }
 
         container.innerHTML = reviews.map(review => {
-            // FIXED: Compare user IDs as strings and check populated user object
-            const reviewUserId = review.user?._id || review.user;
-            const currentUserId = currentUser._id;
-            
-            const canModifyReview = isLoggedIn && (
-                reviewUserId === currentUserId || 
-                ['admin', 'super-admin'].includes(currentUser.role)
-            );
+    const reviewUserId = review.user?._id || review.user;
+    const currentUserId = currentUser._id;
+    
+    const canModifyReview = isLoggedIn && (
+        reviewUserId === currentUserId || 
+        ['admin', 'super-admin'].includes(currentUser.role)
+    );
 
-            console.log('Review user ID:', reviewUserId);
-            console.log('Current user ID:', currentUserId);
-            console.log('Current user role:', currentUser.role);
-            console.log('Can modify review:', canModifyReview);
-
-            return `
-                <div class="bg-gradient-to-r from-gray-50 to-white dark:from-gray-700 dark:to-gray-800 p-6 rounded-xl shadow-md border-l-4 border-purple-500 relative group hover:shadow-xl transition-all duration-300" data-review-id="${review._id}">
-                    <div class="flex items-start gap-4 mb-4">
-                        <div class="flex-shrink-0">
-                            <img src="${review.user?.photo || '/assets/images/default-avatar.jpg'}" 
-                                 alt="${review.user?.name || 'Anonymous'}" 
-                                 class="w-12 h-12 rounded-full object-cover border-2 border-purple-200 dark:border-purple-700"
-                                 onerror="this.src='/assets/images/default-avatar.jpg'">
-                        </div>
-                        <div class="flex-1">
-                            <div class="flex items-center justify-between mb-2">
-                                <h3 class="font-bold text-lg dark:text-white">${review.user?.name || 'Anonymous'}</h3>
-                                <div class="flex items-center gap-2">
-                                    <div class="flex text-yellow-400">
-                                        ${Array(10).fill().map((_, i) => 
-                                            `<i class="fas fa-star ${i < review.rating ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600'} text-sm"></i>`
-                                        ).join('')}
-                                    </div>
-                                    <span class="text-sm font-semibold bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 px-2 py-1 rounded-full">${review.rating}/10</span>
-                                </div>
+    return `
+        <div class="card rounded-2xl p-8 border-l-4 border-[#F76F53] hover:shadow-xl transition-all duration-300 group" data-review-id="${review._id}">
+            <div class="flex items-start gap-6">
+                <div class="flex-shrink-0">
+                    <img src="${review.user?.photo || '/assets/images/default-avatar.jpg'}" 
+                         alt="${review.user?.name || 'Anonymous'}" 
+                         class="w-16 h-16 rounded-full object-cover border-4 border-[#F76F53]/20 shadow-lg"
+                         onerror="this.src='/assets/images/default-avatar.jpg'">
+                </div>
+                <div class="flex-1">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-xl text-[#2E2E2E] dark:text-[#F2F0E3]">${review.user?.name || 'Anonymous'}</h3>
+                        <div class="flex items-center gap-3">
+                            <div class="flex text-yellow-400 text-lg">
+                                ${Array(10).fill().map((_, i) => 
+                                    `<i class="fas fa-star ${i < review.rating ? 'text-yellow-400' : 'text-[#2E2E2E]/20 dark:text-[#F2F0E3]/20'}"></i>`
+                                ).join('')}
                             </div>
-                            <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-3">${review.review}</p>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs text-gray-500 dark:text-gray-400">
-                                    <i class="far fa-calendar-alt mr-1"></i>
-                                    ${new Date(review.createdAt).toLocaleDateString('en-US', { 
-                                        year: 'numeric', 
-                                        month: 'long', 
-                                        day: 'numeric' 
-                                    })}
-                                </span>
-                                ${canModifyReview ? `
-                                <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                    <button class="edit-review-btn p-2 text-blue-500 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900 rounded-full transition-all duration-200" data-review='${JSON.stringify(review).replace(/'/g, "&apos;")}' title="Edit Review">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="delete-review-btn p-2 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900 rounded-full transition-all duration-200" title="Delete Review">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                                ` : ''}
-                            </div>
+                            <span class="text-lg font-bold bg-yellow-500 text-white px-4 py-2 rounded-full shadow-lg">${review.rating}/10</span>
                         </div>
                     </div>
+                    <p class="text-lg leading-relaxed text-[#2E2E2E] dark:text-[#F2F0E3] mb-4">${review.review}</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-[#2E2E2E]/60 dark:text-[#F2F0E3]/60 flex items-center gap-2">
+                            <i class="far fa-calendar-alt text-[#F76F53]"></i>
+                            ${new Date(review.createdAt).toLocaleDateString('en-US', { 
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric' 
+                            })}
+                        </span>
+                        ${canModifyReview ? `
+                        <div class="flex gap-3 opacity-70 group-hover:opacity-100 transition-opacity duration-300">
+                            ${reviewUserId === currentUserId ? `
+                            <button class="edit-review-btn p-3 text-blue-500 hover:text-blue-700 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-full transition-all duration-200 shadow-md hover:shadow-lg" data-review='${JSON.stringify(review).replace(/'/g, "&apos;")}' title="Edit Review">
+                                <i class="fas fa-edit text-lg"></i>
+                            </button>
+                            ` : ''}
+                            <button class="delete-review-btn p-3 text-red-500 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-full transition-all duration-200 shadow-md hover:shadow-lg" title="Delete Review">
+                                <i class="fas fa-trash text-lg"></i>
+                            </button>
+                        </div>
+                        ` : ''}
+                    </div>
                 </div>
-            `;
-        }).join('');
+            </div>
+        </div>
+    `;
+}).join('');
 
         // Add event listeners for delete and edit buttons
         container.querySelectorAll('.delete-review-btn').forEach(btn => {
@@ -907,37 +1020,112 @@ const loadReviews = async (movieId) => {
 
 const initReviewModal = (reviewToEdit = null) => {
     const modal = document.createElement('div');
-    modal.className = 'fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4';
+    modal.className = 'review-modal-overlay fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4';
     modal.innerHTML = `
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md p-6">
-            <h3 class="text-xl font-bold mb-4 dark:text-white">
-                ${reviewToEdit ? 'Edit Review' : 'Write Review'}
-            </h3>
-            <form id="review-form" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Rating (1-10)</label>
-                    <input type="number" id="review-rating" min="1" max="10" required 
-                           class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" 
-                           placeholder="Your rating"
-                           value="${reviewToEdit?.rating || ''}">
+        <div class="review-modal-content rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+            <!-- Modal Header -->
+            <div class="modal-header bg-gradient-to-r from-[#F76F53] to-[#FF8A70] p-6 dark:text-white">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/20 text-orange-400 rounded-full flex items-center justify-center">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold">
+                        ${reviewToEdit ? 'Edit Your Review' : 'Write a Review'}
+                    </h3>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Review</label>
-                    <textarea id="review-text" rows="4" required 
-                              class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" 
-                              placeholder="Share your thoughts...">${reviewToEdit?.review || ''}</textarea>
-                </div>
-                <div class="flex justify-end gap-3">
-                    <button type="button" id="cancel-review" class="btn btn-outline">Cancel</button>
-                    <button type="submit" class="btn btn-primary">
-                        ${reviewToEdit ? 'Update' : 'Submit'}
-                    </button>
-                </div>
-            </form>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="review-modal-body p-6">
+                <form id="review-form" class="space-y-6">
+                    <!-- Rating Input -->
+                    <div class="rating-section">
+                        <label class="flex items-center gap-2 text-sm font-semibold mb-3 review-modal-text">
+                            <i class="fas fa-star text-[#F76F53]"></i>
+                            Rating (1-10)
+                        </label>
+                        <div class="rating-input-container relative">
+                            <input type="number" id="review-rating" min="1" max="10" required 
+                                   class="review-modal-input w-full border-2 rounded-xl px-4 py-3 focus:border-[#F76F53] focus:outline-none focus:ring-2 focus:ring-[#F76F53]/20 transition-all duration-300" 
+                                   placeholder="Rate this movie (1-10)"
+                                   value="${reviewToEdit?.rating || ''}">
+                        </div>
+                    </div>
+                    
+                    <!-- Review Text -->
+                    <div class="review-section">
+                        <label class="flex items-center gap-2 text-sm font-semibold mb-3 review-modal-text">
+                            <i class="fas fa-pen text-[#F76F53]"></i>
+                            Your Review
+                        </label>
+                        <textarea id="review-text" rows="4" required 
+                                  class="review-modal-input w-full border-2 rounded-xl px-4 py-3 focus:border-[#F76F53] focus:outline-none focus:ring-2 focus:ring-[#F76F53]/20 transition-all duration-300 resize-none" 
+                                  placeholder="Share your thoughts about this movie...">${reviewToEdit?.review || ''}</textarea>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="flex justify-end gap-3 pt-4 review-modal-border-top">
+                        <button type="button" id="cancel-review" class="btn btn-outline px-6 py-3 font-medium transition-all duration-300 hover:scale-105">
+                            <i class="fas fa-times mr-2"></i>
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary px-6 py-3 font-medium transition-all duration-300 hover:scale-105">
+                            <i class="fas fa-check mr-2"></i>
+                            ${reviewToEdit ? 'Update Review' : 'Submit Review'}
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     `;
 
     document.body.appendChild(modal);
+
+    // Force the correct theme styling
+    const isDarkMode = document.documentElement.classList.contains('dark');
+    const modalContent = modal.querySelector('.review-modal-content');
+    const modalBody = modal.querySelector('.review-modal-body');
+    const inputs = modal.querySelectorAll('.review-modal-input');
+    const texts = modal.querySelectorAll('.review-modal-text');
+    const borderTop = modal.querySelector('.review-modal-border-top');
+
+    if (isDarkMode) {
+        modalContent.style.backgroundColor = '#2E2E2E';
+        modalContent.style.borderColor = '#3E3E3E';
+        modalBody.style.backgroundColor = '#2E2E2E';
+        inputs.forEach(input => {
+            input.style.backgroundColor = '#1F1F1F';
+            input.style.borderColor = '#3E3E3E';
+            input.style.color = '#F2F0E3';
+        });
+        texts.forEach(text => {
+            text.style.color = '#F2F0E3';
+        });
+        borderTop.style.borderTopColor = '#3E3E3E';
+    } else {
+        modalContent.style.backgroundColor = '#F2F0E3';
+        modalContent.style.borderColor = '#e0ddd0';
+        modalBody.style.backgroundColor = '#F2F0E3';
+        inputs.forEach(input => {
+            input.style.backgroundColor = '#ffffff';
+            input.style.borderColor = '#e0ddd0';
+            input.style.color = '#2E2E2E';
+        });
+        texts.forEach(text => {
+            text.style.color = '#2E2E2E';
+        });
+        borderTop.style.borderTopColor = '#e0ddd0';
+    }
+
+    // Add border to modal content
+    modalContent.style.border = '1px solid';
+
+    // Add modal animation
+    requestAnimationFrame(() => {
+        modal.style.opacity = '1';
+        modalContent.style.transform = 'scale(1)';
+    });
+
 
     // Form submission with correct endpoints
     modal.querySelector('#review-form').addEventListener('submit', async (e) => {
@@ -1040,94 +1228,45 @@ const loadFeaturedMovies = async (filter = 'top-rated') => {
             </div>
         `;
 
+        // For small datasets, load fewer movies initially
+        const limit = 5; // Reduced from 10 since you only have 3 movies
+        
         // Determine API endpoint based on filter
         let apiUrl;
         switch(filter) {
             case 'new':
-                apiUrl = `${API_BASE_URL}/movies?limit=10&sort=-createdAt`; // Sort by newest first
+                apiUrl = `${API_BASE_URL}/movies?limit=${limit}&sort=-createdAt`;
                 break;
             case 'top-rated':
             default:
-                apiUrl = `${API_BASE_URL}/movies?limit=10&sort=-averageRating`; // Sort by highest rating
+                apiUrl = `${API_BASE_URL}/movies?limit=${limit}&sort=-averageRating`;
                 break;
         }
 
         const { data } = await axios.get(apiUrl);
         const movies = data.data.movies || [];
+        const totalResults = data.data.totalResults || movies.length;
+        const hasMore = data.data.hasNextPage || false;
         
-        container.innerHTML = movies.map(movie => `
-            <div class="movie-card group cursor-pointer bg-[#F2F0E3] dark:bg-[#2E2E2E] rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-[#e0ddd0] dark:border-[#3E3E3E]" onclick="goToMovieDetails('${movie._id}')">
-                <!-- Poster Section -->
-                <div class="relative overflow-hidden h-80 bg-[#e8e6d9] dark:bg-[#1F1F1F]">
-                    <img src="${movie.poster}" 
-                         alt="${movie.title}" 
-                         class="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
-                         onerror="this.src='/assets/images/no-poster.jpg'">
-                    
-                    <!-- Hover Overlay -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-[#2E2E2E]/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4">
-                        <div class="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                            <!-- Rating -->
-                            <div class="flex items-center mb-3">
-                                <span class="text-[#F76F53] text-lg font-bold mr-2">★</span>
-                                <span class="text-[#F2F0E3] text-sm font-medium">${movie.averageRating?.toFixed(1) || 'N/A'}</span>
-                                <span class="text-[#F2F0E3]/60 text-xs ml-1">/10</span>
-                            </div>
-                            
-                            <!-- Genres -->
-                            ${(movie.genre || []).length > 0 ? `
-                            <div class="flex flex-wrap gap-1 mb-2">
-                                ${(movie.genre || []).slice(0, 2).map(g => 
-                                    `<span class="px-2 py-1 bg-[#F2F0E3]/20 text-[#F2F0E3] text-xs rounded-md font-medium">${g}</span>`
-                                ).join('')}
-                            </div>
-                            ` : ''}
-                            
-                            <!-- Quick Info -->
-                            <p class="text-[#F2F0E3]/80 text-xs line-clamp-2">${movie.plot || 'No description available'}</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Rating Badge -->
-                    <div class="absolute top-3 right-3 bg-[#F76F53] text-white px-2 py-1 rounded-full text-xs font-bold shadow-md">
-                        ${movie.averageRating?.toFixed(1) || 'N/A'}
-                    </div>
-                </div>
-                
-                <!-- Content Section -->
-                <div class="p-4">
-                    <h3 class="text-[#2E2E2E] dark:text-[#F2F0E3] font-semibold text-base mb-1 line-clamp-1 group-hover:text-[#F76F53] transition-colors duration-200">${movie.title}</h3>
-                    
-                    <div class="flex items-center justify-between">
-                        <p class="text-[#2E2E2E]/60 dark:text-[#F2F0E3]/60 text-sm">${movie.year}</p>
-                        
-                        <!-- Genre Pills -->
-                        ${(movie.genre || []).length > 0 ? `
-                        <div class="flex gap-1">
-                            ${(movie.genre || []).slice(0, 1).map(g => 
-                                `<span class="px-2 py-1 bg-[#F76F53]/10 text-[#F76F53] text-xs rounded-md font-medium">${g}</span>`
-                            ).join('')}
-                        </div>
-                        ` : ''}
-                    </div>
-                    
-                    <!-- Bottom Stats -->
-                    <div class="flex items-center justify-between mt-3 pt-3 border-t border-[#e0ddd0] dark:border-[#3E3E3E]">
-                        <div class="flex items-center">
-                            <span class="text-[#F76F53] mr-1">★</span>
-                            <span class="text-[#2E2E2E]/60 dark:text-[#F2F0E3]/60 text-xs">${movie.averageRating?.toFixed(1) || 'N/A'}/10</span>
-                        </div>
-                        
-                        ${movie.duration ? `
-                        <div class="flex items-center">
-                            <i class="fas fa-clock text-[#2E2E2E]/40 dark:text-[#F2F0E3]/40 text-xs mr-1"></i>
-                            <span class="text-[#2E2E2E]/60 dark:text-[#F2F0E3]/60 text-xs">${movie.duration} min</span>
-                        </div>
-                        ` : ''}
-                    </div>
-                </div>
-            </div>
-        `).join('');
+        console.log('Featured movies loaded:', {
+            movies: movies.length,
+            totalResults,
+            hasMore,
+            filter
+        });
+        
+        // Store current state for load more
+        window.featuredMoviesState = {
+            filter,
+            currentPage: 1,
+            allMovies: movies,
+            totalResults,
+            hasMore
+        };
+        
+        renderFeaturedMovies(movies);
+        updateFeaturedLoadMore(hasMore, totalResults, movies.length);
+        
     } catch (err) {
         console.error('Failed to load featured movies:', err);
         const container = document.getElementById('movies-grid');
@@ -1138,6 +1277,139 @@ const loadFeaturedMovies = async (filter = 'top-rated') => {
                 </div>
             `;
         }
+    }
+};
+
+const renderFeaturedMovies = (movies) => {
+    const container = document.getElementById('movies-grid');
+    if (!container) return;
+
+    container.innerHTML = movies.map(movie => `
+        <div class="movie-card-enhanced group cursor-pointer" onclick="goToMovieDetails('${movie._id}')">
+            <div class="movie-poster-container">
+                <img src="${movie.poster}" 
+                     alt="${movie.title}" 
+                     class="w-full h-full object-cover transition-all duration-500 group-hover:scale-110"
+                     onerror="this.src='/assets/images/no-poster.jpg'">
+                
+                <div class="movie-rating-badge">
+                    ${movie.averageRating?.toFixed(1) || 'N/A'}
+                </div>
+                
+                <div class="movie-overlay">
+                    <div class="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                        <h3 class="text-white text-lg font-bold mb-2 line-clamp-2">${movie.title}</h3>
+                        <div class="movie-genres mb-2">
+                            ${(movie.genre || []).slice(0, 2).map(g => 
+                                `<span class="px-2 py-1 bg-white/20 text-white text-xs rounded-full">${g}</span>`
+                            ).join('')}
+                        </div>
+                        <p class="text-desc text-sm line-clamp-2">${movie.description || ''}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="movie-content">
+                <h3 class="movie-title line-clamp-1">${movie.title}</h3>
+                <div class="movie-meta">
+                    <span>${movie.year}</span>
+                    <span>${movie.director}</span>
+                </div>
+            </div>
+        </div>
+    `).join('');
+};
+
+const updateFeaturedLoadMore = (hasMore, totalResults, currentCount) => {
+    // Only run on main index page
+    const isMainIndex = window.location.pathname === '/' || 
+                       window.location.pathname.includes('index.html') ||
+                       window.location.pathname === '/pages/index.html';
+    
+    if (!isMainIndex) {
+        console.log('Not main index, skipping load more update');
+        return;
+    }
+    
+    const loadMoreBtn = document.getElementById('load-more-featured');
+    if (!loadMoreBtn) {
+        console.log('Load more button not found');
+        return;
+    }
+    
+    console.log('Load more check:', {
+        hasMore,
+        totalResults,
+        currentCount,
+        shouldShow: hasMore && totalResults > currentCount && totalResults > 5
+    });
+    
+    const shouldShow = hasMore && totalResults > currentCount && totalResults > 5;
+    
+    // FORCE HIDE - be more aggressive
+    if (!shouldShow) {
+        console.log('FORCING BUTTON TO HIDE');
+        loadMoreBtn.style.display = 'none';
+        loadMoreBtn.classList.add('hidden');
+        return; // Exit early
+    }
+    
+    // Only show if conditions are met
+    if (shouldShow) {
+        console.log('SHOWING BUTTON');
+        loadMoreBtn.style.display = 'block';
+        loadMoreBtn.classList.remove('hidden');
+        const remaining = totalResults - currentCount;
+        loadMoreBtn.innerHTML = `
+            <i class="fas fa-plus mr-2"></i> 
+            Load More (${remaining} remaining)
+        `;
+        
+        // Remove any existing event listeners and add new one
+        loadMoreBtn.replaceWith(loadMoreBtn.cloneNode(true));
+        const newBtn = document.getElementById('load-more-featured');
+        newBtn.onclick = () => loadMoreFeaturedMovies();
+    }
+};
+
+const loadMoreFeaturedMovies = async () => {
+    if (!window.featuredMoviesState) return;
+    
+    const { filter, currentPage, allMovies, totalResults } = window.featuredMoviesState;
+    const nextPage = currentPage + 1;
+    
+    try {
+        let apiUrl;
+        switch(filter) {
+            case 'new':
+                apiUrl = `${API_BASE_URL}/movies?limit=10&page=${nextPage}&sort=-createdAt`;
+                break;
+            case 'top-rated':
+            default:
+                apiUrl = `${API_BASE_URL}/movies?limit=10&page=${nextPage}&sort=-averageRating`;
+                break;
+        }
+
+        const { data } = await axios.get(apiUrl);
+        const newMovies = data.data.movies || [];
+        const hasMore = data.data.hasNextPage || false;
+        
+        // Update state
+        const updatedMovies = [...allMovies, ...newMovies];
+        window.featuredMoviesState = {
+            filter,
+            currentPage: nextPage,
+            allMovies: updatedMovies,
+            totalResults,
+            hasMore
+        };
+        
+        // Re-render all movies
+        renderFeaturedMovies(updatedMovies);
+        updateFeaturedLoadMore(hasMore, totalResults, updatedMovies.length);
+        
+    } catch (err) {
+        console.error('Failed to load more featured movies:', err);
     }
 };
 
@@ -1241,6 +1513,162 @@ const initFeaturedFilters = () => {
     });
 };
 
+const loadGenres = async () => {
+    try {
+        // Show loading state
+        const genreChips = document.getElementById('genre-chips');
+        if (genreChips) {
+            genreChips.innerHTML = Array(6).fill().map(() => 
+                '<div class="genre-loading"></div>'
+            ).join('');
+        }
+
+        const { data } = await axios.get(`${API_BASE_URL}/genres/active`);
+        const genres = data.data.genres || [];
+        
+        // Update genre dropdown
+        const genreSelect = document.getElementById('genre-filter');
+        if (genreSelect) {
+            genreSelect.innerHTML = '<option value="">All Genres</option>';
+            genres.forEach(genre => {
+                const option = document.createElement('option');
+                option.value = genre.name;
+                option.textContent = genre.name;
+                genreSelect.appendChild(option);
+            });
+        }
+        
+        // Update genre chips
+        if (genreChips) {
+            const allChip = `<button class="filter-chip active px-4 py-2 rounded-full transition-all duration-300" data-genre="">All</button>`;
+            const genreChipsHTML = genres.slice(0, 8).map(genre => 
+                `<button class="filter-chip px-4 py-2 rounded-full transition-all duration-300" data-genre="${genre.name}">${genre.name}</button>`
+            ).join('');
+            
+            genreChips.innerHTML = allChip + genreChipsHTML;
+            
+            // Add event listeners to chips
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+                    chip.classList.add('active');
+                    const genre = chip.dataset.genre;
+                    handleGenreFilter(genre);
+                });
+            });
+        }
+        
+    } catch (err) {
+        console.error('Failed to load genres:', err);
+        
+        // Show error state
+        const genreChips = document.getElementById('genre-chips');
+        if (genreChips) {
+            genreChips.innerHTML = '<div class="genre-error">Failed to load genres</div>';
+        }
+    }
+};
+
+const enhanceSearchBar = () => {
+    const searchInput = document.getElementById('search-input');
+    const searchForm = document.getElementById('search-form');
+    const suggestionsContainer = document.getElementById('search-suggestions');
+    
+    if (!searchInput) return;
+    
+    // Enhanced form submission
+    if (searchForm) {
+        searchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const query = searchInput.value.trim();
+            if (query) {
+                doSearch(query);
+                hideSearchSuggestions();
+            }
+        });
+    }
+    
+    // Search suggestions with debounce
+    let searchTimeout;
+    searchInput.addEventListener('input', (e) => {
+        clearTimeout(searchTimeout);
+        const query = e.target.value.trim();
+        
+        searchTimeout = setTimeout(() => {
+            if (query) {
+                showSearchSuggestions(query);
+            } else {
+                hideSearchSuggestions();
+            }
+        }, 300);
+    });
+    
+    // Hide suggestions when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !suggestionsContainer?.contains(e.target)) {
+            hideSearchSuggestions();
+        }
+    });
+    
+    // Show suggestions when focusing on search (if there's content)
+    searchInput.addEventListener('focus', () => {
+        const query = searchInput.value.trim();
+        if (query && query.length >= 2) {
+            showSearchSuggestions(query);
+        }
+    });
+    
+    // Enhanced keyboard navigation
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            searchInput.blur();
+            hideSearchSuggestions();
+        }
+    });
+};
+
+const showSearchSuggestions = async (query) => {
+    if (!query || query.length < 2) {
+        hideSearchSuggestions();
+        return;
+    }
+    
+    try {
+        // You can implement this with your movie API
+        const { data } = await axios.get(`${API_BASE_URL}/movies?search=${query}&limit=5`);
+        const movies = data.data.movies || [];
+        
+        const suggestionsContainer = document.getElementById('search-suggestions');
+        if (suggestionsContainer && movies.length > 0) {
+            suggestionsContainer.innerHTML = movies.map(movie => `
+                <div class="suggestion-item" onclick="selectSuggestion('${movie.title}')">
+                    <strong>${movie.title}</strong> (${movie.year})
+                    <small class="block text-xs opacity-70">${movie.director}</small>
+                </div>
+            `).join('');
+            suggestionsContainer.style.display = 'block';
+        }
+    } catch (err) {
+        console.error('Failed to load suggestions:', err);
+    }
+};
+
+const hideSearchSuggestions = () => {
+    const suggestionsContainer = document.getElementById('search-suggestions');
+    if (suggestionsContainer) {
+        suggestionsContainer.style.display = 'none';
+    }
+};
+
+const selectSuggestion = (title) => {
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+        searchInput.value = title;
+        doSearch(title);
+    }
+    hideSearchSuggestions();
+};
+
 // ======================
 // Initialization Functions
 // ======================
@@ -1248,12 +1676,25 @@ const initFeaturedFilters = () => {
 const initMoviesPage = () => {
     // Check if we're on the movies listing page
     if (document.getElementById('movies-grid') && window.location.pathname.includes('/movies/') && !window.location.pathname.includes('details.html')) {
+        
+        const loadMoreBtn = document.getElementById('load-more');
+        if (loadMoreBtn) {
+            loadMoreBtn.style.display = 'none';
+            loadMoreBtn.classList.add('hidden');
+            console.log('Movies load more button force hidden on page load');
+        }
+        
+        loadGenres(); // Load genres first
         initGenreFilter();
         initSortFilter();
         initAdvancedSearch();
         checkAdminStatus();
-        loadMovies(currentFilters, 1);
-        updateActiveFilters();
+        
+        // Load movies after genres are loaded
+        setTimeout(() => {
+            loadMovies(currentFilters, 1);
+            updateActiveFilters();
+        }, 500);
     }
     
     // Check if we're on the movie details page
@@ -1268,6 +1709,44 @@ const initMoviesPage = () => {
     }
 };
 
+window.clearAllFilters = () => {
+    currentFilters = {
+        search: '',
+        genre: '',
+        sort: 'popular',
+        yearFrom: '',
+        yearTo: '',
+        rating: '',
+        duration: '',
+        director: '',
+        cast: ''
+    };
+
+    // Reset UI elements
+    const searchInput = document.getElementById('search-input');
+    const genreSelect = document.getElementById('genre-filter');
+    const sortSelect = document.getElementById('sort-by');
+
+    if (searchInput) searchInput.value = '';
+    if (genreSelect) genreSelect.value = '';
+    if (sortSelect) sortSelect.value = 'popular';
+
+    // Reset genre chips
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+        chip.classList.remove('active');
+        if (chip.dataset.genre === '') {
+            chip.classList.add('active');
+        }
+    });
+
+    currentPage = 1;
+    loadMovies(currentFilters, 1);
+    updateActiveFilters();
+    
+    // Clear URL parameters
+    window.history.pushState({}, '', window.location.pathname);
+};
+
 // Make functions globally available
 window.updateActiveFilters = updateActiveFilters;
 window.removeFilter = removeFilter;
@@ -1279,9 +1758,14 @@ window.updateGenreChips = updateGenreChips;
 window.currentFilters = currentFilters;
 window.currentPage = currentPage;
 window.loadMovies = loadMovies;
+window.loadGenres = loadGenres;
+window.selectSuggestion = selectSuggestion;
 
 // Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', initMoviesPage);
+document.addEventListener('DOMContentLoaded', () => {
+    enhanceSearchBar();
+    initMoviesPage();
+});
 
 // Also export for module usage if needed
 if (typeof module !== 'undefined' && module.exports) {

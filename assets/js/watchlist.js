@@ -1,4 +1,3 @@
-const API_BASE_URL = 'http://localhost:3000/api/v1';
 
 document.addEventListener('DOMContentLoaded', async () => {
     const container = document.getElementById('watchlist-container');
@@ -53,27 +52,37 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             
             container.innerHTML = validMovies.map(movie => `
-                <div class="movie-card relative">
-                    <a href="/pages/movies/details.html?id=${movie._id}">
+            <div class="movie-card group">
+                <a href="/pages/movies/details.html?id=${movie._id}">
+                    <div class="relative overflow-hidden rounded-t-lg">
                         <img src="${movie.poster || '/assets/images/default-poster.jpg'}" 
-                             alt="${movie.title}" 
-                             class="w-full h-64 object-cover rounded-lg">
-                        <div class="p-4">
-                            <h3 class="font-semibold text-lg dark:text-white truncate">${movie.title}</h3>
-                            <div class="flex justify-between items-center mt-2">
-                                <span class="text-gray-600 dark:text-gray-300">${movie.year}</span>
-                                <span class="text-yellow-400 font-medium">
+                            alt="${movie.title}" 
+                            class="w-full h-80 object-cover transition-transform duration-300 group-hover:scale-110">
+                        <div class="gradient-overlay absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-semibold text-xl line-clamp-1 mb-3">${movie.title}</h3>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm opacity-70">${movie.year}</span>
+                            <div class="flex items-center space-x-1">
+                                <i class="fas fa-star text-yellow-400 text-sm"></i>
+                                <span class="text-sm font-medium">
                                     ${movie.averageRating?.toFixed(1) || 'N/A'}
                                 </span>
                             </div>
                         </div>
-                    </a>
-                    <button class="remove-watchlist absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full opacity-0 hover:opacity-100 transition-opacity" 
-                            data-movie-id="${movie._id}">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            `).join('');
+                        <div class="text-xs opacity-60 line-clamp-2">
+                            ${movie.genres?.slice(0, 2).join(' • ') || 'Drama'}
+                        </div>
+                    </div>
+                </a>
+                <button class="remove-watchlist absolute top-4 right-4 w-9 h-9 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-red-600 flex items-center justify-center shadow-lg" 
+                        data-movie-id="${movie._id}"
+                        title="Remove from watchlist">
+                    <i class="fas fa-times text-sm"></i>
+                </button>
+            </div>
+        `).join('');
             
             // 5. Add event listeners to remove buttons
             document.querySelectorAll('.remove-watchlist').forEach(btn => {
@@ -123,6 +132,5 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     // Initialize
-    refreshBtn?.addEventListener('click', loadWatchlist);
     await loadWatchlist();
 });

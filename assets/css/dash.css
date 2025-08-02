@@ -1,0 +1,598 @@
+.sidebar-gradient {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-right: 1px solid rgba(247, 111, 83, 0.2);
+}
+.dark .sidebar-gradient {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  border-right: 1px solid rgba(247, 111, 83, 0.2);
+}
+
+.card-hover {
+  transition: all 0.3s ease;
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(247, 111, 83, 0.15);
+}
+
+.metric-card {
+  background: linear-gradient(135deg, rgba(247, 111, 83, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid rgba(247, 111, 83, 0.1);
+}
+.dark .metric-card {
+  background: linear-gradient(135deg, rgba(247, 111, 83, 0.08) 0%, rgba(46, 46, 46, 0.3) 100%);
+}
+
+.chart-container {
+  position: relative;
+  height: 300px;
+}
+
+.notification-badge {
+  background: linear-gradient(135deg, #FF4444 0%, #FF6B6B 100%);
+  animation: pulse 2s infinite;
+  min-width: 18px;
+  height: 18px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.pulse-dot {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Sidebar Styles */
+.sidebar-btn {
+  position: relative;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+  background: transparent;
+  color: #495057;
+}
+.dark .sidebar-btn {
+  color: #F2F0E3;
+}
+
+.sidebar-btn:hover {
+  background: rgba(247, 111, 83, 0.1);
+  border-color: rgba(247, 111, 83, 0.3);
+  transform: translateX(4px);
+}
+
+.sidebar-item-active {
+  background: linear-gradient(135deg, #F76F53 0%, #FF8A70 100%) !important;
+  border-color: #F76F53 !important;
+  transform: translateX(4px);
+  box-shadow: 0 8px 16px rgba(247, 111, 83, 0.4);
+  color: white !important;
+}
+.sidebar-item-active * {
+  color: white !important;
+}
+
+.sidebar-item-active:hover {
+  transform: translateX(4px) translateY(-2px);
+  box-shadow: 0 12px 20px rgba(247, 111, 83, 0.5);
+}
+
+.sidebar-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.sidebar-btn:hover .sidebar-icon {
+  transform: scale(1.1);
+}
+
+.sidebar-item-active .sidebar-icon {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+.admin-profile-card {
+  background: rgba(247, 111, 83, 0.1);
+  border: 1px solid rgba(247, 111, 83, 0.2);
+  backdrop-filter: blur(10px);
+}
+.dark .admin-profile-card {
+  background: rgba(247, 111, 83, 0.15);
+  border: 1px solid rgba(247, 111, 83, 0.3);
+}
+
+.admin-avatar {
+  background: linear-gradient(135deg, #F76F53 0%, #FF8A70 100%);
+  box-shadow: 0 4px 12px rgba(247, 111, 83, 0.3);
+}
+
+/* Text color fixes for sidebar buttons */
+.sidebar-btn span, .sidebar-btn p {
+  color: #495057;
+}
+.dark .sidebar-btn span, .dark .sidebar-btn p {
+  color: #F2F0E3;
+}
+.sidebar-item-active span, .sidebar-item-active p {
+  color: white !important;
+}
+
+/* System status styling */
+.system-status-card {
+  background: rgba(247, 111, 83, 0.05);
+  border: 1px solid rgba(247, 111, 83, 0.15);
+}
+.dark .system-status-card {
+  background: rgba(247, 111, 83, 0.08);
+  border: 1px solid rgba(247, 111, 83, 0.2);
+}
+
+/* Table styling for dashboard */
+.table-row:hover {
+  background-color: rgba(247, 111, 83, 0.05);
+}
+.dark .table-row:hover {
+  background-color: rgba(247, 111, 83, 0.1);
+}
+
+/* Fix active state for all sidebar buttons */
+.sidebar-btn.sidebar-item-active {
+  background: linear-gradient(135deg, #F76F53 0%, #FF8A70 100%) !important;
+  border-color: #F76F53 !important;
+  transform: translateX(4px);
+  box-shadow: 0 8px 16px rgba(247, 111, 83, 0.4);
+  color: white !important;
+}
+
+.sidebar-btn.sidebar-item-active * {
+  color: white !important;
+}
+
+.sidebar-btn.sidebar-item-active .sidebar-icon {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Prevent box appearance on click */
+.sidebar-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(247, 111, 83, 0.3);
+}
+
+.sidebar-btn.sidebar-item-active:focus {
+  box-shadow: 0 8px 16px rgba(247, 111, 83, 0.4), 0 0 0 2px rgba(247, 111, 83, 0.3);
+}
+
+/* Custom Scrollbar for Sidebar */
+.sidebar-scroll {
+  overflow-y: auto;
+  max-height: calc(100vh - 200px); /* Increased space for system status */
+  padding-bottom: 1rem; /* Add padding at bottom */
+}
+
+.sidebar-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: rgba(247, 111, 83, 0.1);
+  border-radius: 3px;
+  margin: 8px 0;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #F76F53 0%, #FF8A70 100%);
+  border-radius: 3px;
+  transition: background 0.3s ease;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #e65a3e 0%, #F76F53 100%);
+}
+
+.sidebar-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #F76F53 rgba(247, 111, 83, 0.1);
+}
+
+.sidebar-btn.btn,
+.sidebar-btn {
+  padding: 1rem !important; /* Override style.css .btn padding */
+  border-radius: 12px !important; /* Override style.css .btn border-radius */
+  font-size: 1rem !important; /* Override style.css .btn font-size */
+  display: flex !important; /* Override style.css .btn display */
+  align-items: center !important;
+  justify-content: flex-start !important; /* Override style.css center alignment */
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  color: #495057 !important;
+  text-align: left !important;
+  width: 100% !important;
+}
+
+.dark .sidebar-btn.btn,
+.dark .sidebar-btn {
+  color: #F2F0E3 !important;
+}
+
+/* Ensure hover state works correctly */
+.sidebar-btn:hover,
+.sidebar-btn.btn:hover {
+  background: rgba(247, 111, 83, 0.1) !important;
+  border-color: rgba(247, 111, 83, 0.3) !important;
+  transform: translateX(4px) !important;
+  color: inherit !important;
+}
+
+/* Ensure active state overrides everything */
+.sidebar-btn.sidebar-item-active,
+.sidebar-btn.btn.sidebar-item-active {
+  background: linear-gradient(135deg, #F76F53 0%, #FF8A70 100%) !important;
+  border-color: #F76F53 !important;
+  transform: translateX(4px) !important;
+  box-shadow: 0 8px 16px rgba(247, 111, 83, 0.4) !important;
+  color: white !important;
+}
+
+.sidebar-btn.sidebar-item-active *,
+.sidebar-btn.btn.sidebar-item-active * {
+  color: white !important;
+}
+
+/* Fix focus states that create weird shapes */
+.sidebar-btn:focus,
+.sidebar-btn.btn:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(247, 111, 83, 0.3) !important;
+}
+
+.sidebar-btn.sidebar-item-active:focus,
+.sidebar-btn.btn.sidebar-item-active:focus {
+  box-shadow: 0 8px 16px rgba(247, 111, 83, 0.4), 0 0 0 2px rgba(247, 111, 83, 0.3) !important;
+}
+
+#users-tab,
+#movies-tab {
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: 12px !important;
+  padding: 1rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  width: 100% !important;
+  text-align: left !important;
+  color: #495057 !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.dark #users-tab,
+.dark #movies-tab {
+  color: #F2F0E3 !important;
+}
+
+#users-tab:hover,
+#movies-tab:hover {
+  background: rgba(247, 111, 83, 0.1) !important;
+  border-color: rgba(247, 111, 83, 0.3) !important;
+  transform: translateX(4px) !important;
+}
+
+#users-tab.sidebar-item-active,
+#movies-tab.sidebar-item-active {
+  background: linear-gradient(135deg, #F76F53 0%, #FF8A70 100%) !important;
+  border-color: #F76F53 !important;
+  transform: translateX(4px) !important;
+  box-shadow: 0 8px 16px rgba(247, 111, 83, 0.4) !important;
+  color: white !important;
+}
+
+#users-tab.sidebar-item-active *,
+#movies-tab.sidebar-item-active * {
+  color: white !important;
+}
+
+#users-tab.sidebar-item-active .sidebar-icon,
+#movies-tab.sidebar-item-active .sidebar-icon {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+#users-tab:focus,
+#movies-tab:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Force remove any button styling from other CSS files */
+#users-tab.btn,
+#movies-tab.btn {
+  all: unset !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: 12px !important;
+  padding: 1rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  width: 100% !important;
+  text-align: left !important;
+  color: #495057 !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Search bars for Users, Movies, and Reviews */
+input[type="text"]#users-search,
+input[type="text"]#movies-search,
+input[type="text"]#reviews-search {
+  background: #FFFFFF !important;
+  border: 1px solid #e0ddd0 !important;
+  color: #2E2E2E !important;
+  border-radius: 0.75rem !important;
+  padding: 0.75rem 3rem 0.75rem 3rem !important;
+  transition: all 0.3s ease !important;
+  font-size: 0.875rem !important;
+}
+
+/* Dark mode */
+.dark input[type="text"]#users-search,
+.dark input[type="text"]#movies-search,
+.dark input[type="text"]#reviews-search {
+  background: #2E2E2E !important;
+  border: 1px solid #404040 !important;
+  color: #F2F0E3 !important;
+}
+
+/* Placeholders */
+input[type="text"]#users-search::placeholder,
+input[type="text"]#movies-search::placeholder,
+input[type="text"]#reviews-search::placeholder {
+  color: rgba(46, 46, 46, 0.5) !important;
+}
+
+.dark input[type="text"]#users-search::placeholder,
+.dark input[type="text"]#movies-search::placeholder,
+.dark input[type="text"]#reviews-search::placeholder {
+  color: rgba(242, 240, 227, 0.5) !important;
+}
+
+/* Focus states */
+input[type="text"]#users-search:focus,
+input[type="text"]#movies-search:focus,
+input[type="text"]#reviews-search:focus {
+  outline: none !important;
+  border-color: #F76F53 !important;
+  box-shadow: 0 0 0 3px rgba(247, 111, 83, 0.1) !important;
+}
+
+/* Search icons */
+.relative .fas.fa-search {
+  color: rgba(46, 46, 46, 0.4) !important;
+  position: absolute !important;
+  left: 1rem !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  pointer-events: none !important;
+}
+
+.dark .relative .fas.fa-search {
+  color: rgba(242, 240, 227, 0.4) !important;
+}
+
+/* FIXED: SweetAlert Modal Styling - Removed problematic backdrop blur */
+.swal2-popup {
+  background: #FFFFFF !important;
+  color: #2E2E2E !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+}
+
+.swal2-title {
+  color: #2E2E2E !important;
+}
+
+.swal2-content,
+.swal2-html-container {
+  color: #2E2E2E !important;
+}
+
+/* Dark mode modals */
+.dark .swal2-popup {
+  background: #2E2E2E !important;
+  color: #F2F0E3 !important;
+  border: 1px solid #404040 !important;
+}
+
+.dark .swal2-title {
+  color: #F2F0E3 !important;
+}
+
+.dark .swal2-content,
+.dark .swal2-html-container {
+  color: #F2F0E3 !important;
+}
+
+.swal2-container {
+  background: transparent !important;
+}
+
+.dark .swal2-container {
+  background: transparent !important;
+}
+
+/* Buttons */
+.swal2-confirm {
+  background: #F76F53 !important;
+  border: none !important;
+  border-radius: 0.5rem !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+.swal2-confirm:hover {
+  background: #e65a3e !important;
+}
+
+.swal2-cancel {
+  background: transparent !important;
+  border: 1px solid #6b7280 !important;
+  border-radius: 0.5rem !important;
+  color: #6b7280 !important;
+  font-weight: 600 !important;
+}
+
+.swal2-cancel:hover {
+  background: #6b7280 !important;
+  color: white !important;
+}
+
+.dark .swal2-cancel {
+  border-color: #9ca3af !important;
+  color: #9ca3af !important;
+}
+
+.dark .swal2-cancel:hover {
+  background: #9ca3af !important;
+  color: #2E2E2E !important;
+}
+
+/* Input fields in modals (for genre/role creation) */
+.swal2-input,
+.swal2-textarea {
+  background: #FFFFFF !important;
+  border: 1px solid #e0ddd0 !important;
+  color: #2E2E2E !important;
+  border-radius: 0.5rem !important;
+}
+
+.dark .swal2-input,
+.dark .swal2-textarea {
+  background: #1F1F1F !important;
+  border: 1px solid #404040 !important;
+  color: #F2F0E3 !important;
+}
+
+.swal2-input::placeholder,
+.swal2-textarea::placeholder {
+  color: rgba(46, 46, 46, 0.5) !important;
+}
+
+.dark .swal2-input::placeholder,
+.dark .swal2-textarea::placeholder {
+  color: rgba(242, 240, 227, 0.5) !important;
+}
+
+.swal2-input:focus,
+.swal2-textarea:focus {
+  border-color: #F76F53 !important;
+  box-shadow: 0 0 0 3px rgba(247, 111, 83, 0.1) !important;
+  outline: none !important;
+}
+
+/* Checkbox styling in modals */
+.swal2-checkbox input[type="checkbox"] {
+  accent-color: #F76F53 !important;
+}
+
+/* Color picker in modals */
+.swal2-input[type="color"] {
+  padding: 0.25rem !important;
+  height: 3rem !important;
+  cursor: pointer !important;
+}
+
+/* Modal info box styling */
+.swal2-html-container .mt-4.p-3.bg-gray-100.rounded,
+.swal2-html-container div[class*="mt-4"][class*="p-3"][class*="bg-gray"] {
+  background: #f3f4f6 !important;
+  color: #2E2E2E !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 0.5rem !important;
+  padding: 0.75rem !important;
+  margin-top: 1rem !important;
+}
+
+.dark .swal2-html-container .mt-4.p-3.bg-gray-100.rounded,
+.dark .swal2-html-container div[class*="mt-4"][class*="p-3"][class*="bg-gray"] {
+  background: #374151 !important;
+  color: #F2F0E3 !important;
+  border: 1px solid #4b5563 !important;
+}
+
+/* Strong tags in modal info boxes */
+.swal2-html-container strong {
+  color: #2E2E2E !important;
+  font-weight: 600 !important;
+}
+
+.dark .swal2-html-container strong {
+  color: #F2F0E3 !important;
+}
+
+/* Text content in info boxes */
+.swal2-html-container .mt-4 br + strong,
+.swal2-html-container .mt-4 strong {
+  color: #2E2E2E !important;
+}
+
+.dark .swal2-html-container .mt-4 br + strong,
+.dark .swal2-html-container .mt-4 strong {
+  color: #F2F0E3 !important;
+}
+
+/* Validation message */
+.swal2-validation-message {
+  background: #fef2f2 !important;
+  color: #dc2626 !important;
+  border: 1px solid #fecaca !important;
+}
+
+.dark .swal2-validation-message {
+  background: #2d1b1b !important;
+  color: #f87171 !important;
+  border: 1px solid #4b1f1f !important;
+}
+
+/* Icons in modals */
+.swal2-icon {
+  border: none !important;
+}
+
+.swal2-icon.swal2-question {
+  border-color: #F76F53 !important;
+  color: #F76F53 !important;
+}
+
+.swal2-icon.swal2-warning {
+  border-color: #f59e0b !important;
+  color: #f59e0b !important;
+}
+
+.swal2-icon.swal2-error {
+  border-color: #ef4444 !important;
+  color: #ef4444 !important;
+}
+
+.swal2-icon.swal2-success {
+  border-color: #10b981 !important;
+  color: #10b981 !important;
+}
+
+/* Close button */
+.swal2-close {
+  color: #6b7280 !important;
+}
+
+.dark .swal2-close {
+  color: #9ca3af !important;
+}
+
+.swal2-close:hover {
+  color: #F76F53 !important;
+}
