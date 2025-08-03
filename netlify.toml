@@ -1,8 +1,7 @@
+[build]
+  publish = "pages"
 
 [[redirects]]
   from = "/*"
-  to = "/pages/index.html"
+  to = "/index.html"
   status = 200
-
-[build.environment]
-  NODE_VERSION = "18"
