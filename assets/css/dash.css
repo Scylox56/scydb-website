@@ -615,7 +615,7 @@ input[type="text"]#reviews-search:focus {
   position: fixed;
   top: 1rem;
   left: 1rem;
-  z-index: 50;
+  z-index: 9999;
   background: linear-gradient(135deg, #F76F53 0%, #FF8A70 100%);
   color: white;
   border: none;
