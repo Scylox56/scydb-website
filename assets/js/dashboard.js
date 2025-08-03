@@ -1575,6 +1575,288 @@ async function toggleUserRole(userId, currentRole) {
   }
 }
 
+// Mobile menu functionality
+//--------------------------
+document.addEventListener('DOMContentLoaded', function() {
+    // Create mobile menu elements if they don't exist
+    createMobileMenuElements();
+    
+    // Initialize mobile menu functionality
+    initializeMobileMenu();
+    
+    // Handle window resize
+    handleWindowResize();
+    
+    // Add responsive classes to existing elements
+    addResponsiveClasses();
+});
+
+function createMobileMenuElements() {
+    // Create mobile menu toggle button
+    if (!document.querySelector('.mobile-menu-toggle')) {
+        const toggleButton = document.createElement('button');
+        toggleButton.className = 'mobile-menu-toggle';
+        toggleButton.innerHTML = '<i class="fas fa-bars"></i>';
+        toggleButton.setAttribute('aria-label', 'Toggle mobile menu');
+        document.body.appendChild(toggleButton);
+    }
+    
+    // Create mobile overlay
+    if (!document.querySelector('.mobile-overlay')) {
+        const overlay = document.createElement('div');
+        overlay.className = 'mobile-overlay';
+        document.body.appendChild(overlay);
+    }
+}
+
+function initializeMobileMenu() {
+    const toggleButton = document.querySelector('.mobile-menu-toggle');
+    const sidebar = document.querySelector('.sidebar-gradient');
+    const overlay = document.querySelector('.mobile-overlay');
+    const body = document.body;
+    
+    if (!toggleButton || !sidebar || !overlay) return;
+    
+    // Toggle menu function
+    function toggleMobileMenu() {
+        const isOpen = sidebar.classList.contains('sidebar-open');
+        
+        if (isOpen) {
+            closeMobileMenu();
+        } else {
+            openMobileMenu();
+        }
+    }
+    
+    function openMobileMenu() {
+        sidebar.classList.add('sidebar-open');
+        overlay.classList.add('active');
+        toggleButton.innerHTML = '<i class="fas fa-times"></i>';
+        body.style.overflow = 'hidden'; // Prevent background scrolling
+        
+        // Animate toggle button
+        toggleButton.style.transform = 'rotate(180deg)';
+    }
+    
+    function closeMobileMenu() {
+        sidebar.classList.remove('sidebar-open');
+        overlay.classList.remove('active');
+        toggleButton.innerHTML = '<i class="fas fa-bars"></i>';
+        body.style.overflow = '';
+        
+        // Reset toggle button animation
+        toggleButton.style.transform = 'rotate(0deg)';
+    }
+    
+    // Event listeners
+    toggleButton.addEventListener('click', toggleMobileMenu);
+    overlay.addEventListener('click', closeMobileMenu);
+    
+    // Close menu when clicking sidebar items (for better UX)
+    const sidebarButtons = sidebar.querySelectorAll('.sidebar-btn');
+    sidebarButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            if (window.innerWidth <= 1024) {
+                setTimeout(closeMobileMenu, 150); // Small delay for smooth transition
+            }
+        });
+    });
+    
+    // Close menu on escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && sidebar.classList.contains('sidebar-open')) {
+            closeMobileMenu();
+        }
+    });
+    
+    // Handle swipe gestures for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    document.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    });
+    
+    document.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    });
+    
+    function handleSwipe() {
+        const swipeThreshold = 50;
+        const swipeDistance = touchEndX - touchStartX;
+        
+        // Swipe right to open menu (from left edge)
+        if (swipeDistance > swipeThreshold && touchStartX < 50 && !sidebar.classList.contains('sidebar-open')) {
+            openMobileMenu();
+        }
+        
+        // Swipe left to close menu
+        if (swipeDistance < -swipeThreshold && sidebar.classList.contains('sidebar-open')) {
+            closeMobileMenu();
+        }
+    }
+}
+
+function handleWindowResize() {
+    window.addEventListener('resize', () => {
+        const sidebar = document.querySelector('.sidebar-gradient');
+        const overlay = document.querySelector('.mobile-overlay');
+        const toggleButton = document.querySelector('.mobile-menu-toggle');
+        const body = document.body;
+        
+        // Close mobile menu when resizing to desktop
+        if (window.innerWidth > 1024) {
+            if (sidebar) sidebar.classList.remove('sidebar-open');
+            if (overlay) overlay.classList.remove('active');
+            if (toggleButton) {
+                toggleButton.innerHTML = '<i class="fas fa-bars"></i>';
+                toggleButton.style.transform = 'rotate(0deg)';
+            }
+            body.style.overflow = '';
+        }
+        
+        // Update chart sizes on resize
+        debounce(updateChartsOnResize, 250)();
+    });
+}
+
+function addResponsiveClasses() {
+    // Add responsive classes to existing elements
+    const mainContent = document.querySelector('.flex-1.ml-72');
+    if (mainContent) {
+        mainContent.classList.add('main-content');
+    }
+    
+    // Add responsive classes to header sections
+    const headerSections = document.querySelectorAll('.flex.justify-between.items-center');
+    headerSections.forEach(section => {
+        section.classList.add('header-section');
+    });
+    
+    // Add responsive classes to control sections
+    const controlSections = document.querySelectorAll('.flex.items-center.space-x-4');
+    controlSections.forEach(section => {
+        section.classList.add('header-controls');
+    });
+    
+    // Add responsive classes to grids
+    const statsGrids = document.querySelectorAll('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-4');
+    statsGrids.forEach(grid => {
+        grid.classList.add('stats-grid');
+    });
+    
+    const chartsGrids = document.querySelectorAll('.grid.grid-cols-1.lg\\:grid-cols-2');
+    chartsGrids.forEach(grid => {
+        grid.classList.add('charts-grid');
+    });
+    
+    const quickActionsGrids = document.querySelectorAll('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-4.gap-4');
+    quickActionsGrids.forEach(grid => {
+        grid.classList.add('quick-actions-grid');
+    });
+    
+    // Add responsive classes to tables
+    const tables = document.querySelectorAll('.overflow-x-auto');
+    tables.forEach(table => {
+        table.classList.add('table-container');
+    });
+    
+    // Add responsive classes to footer
+    const footerGrids = document.querySelectorAll('footer .grid.grid-cols-1.md\\:grid-cols-3');
+    footerGrids.forEach(grid => {
+        grid.classList.add('footer-grid');
+    });
+}
+
+function updateChartsOnResize() {
+    // Update Chart.js charts to be responsive
+    if (typeof Chart !== 'undefined') {
+        Chart.helpers.each(Chart.instances, function(instance) {
+            instance.resize();
+        });
+    }
+}
+
+// Utility function for debouncing
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Enhanced table scroll for mobile
+function enhanceTableScroll() {
+    const tableContainers = document.querySelectorAll('.table-container');
+    
+    tableContainers.forEach(container => {
+        // Add scroll indicators for mobile
+        if (window.innerWidth <= 768) {
+            let isScrolling = false;
+            
+            container.addEventListener('scroll', () => {
+                if (!isScrolling) {
+                    container.classList.add('scrolling');
+                    isScrolling = true;
+                    
+                    setTimeout(() => {
+                        container.classList.remove('scrolling');
+                        isScrolling = false;
+                    }, 1000);
+                }
+            });
+        }
+    });
+}
+
+// Initialize enhanced mobile features
+document.addEventListener('DOMContentLoaded', function() {
+    enhanceTableScroll();
+    
+    // Add touch-friendly improvements
+    if ('ontouchstart' in window) {
+        document.body.classList.add('touch-device');
+    }
+});
+
+// Export functions for use in other scripts
+window.mobileMenu = {
+    open: () => {
+        const sidebar = document.querySelector('.sidebar-gradient');
+        const overlay = document.querySelector('.mobile-overlay');
+        const toggleButton = document.querySelector('.mobile-menu-toggle');
+        
+        if (sidebar) sidebar.classList.add('sidebar-open');
+        if (overlay) overlay.classList.add('active');
+        if (toggleButton) {
+            toggleButton.innerHTML = '<i class="fas fa-times"></i>';
+            toggleButton.style.transform = 'rotate(180deg)';
+        }
+        document.body.style.overflow = 'hidden';
+    },
+    
+    close: () => {
+        const sidebar = document.querySelector('.sidebar-gradient');
+        const overlay = document.querySelector('.mobile-overlay');
+        const toggleButton = document.querySelector('.mobile-menu-toggle');
+        
+        if (sidebar) sidebar.classList.remove('sidebar-open');
+        if (overlay) overlay.classList.remove('active');
+        if (toggleButton) {
+            toggleButton.innerHTML = '<i class="fas fa-bars"></i>';
+            toggleButton.style.transform = 'rotate(0deg)';
+        }
+        document.body.style.overflow = '';
+    }
+};
+
+
 // Update UI elements based on permissions
 function updateUIBasedOnPermissions() {
   const hasWriteAccess = hasPermission('write');

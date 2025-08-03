@@ -385,12 +385,21 @@ input[type="text"]#reviews-search:focus {
   color: rgba(242, 240, 227, 0.4) !important;
 }
 
-/* FIXED: SweetAlert Modal Styling - Removed problematic backdrop blur */
 .swal2-popup {
   background: #FFFFFF !important;
   color: #2E2E2E !important;
   border-radius: 1rem !important;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+  z-index: 10000 !important;
+}
+
+.swal2-popup.swal2-modal {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.swal2-backdrop-show {
+  background: rgba(0, 0, 0, 0.4) !important;
 }
 
 .swal2-title {
@@ -420,6 +429,7 @@ input[type="text"]#reviews-search:focus {
 
 .swal2-container {
   background: transparent !important;
+  z-index: 9999 !important;
 }
 
 .dark .swal2-container {
@@ -595,4 +605,389 @@ input[type="text"]#reviews-search:focus {
 
 .swal2-close:hover {
   color: #F76F53 !important;
+}
+
+/* ===================== MOBILE RESPONSIVE SECTION ===================== */
+
+/* Mobile Menu Toggle Button */
+.mobile-menu-toggle {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 50;
+  background: linear-gradient(135deg, #F76F53 0%, #FF8A70 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  width: 48px;
+  height: 48px;
+  box-shadow: 0 4px 12px rgba(247, 111, 83, 0.3);
+  transition: all 0.3s ease;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-menu-toggle:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(247, 111, 83, 0.4);
+}
+
+.mobile-menu-toggle i {
+  font-size: 1.2rem;
+}
+
+/* Mobile Overlay */
+.mobile-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 30;
+  pointer-events: none !important;
+}
+
+.mobile-overlay.active {
+  display: block;
+  pointer-events: auto !important;
+}
+
+/* Tablet and Mobile Responsive */
+@media (max-width: 1024px) {
+  .mobile-menu-toggle {
+    display: flex;
+  }
+
+  .sidebar-gradient {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 40;
+  }
+
+  .sidebar-gradient.sidebar-open {
+    transform: translateX(0);
+  }
+
+  /* Main content mobile adjustments */
+  .flex-1.ml-72 {
+    margin-left: 0 !important;
+    padding: 1rem !important;
+    padding-top: 5rem !important;
+  }
+
+  /* Footer mobile adjustments */
+  footer.ml-72 {
+    margin-left: 0 !important;
+  }
+}
+
+/* MOBILE ONLY - DO NOT AFFECT DESKTOP */
+@media (max-width: 768px) {
+  
+  /* ONLY affect the statistics cards grid on mobile */
+  #overview-content .grid.grid-cols-1.md\:grid-cols-2.lg\:grid-cols-4 {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+  
+  /* ONLY affect charts grid on mobile */
+  #overview-content .grid.grid-cols-1.lg\:grid-cols-2 {
+    grid-template-columns: 1fr !important;
+  }
+  
+  /* Headers responsive on mobile only */
+  .mb-8 .flex.justify-between.items-center {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 1rem !important;
+  }
+  
+  .mb-8 .flex.items-center.space-x-4 {
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+    width: 100% !important;
+  }
+  
+  /* Management sections mobile responsive */
+  .tab-content .flex.flex-col.lg\:flex-row {
+    flex-direction: column !important;
+    gap: 1rem !important;
+    align-items: flex-start !important;
+  }
+  
+  .tab-content .flex.gap-3 {
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 0.75rem !important;
+  }
+  
+  /* Search inputs full width on mobile */
+  .tab-content input[type="text"] {
+    width: 100% !important;
+  }
+  
+  /* Table responsive */
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .overflow-x-auto table {
+    min-width: 640px;
+  }
+  
+  /* Sidebar mobile adjustments */
+  .sidebar-gradient {
+    width: 280px;
+    padding-top: 4rem;
+  }
+  
+  /* Modal adjustments */
+  .swal2-popup {
+    width: 90% !important;
+    max-width: 400px !important;
+    margin: 1rem !important;
+  }
+  
+  /* Quick actions 2 columns on mobile */
+  #overview-content .grid.grid-cols-1.md\:grid-cols-2.lg\:grid-cols-4.gap-4 {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.75rem !important;
+  }
+}
+
+/* Small mobile styles */
+@media (max-width: 480px) {
+  .flex-1.ml-72 {
+    padding: 0.75rem !important;
+    padding-top: 4.5rem !important;
+  }
+  
+  .sidebar-gradient {
+    width: 100% !important;
+  }
+  
+  .sidebar-btn {
+    padding: 0.875rem !important;
+  }
+  
+  /* Quick actions single column on very small screens */
+  #overview-content .grid.grid-cols-1.md\:grid-cols-2.lg\:grid-cols-4.gap-4 {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Touch optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .sidebar-btn {
+    min-height: 48px;
+  }
+  
+  .btn {
+    min-height: 44px;
+    padding: 0.75rem 1.5rem !important;
+  }
+}
+
+/* Protect navbar */
+nav {
+  position: relative !important;
+  z-index: 100 !important;
+}
+
+/* FORCE DESKTOP TO KEEP ORIGINAL LAYOUT */
+@media (min-width: 769px) {
+  /* Ensure desktop keeps 4 cards per row */
+  .grid.grid-cols-1.md\:grid-cols-2.lg\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+  
+  /* Ensure desktop keeps 2 charts per row */
+  .grid.grid-cols-1.lg\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  
+  /* Ensure desktop headers stay horizontal */
+  .flex.justify-between.items-center {
+    flex-direction: row !important;
+    align-items: center !important;
+  }
+  
+  .flex.items-center.space-x-4 {
+    flex-direction: row !important;
+    width: auto !important;
+  }
+}
+@media (max-width: 768px) {
+  
+  /* Ensure card content stays horizontal on mobile */
+  .metric-card .flex.items-center.justify-between {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+  
+  /* Ensure the text section takes available space */
+  .metric-card .flex.items-center.justify-between > div:first-child {
+    flex: 1 !important;
+    margin-right: 1rem !important;
+  }
+  
+  /* Ensure icon container stays on the right */
+  .metric-card .w-16.h-16 {
+    flex-shrink: 0 !important;
+    width: 4rem !important;
+    height: 4rem !important;
+  }
+  
+  /* Adjust text sizes for mobile but keep layout */
+  .metric-card h3 {
+    font-size: 0.75rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .metric-card p {
+    font-size: 2rem !important;
+    margin-bottom: 0.25rem !important;
+  }
+  
+  .metric-card .flex.items-center.text-sm {
+    font-size: 0.75rem !important;
+  }
+}
+
+/* For very small screens, slightly smaller icons but keep side-by-side */
+@media (max-width: 480px) {
+  
+  .metric-card .w-16.h-16 {
+    width: 3rem !important;
+    height: 3rem !important;
+  }
+  
+  .metric-card .w-16.h-16 i {
+    font-size: 1.25rem !important;
+  }
+  
+  .metric-card p {
+    font-size: 1.75rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .swal2-popup {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 90% !important;
+    max-width: 400px !important;
+    margin: 0 !important;
+  }
+  
+  .swal2-container {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+  }
+}
+
+/* Fix review content box text visibility */
+
+/* Force review content text to be dark on light background */
+.swal2-html-container .review-content,
+.swal2-html-container .mt-4,
+.swal2-html-container .p-3,
+.swal2-html-container .bg-gray-100,
+.swal2-html-container .rounded,
+.swal2-html-container div[class*="bg-gray"] {
+  background: #f8f9fa !important;
+  color: #2E2E2E !important;
+  border: 1px solid #dee2e6 !important;
+  border-radius: 0.5rem !important;
+  padding: 1rem !important;
+}
+
+/* Force ALL text inside review content to be dark */
+.swal2-html-container .review-content *,
+.swal2-html-container .mt-4 *,
+.swal2-html-container .p-3 *,
+.swal2-html-container .bg-gray-100 *,
+.swal2-html-container .rounded *,
+.swal2-html-container div[class*="bg-gray"] * {
+  color: #2E2E2E !important;
+}
+
+/* Dark mode: Force review content to be light text on dark background */
+html.dark .swal2-html-container .review-content,
+html.dark .swal2-html-container .mt-4,
+html.dark .swal2-html-container .p-3,
+html.dark .swal2-html-container .bg-gray-100,
+html.dark .swal2-html-container .rounded,
+html.dark .swal2-html-container div[class*="bg-gray"],
+body.dark .swal2-html-container .review-content,
+body.dark .swal2-html-container .mt-4,
+body.dark .swal2-html-container .p-3,
+body.dark .swal2-html-container .bg-gray-100,
+body.dark .swal2-html-container .rounded,
+body.dark .swal2-html-container div[class*="bg-gray"],
+.dark .swal2-html-container .review-content,
+.dark .swal2-html-container .mt-4,
+.dark .swal2-html-container .p-3,
+.dark .swal2-html-container .bg-gray-100,
+.dark .swal2-html-container .rounded,
+.dark .swal2-html-container div[class*="bg-gray"] {
+  background: #374151 !important;
+  color: #F2F0E3 !important;
+  border: 1px solid #4b5563 !important;
+}
+
+/* Dark mode: Force ALL text inside review content to be light */
+html.dark .swal2-html-container .review-content *,
+html.dark .swal2-html-container .mt-4 *,
+html.dark .swal2-html-container .p-3 *,
+html.dark .swal2-html-container .bg-gray-100 *,
+html.dark .swal2-html-container .rounded *,
+html.dark .swal2-html-container div[class*="bg-gray"] *,
+body.dark .swal2-html-container .review-content *,
+body.dark .swal2-html-container .mt-4 *,
+body.dark .swal2-html-container .p-3 *,
+body.dark .swal2-html-container .bg-gray-100 *,
+body.dark .swal2-html-container .rounded *,
+body.dark .swal2-html-container div[class*="bg-gray"] *,
+.dark .swal2-html-container .review-content *,
+.dark .swal2-html-container .mt-4 *,
+.dark .swal2-html-container .p-3 *,
+.dark .swal2-html-container .bg-gray-100 *,
+.dark .swal2-html-container .rounded *,
+.dark .swal2-html-container div[class*="bg-gray"] * {
+  color: #F2F0E3 !important;
+}
+
+/* Specific fix for paragraph text in review boxes */
+.swal2-html-container p,
+.swal2-html-container span,
+.swal2-html-container div {
+  color: #2E2E2E !important;
+}
+
+html.dark .swal2-html-container p,
+html.dark .swal2-html-container span,
+html.dark .swal2-html-container div,
+body.dark .swal2-html-container p,
+body.dark .swal2-html-container span,
+body.dark .swal2-html-container div,
+.dark .swal2-html-container p,
+.dark .swal2-html-container span,
+.dark .swal2-html-container div {
+  color: #F2F0E3 !important;
+}
+
+/* Override any inherited text colors */
+.swal2-popup * {
+  color: inherit !important;
 }

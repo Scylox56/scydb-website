@@ -876,8 +876,26 @@ const handleDeleteReview = async (e) => {
 };
 
 const handleEditReview = (e) => {
-    const reviewData = JSON.parse(e.target.closest('.edit-review-btn').dataset.review);
-    initReviewModal(reviewData);
+    try {
+        const reviewDataStr = e.target.closest('.edit-review-btn').dataset.review;
+        console.log('Raw review data:', reviewDataStr);
+        
+        // Clean up the JSON string - replace HTML entities
+        const cleanedStr = reviewDataStr.replace(/&apos;/g, "'").replace(/&quot;/g, '"');
+        console.log('Cleaned review data:', cleanedStr);
+        
+        const reviewData = JSON.parse(cleanedStr);
+        console.log('Parsed review data:', reviewData);
+        
+        initReviewModal(reviewData);
+    } catch (err) {
+        console.error('Error parsing review data:', err);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to load review data for editing'
+        });
+    }
 };
 
 const loadReviews = async (movieId) => {
@@ -934,63 +952,79 @@ const loadReviews = async (movieId) => {
         }
 
         container.innerHTML = reviews.map(review => {
-    const reviewUserId = review.user?._id || review.user;
-    const currentUserId = currentUser._id;
-    
-    const canModifyReview = isLoggedIn && (
-        reviewUserId === currentUserId || 
-        ['admin', 'super-admin'].includes(currentUser.role)
-    );
+            const reviewUserId = review.user?._id || review.user;
+            const currentUserId = currentUser._id;
+            
+            const canModifyReview = isLoggedIn && (
+                reviewUserId === currentUserId || 
+                ['admin', 'super-admin'].includes(currentUser.role)
+            );
 
-    return `
-        <div class="card rounded-2xl p-8 border-l-4 border-[#F76F53] hover:shadow-xl transition-all duration-300 group" data-review-id="${review._id}">
-            <div class="flex items-start gap-6">
-                <div class="flex-shrink-0">
-                    <img src="${review.user?.photo || '/assets/images/default-avatar.jpg'}" 
-                         alt="${review.user?.name || 'Anonymous'}" 
-                         class="w-16 h-16 rounded-full object-cover border-4 border-[#F76F53]/20 shadow-lg"
-                         onerror="this.src='/assets/images/default-avatar.jpg'">
-                </div>
-                <div class="flex-1">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="font-bold text-xl text-[#2E2E2E] dark:text-[#F2F0E3]">${review.user?.name || 'Anonymous'}</h3>
-                        <div class="flex items-center gap-3">
-                            <div class="flex text-yellow-400 text-lg">
-                                ${Array(10).fill().map((_, i) => 
-                                    `<i class="fas fa-star ${i < review.rating ? 'text-yellow-400' : 'text-[#2E2E2E]/20 dark:text-[#F2F0E3]/20'}"></i>`
-                                ).join('')}
+            return `
+                <div class="card rounded-2xl p-4 md:p-8 border-l-4 border-[#F76F53] hover:shadow-xl transition-all duration-300 group" data-review-id="${review._id}">
+                    <div class="flex flex-col md:flex-row md:items-start gap-4 md:gap-6">
+                        <div class="flex-shrink-0 flex md:flex-col items-center md:items-start gap-4">
+                            <img src="${review.user?.photo || '/assets/images/default-avatar.jpg'}" 
+                                alt="${review.user?.name || 'Anonymous'}" 
+                                class="w-12 h-12 md:w-16 md:h-16 rounded-full object-cover border-4 border-[#F76F53]/20 shadow-lg"
+                                onerror="this.src='/assets/images/default-avatar.jpg'">
+                            
+                            <!-- Mobile: Show rating next to avatar -->
+                            <div class="md:hidden flex items-center gap-2">
+                                <div class="flex text-sm">
+                                    ${Array(10).fill().map((_, i) => 
+                                        `<i class="fas fa-star ${i < review.rating ? 'review-star-active' : 'text-[#2E2E2E]/20 dark:text-[#F2F0E3]/20'}"></i>`
+                                    ).join('')}
+                                </div>
+                                <span class="text-sm font-bold bg-gradient-to-r from-[#F76F53] to-[#FF8A70] text-white px-2 py-1 rounded-full shadow-lg">${review.rating}/10</span>
                             </div>
-                            <span class="text-lg font-bold bg-yellow-500 text-white px-4 py-2 rounded-full shadow-lg">${review.rating}/10</span>
                         </div>
-                    </div>
-                    <p class="text-lg leading-relaxed text-[#2E2E2E] dark:text-[#F2F0E3] mb-4">${review.review}</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm text-[#2E2E2E]/60 dark:text-[#F2F0E3]/60 flex items-center gap-2">
-                            <i class="far fa-calendar-alt text-[#F76F53]"></i>
-                            ${new Date(review.createdAt).toLocaleDateString('en-US', { 
-                                year: 'numeric', 
-                                month: 'long', 
-                                day: 'numeric' 
-                            })}
-                        </span>
-                        ${canModifyReview ? `
-                        <div class="flex gap-3 opacity-70 group-hover:opacity-100 transition-opacity duration-300">
-                            ${reviewUserId === currentUserId ? `
-                            <button class="edit-review-btn p-3 text-blue-500 hover:text-blue-700 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-full transition-all duration-200 shadow-md hover:shadow-lg" data-review='${JSON.stringify(review).replace(/'/g, "&apos;")}' title="Edit Review">
-                                <i class="fas fa-edit text-lg"></i>
-                            </button>
-                            ` : ''}
-                            <button class="delete-review-btn p-3 text-red-500 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-full transition-all duration-200 shadow-md hover:shadow-lg" title="Delete Review">
-                                <i class="fas fa-trash text-lg"></i>
-                            </button>
+                        
+                        <div class="flex-1 min-w-0">
+                            <div class="flex flex-col md:flex-row md:items-center justify-between mb-3 md:mb-4 gap-2">
+                                <h3 class="font-bold text-lg md:text-xl text-[#2E2E2E] dark:text-[#F2F0E3] truncate">${review.user?.name || 'Anonymous'}</h3>
+                                
+                                <!-- Desktop: Show rating in header -->
+                                <div class="hidden md:flex items-center gap-3">
+                                    <div class="flex text-lg">
+                                        ${Array(10).fill().map((_, i) => 
+                                            `<i class="fas fa-star ${i < review.rating ? 'review-star-active' : 'text-[#2E2E2E]/20 dark:text-[#F2F0E3]/20'}"></i>`
+                                        ).join('')}
+                                    </div>
+                                    <span class="text-lg font-bold bg-gradient-to-r from-[#F76F53] to-[#FF8A70] text-white px-4 py-2 rounded-full shadow-lg">${review.rating}/10</span>
+                                </div>
+                            </div>
+                            
+                            <p class="text-base md:text-lg leading-relaxed text-[#2E2E2E] dark:text-[#F2F0E3] mb-4 break-words">${review.review}</p>
+                            
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                                <span class="text-sm text-[#2E2E2E]/60 dark:text-[#F2F0E3]/60 flex items-center gap-2">
+                                    <i class="far fa-calendar-alt text-[#F76F53]"></i>
+                                    ${new Date(review.createdAt).toLocaleDateString('en-US', { 
+                                        year: 'numeric', 
+                                        month: 'long', 
+                                        day: 'numeric' 
+                                    })}
+                                </span>
+                                
+                                ${canModifyReview ? `
+                                <div class="flex gap-2 opacity-70 group-hover:opacity-100 transition-opacity duration-300 self-end md:self-auto">
+                                    ${reviewUserId === currentUserId ? `
+                                    <button class="edit-review-btn p-2 md:p-3 text-blue-500 hover:text-blue-700 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-full transition-all duration-200 shadow-md hover:shadow-lg" data-review='${JSON.stringify(review).replace(/'/g, "&apos;")}' title="Edit Review">
+                                        <i class="fas fa-edit text-sm md:text-lg"></i>
+                                    </button>
+                                    ` : ''}
+                                    <button class="delete-review-btn p-2 md:p-3 text-red-500 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-full transition-all duration-200 shadow-md hover:shadow-lg" title="Delete Review">
+                                        <i class="fas fa-trash text-sm md:text-lg"></i>
+                                    </button>
+                                </div>
+                                ` : ''}
+                            </div>
                         </div>
-                        ` : ''}
                     </div>
                 </div>
-            </div>
-        </div>
-    `;
-}).join('');
+            `;
+        }).join('');
 
         // Add event listeners for delete and edit buttons
         container.querySelectorAll('.delete-review-btn').forEach(btn => {
@@ -1129,50 +1163,60 @@ const initReviewModal = (reviewToEdit = null) => {
 
     // Form submission with correct endpoints
     modal.querySelector('#review-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const movieId = new URLSearchParams(window.location.search).get('id');
-        const token = localStorage.getItem('token');
-        
-        if (!token) {
-            window.location.href = '/pages/auth/login.html';
-            return;
-        }
+    e.preventDefault();
+    const movieId = new URLSearchParams(window.location.search).get('id');
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+        window.location.href = '/pages/auth/login.html';
+        return;
+    }
 
-        try {
-            const reviewData = {
-                rating: parseInt(document.getElementById('review-rating').value),
-                review: document.getElementById('review-text').value
-            };
+    try {
+        const reviewData = {
+            rating: parseInt(document.getElementById('review-rating').value),
+            review: document.getElementById('review-text').value
+        };
 
-            if (reviewToEdit) {
-                // PATCH request to update existing review
-                await axios.patch(`${API_BASE_URL}/movies/${movieId}/reviews/${reviewToEdit._id}`, reviewData, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-            } else {
-                // POST request to create new review
-                await axios.post(`${API_BASE_URL}/movies/${movieId}/reviews`, reviewData, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-            }
-
-            modal.remove();
-            await loadReviews(movieId);
-            Swal.fire({
-                icon: 'success',
-                title: reviewToEdit ? 'Review Updated!' : 'Review Added!',
-                showConfirmButton: false,
-                timer: 1500
+        let response;
+        if (reviewToEdit) {
+            // PATCH request to update existing review - FIXED URL
+            console.log('Updating review:', reviewToEdit._id, 'for movie:', movieId);
+            response = await axios.patch(`${API_BASE_URL}/movies/${movieId}/reviews/${reviewToEdit._id}`, reviewData, {
+                headers: { 
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
             });
-        } catch (err) {
-            console.error('Review submission error:', err);
-            Swal.fire({
-                icon: 'error',
-                title: 'Failed to submit review',
-                text: err.response?.data?.message || 'Please try again'
+        } else {
+            // POST request to create new review
+            console.log('Creating new review for movie:', movieId);
+            response = await axios.post(`${API_BASE_URL}/movies/${movieId}/reviews`, reviewData, {
+                headers: { 
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
             });
         }
-    });
+
+        modal.remove();
+        await loadReviews(movieId);
+        Swal.fire({
+            icon: 'success',
+            title: reviewToEdit ? 'Review Updated!' : 'Review Added!',
+            showConfirmButton: false,
+            timer: 1500
+        });
+    } catch (err) {
+        console.error('Review submission error:', err);
+        console.error('Error response:', err.response);
+        Swal.fire({
+            icon: 'error',
+            title: 'Failed to submit review',
+            text: err.response?.data?.message || 'Please try again'
+        });
+    }
+});
 
     // Cancel and backdrop click handlers
     modal.querySelector('#cancel-review').addEventListener('click', () => {

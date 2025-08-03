@@ -3880,3 +3880,12 @@ html {
 .stat-card:nth-child(1) { animation-delay: 0.1s; }
 .stat-card:nth-child(2) { animation-delay: 0.2s; }
 .stat-card:nth-child(3) { animation-delay: 0.3s; }
+
+.review-star-active {
+    background: linear-gradient(135deg, #F76F53 0%, #FF8A70 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 8px rgba(247, 111, 83, 0.3);
+}
