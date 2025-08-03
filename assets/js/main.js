@@ -31,7 +31,7 @@ document.getElementById('mobile-menu-button')?.addEventListener?.('click', () =>
 });
 
 // Check auth status on page load
-window.API_BASE_URL = window.API_BASE_URL || 'http://localhost:3000/api/v1';
+window.API_BASE_URL = window.API_BASE_URL || 'scydb-api-production.up.railway.app';
 
 const checkAuthStatus = async () => {
   const token = localStorage.getItem('token');

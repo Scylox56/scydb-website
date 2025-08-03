@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let selectedGenres = [];
     let availableGenres = [];
 
-    const API_BASE_URL = 'http://localhost:3000/api/v1';
+    const API_BASE_URL = 'scydb-api-production.up.railway.app';
 
     try {
         // Load available genres and movie data simultaneously
