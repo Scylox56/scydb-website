@@ -5426,3 +5426,248 @@ html {
     color: transparent;
     text-shadow: 0 0 8px rgba(247, 111, 83, 0.3);
 }
+
+
+
+/* Profile completion card mobile fixes */
+
+
+
+@media (max-width: 768px) {
+    .profile-completion {
+        min-width: auto !important;
+        width: 100% !important;
+        padding: 1rem !important;
+        margin-top: 1.5rem !important;
+    }
+    
+    .completion-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.5rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .completion-text {
+        font-size: 0.875rem !important;
+    }
+    
+    .completion-percentage {
+        font-size: 1.25rem !important;
+        align-self: flex-end !important;
+        margin-top: -1.5rem !important;
+    }
+    
+    .completion-tip {
+        font-size: 0.75rem !important;
+        text-align: center !important;
+    }
+}
+
+
+
+/* Avatar input container mobile fixes */
+
+
+
+@media (max-width: 640px) {
+    .avatar-input-container {
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+    
+    .avatar-preview-btn {
+        width: 100% !important;
+        justify-content: center !important;
+        white-space: normal !important;
+        padding: 0.875rem 1rem !important;
+    }
+}
+
+
+
+/* File input section mobile fixes */
+
+
+
+@media (max-width: 768px) {
+    .form-section:has(#avatar-file-input) {
+        padding: 1rem !important;
+    }
+    
+    .form-section:has(#avatar-file-input) .form-group {
+        gap: 0.75rem !important;
+    }
+    
+    .form-section:has(#avatar-file-input) .form-label {
+        font-size: 0.8125rem !important;
+    }
+    
+    .form-section:has(#avatar-file-input) .form-input[type="file"] {
+        padding: 0.75rem !important;
+        font-size: 0.875rem !important;
+    }
+    
+    .form-section:has(#avatar-file-input) p {
+        font-size: 0.75rem !important;
+        text-align: center !important;
+        margin-top: 0.75rem !important;
+    }
+}
+
+
+
+/* Avatar modal mobile fixes */
+
+
+
+@media (max-width: 640px) {
+    .avatar-modal-content {
+        margin: 0.5rem !important;
+        max-width: calc(100vw - 1rem) !important;
+        border-radius: 1rem !important;
+    }
+    
+    .modal-header {
+        padding: 1rem !important;
+    }
+    
+    .modal-title {
+        font-size: 1.125rem !important;
+    }
+    
+    .modal-body {
+        padding: 1rem !important;
+    }
+    
+    .upload-area {
+        padding: 1.5rem 1rem !important;
+    }
+    
+    .upload-area i {
+        font-size: 1.5rem !important;
+    }
+    
+    .upload-area span {
+        font-size: 0.875rem !important;
+    }
+    
+    .upload-area small {
+        font-size: 0.6875rem !important;
+    }
+    
+    .avatar-url-option {
+        gap: 1rem !important;
+    }
+    
+    .avatar-url-option .btn {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+    
+    .avatar-preview {
+        width: 100px !important;
+        height: 100px !important;
+    }
+    
+    .modal-footer {
+        padding: 1rem !important;
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+    }
+    
+    .modal-footer .btn {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+}
+
+
+
+/* Profile main info mobile adjustments */
+
+
+
+@media (max-width: 640px) {
+    .profile-main-info {
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        gap: 1rem !important;
+    }
+    
+    .profile-avatar {
+        width: 100px !important;
+        height: 100px !important;
+    }
+    
+    .profile-name {
+        font-size: 1.5rem !important;
+        text-align: center !important;
+    }
+    
+    .profile-badges {
+        justify-content: center !important;
+        flex-wrap: wrap !important;
+    }
+    
+    .profile-email {
+        text-align: center !important;
+        font-size: 0.875rem !important;
+    }
+}
+
+
+
+/* Form grid mobile responsiveness */
+
+
+
+@media (max-width: 768px) {
+    .form-grid:not(.single-column) {
+        grid-template-columns: 1fr !important;
+        gap: 1.25rem !important;
+    }
+    
+    .form-section .section-title {
+        font-size: 1rem !important;
+        margin-bottom: 1.25rem !important;
+    }
+    
+    .form-section .section-title::before {
+        width: 3px !important;
+        height: 1.25rem !important;
+        margin-right: 0.5rem !important;
+    }
+}
+
+
+
+/* Additional mobile spacing fixes */
+
+
+
+@media (max-width: 480px) {
+    .profile-header-card {
+        margin: 0 0.5rem !important;
+        border-radius: 1rem !important;
+    }
+    
+    .profile-content {
+        padding: 1.5rem 1rem !important;
+        padding-top: 2rem !important;
+    }
+    
+    .profile-completion {
+        padding: 0.875rem !important;
+        border-radius: 0.75rem !important;
+    }
+    
+    .completion-bar {
+        height: 6px !important;
+    }
+    
+    .completion-progress {
+        border-radius: 3px !important;
+    }
+}
