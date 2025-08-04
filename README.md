@@ -54,6 +54,10 @@ ScyDB is a comprehensive movie database website that allows users to discover, r
 - CSS Optimization: Minified stylesheets and efficient selectors
 - API Caching: Smart caching strategies for better performance
 
+## 🔗 Related Repositories
+
+- [scydb-api](https://github.com/Scylox56/scydb-api) – The Express.js backend powering ScyDB
+
 ## 📂 Project Structure
 ```scydb-website/
 ├── pages/
