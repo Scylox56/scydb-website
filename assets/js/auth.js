@@ -1,4 +1,4 @@
-const API_BASE_URL = 'scydb-api-production.up.railway.app';
+const API_BASE_URL = 'https://scydb-api-production.up.railway.app/api/v1';
 
 // ======================
 // UI Management Functions
