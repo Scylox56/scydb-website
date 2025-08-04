@@ -1,12 +1,27 @@
-[build]
-  publish = "."
-  
-[[redirects]]
-  from = "/"
-  to = "/pages/index.html"
-  status = 200
+# Main page redirect
+/  /pages/index.html  200
 
-[[redirects]]
-  from = "/*"
-  to = "/pages/404.html"
-  status = 404
+# Specific page routes
+/about  /pages/about.html  200
+/contact  /pages/contact.html  200
+/privacy  /pages/privacy.html  200
+/tos  /pages/tos.html  200
+
+# Auth routes
+/login  /pages/auth/login.html  200
+/signup  /pages/auth/signup.html  200
+
+# Movie routes
+/movies  /pages/movies/index.html  200
+/movies/  /pages/movies/index.html  200
+/movies/create  /pages/movies/create.html  200
+/movies/details  /pages/movies/details.html  200
+/movies/edit  /pages/movies/edit.html  200
+
+# User routes
+/profile  /pages/users/profile.html  200
+/dashboard  /pages/users/dashboard.html  200
+/watchlist  /pages/users/watchlist.html  200
+
+# Fallback 404
+/*  /pages/404.html  404
