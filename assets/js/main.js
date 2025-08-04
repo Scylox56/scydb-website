@@ -105,7 +105,7 @@ const updateUIForLoggedInUser = (user) => {
     });
 
     // Show signup button for guests
-const ctaSignupBtn = document.querySelector('section a[href="/pages/auth/signup.html"]');
+const ctaSignupBtn = document.querySelector('section a[href="../auth/signup.html"]');
 if (ctaSignupBtn) {
   ctaSignupBtn.style.display = '';
 }
@@ -162,7 +162,7 @@ const isAdmin = user && ['admin', 'super-admin'].includes(user.role);
   }
 
   // Hide/show CTA section signup button based on login status
-const ctaSignupBtn = document.querySelector('section a[href="/pages/auth/signup.html"]');
+const ctaSignupBtn = document.querySelector('section a[href="../auth/signup.html"]');
 if (ctaSignupBtn) {
   if (user) {
     // Hide signup button for logged-in users
