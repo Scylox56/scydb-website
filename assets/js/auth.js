@@ -154,14 +154,19 @@ async function handleSignup(name, email, password, passwordConfirm) {
             withCredentials: true
         });
 
-        saveSession(data);
+        // Store email for verification page
+        localStorage.setItem('pendingVerificationEmail', email);
 
         await Swal.fire({
             icon: 'success',
-            title: 'Signup Successful!',
+            title: 'Account Created!',
+            text: 'Please check your email to verify your account.',
             showConfirmButton: false,
-            timer: 1500
+            timer: 2000
         });
+
+        // Redirect to verification page instead of logging in
+        window.location.href = `/pages/auth/verify-email.html?email=${encodeURIComponent(email)}`;
 
         return data.data.user;
     } catch (error) {
@@ -182,6 +187,92 @@ async function handleLogout() {
     localStorage.removeItem('user');
     updateAuthUI();
 }
+
+async function handleEmailVerification(token) {
+    try {
+        const { data } = await axios.get(`${API_BASE_URL}/auth/verify-email/${token}`, {
+            withCredentials: true
+        });
+
+        saveSession(data);
+        
+        await Swal.fire({
+            icon: 'success',
+            title: 'Email Verified!',
+            text: 'Welcome to ScyDB!',
+            showConfirmButton: false,
+            timer: 2000
+        });
+
+        // Redirect to success page
+        window.location.href = '/pages/auth/email-verified.html';
+
+        return data.data.user;
+    } catch (error) {
+        console.error('Email verification error:', error);
+        
+        await Swal.fire({
+            icon: 'error',
+            title: 'Verification Failed',
+            text: error.response?.data?.message || 'Invalid or expired verification link.',
+            confirmButtonText: 'Go to Login',
+            showCancelButton: true,
+            cancelButtonText: 'Resend Email'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '/pages/auth/login.html';
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                window.location.href = '/pages/auth/verify-email.html';
+            }
+        });
+        
+        throw error;
+    }
+}
+
+function startResendCooldown(seconds = 60) {
+    const cooldownKey = 'verificationCooldownUntil';
+    const endTime = Date.now() + seconds * 1000;
+    localStorage.setItem(cooldownKey, endTime);
+
+    const timerElement = document.getElementById('cooldown-timer');
+    const cooldownElement = document.getElementById('resend-cooldown');
+    const resendBtn = document.getElementById('resend-btn');
+
+    if (cooldownElement) cooldownElement.classList.remove('hidden');
+    if (resendBtn) {
+        resendBtn.disabled = true;
+        resendBtn.classList.add('opacity-50');
+    }
+
+    function updateTimer() {
+        const remaining = Math.max(0, Math.floor((endTime - Date.now()) / 1000));
+        if (timerElement) timerElement.textContent = remaining;
+
+        if (remaining <= 0) {
+            clearInterval(interval);
+            localStorage.removeItem(cooldownKey);
+            if (cooldownElement) cooldownElement.classList.add('hidden');
+            if (resendBtn) {
+                resendBtn.disabled = false;
+                resendBtn.classList.remove('opacity-50');
+            }
+        }
+    }
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+}
+
+// Restore cooldown if page reloads
+(function restoreCooldown() {
+    const cooldownKey = 'verificationCooldownUntil';
+    const endTime = localStorage.getItem(cooldownKey);
+    if (endTime && Date.now() < parseInt(endTime)) {
+        startResendCooldown(Math.ceil((parseInt(endTime) - Date.now()) / 1000));
+    }
+})();
+
 
 // ======================
 // Initialization
@@ -251,7 +342,7 @@ function initializeAuth() {
                 const user = await handleSignup(name, email, password, passwordConfirm);
 
                 // Redirect after signup
-                window.location.href = '/pages/movies/index.html';
+                // (This is handled in the handleSignup function)
 
             } catch (error) {
                 Swal.fire(
@@ -277,6 +368,13 @@ function initializeAuth() {
             });
         }
     });
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const verificationToken = urlParams.get('token');
+    
+    if (verificationToken && window.location.pathname.includes('verify-email')) {
+        handleEmailVerification(verificationToken);
+    }
 }
 
 // Start everything when DOM is ready

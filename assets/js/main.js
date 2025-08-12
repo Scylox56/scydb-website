@@ -174,6 +174,18 @@ if (ctaSignupBtn) {
 }
 };
 
+// Show success message after email verification
+if (window.location.search.includes('verified=success')) {
+  Swal.fire({
+    icon: 'success',
+    title: 'Email Verified!',
+    text: 'Your account has been verified and you are now logged in.',
+    confirmButtonText: 'OK'
+  });
+
+  // Remove query from URL so it doesn't show again on refresh
+  window.history.replaceState({}, document.title, window.location.pathname);
+}
 
 
 function setupLogoutButton() {

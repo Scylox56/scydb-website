@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ScyDB - Verify Your Email</title>
+  <link rel="icon" href="../../assets/images/favicon.ico" type="image/x-icon">
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet" />
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+  <link href="../../assets/css/dist.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(247, 111, 83, 0.3); }
+      50% { box-shadow: 0 0 30px rgba(247, 111, 83, 0.5); }
+    }
+    .floating {
+      animation: float 6s ease-in-out infinite;
+    }
+    .pulse-glow {
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+    .form-container {
+      background-color: white;
+      border: 1px solid #e0e0e0;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    }
+    .dark .form-container {
+      background-color: #252525;
+      border-color: #3d3d3d;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    }
+    .text-primary {
+      color: #F76F53;
+    }
+    .text-secondary {
+      color: #666666;
+    }
+    .dark .text-secondary {
+      color: #a0a0a0;
+    }
+    .btn-primary {
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      box-shadow: 0 2px 8px rgba(247, 111, 83, 0.3);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(247, 111, 83, 0.4);
+    }
+    .email-icon {
+      background: linear-gradient(135deg, #F76F53, #e65a3f);
+      border-radius: 50%;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body class="bg-[#f8f7f2] dark:bg-[#1a1a1a] text-[#333333] dark:text-[#e5e5e5] min-h-screen">
+  <nav></nav>
+
+  <main class="container mx-auto px-4 py-16 flex justify-center items-center min-h-screen">
+    <div class="w-full max-w-md form-container rounded-xl p-8" data-aos="zoom-in" data-aos-duration="600">
+      <!-- Email icon with glow effect -->
+      <div class="text-center mb-6" data-aos="fade-down" data-aos-delay="100">
+        <div class="email-icon floating pulse-glow">
+          <i class="fas fa-envelope text-white text-2xl"></i>
+        </div>
+      </div>
+      
+      <div class="text-center mb-8" data-aos="fade-down" data-aos-delay="200">
+        <h2 class="text-3xl font-bold mb-4">Check Your Email</h2>
+        <p class="text-secondary leading-relaxed">
+          We've sent a verification link to your email address. 
+          Please check your inbox and click the link to verify your account.
+        </p>
+      </div>
+
+      <!-- Email address display -->
+      <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 mb-6 text-center" data-aos="fade-up" data-aos-delay="300">
+        <p class="text-sm text-secondary mb-1">Verification email sent to:</p>
+        <p class="font-semibold text-primary" id="user-email">your@email.com</p>
+      </div>
+
+      <!-- Instructions -->
+      <div class="space-y-4 mb-8" data-aos="fade-up" data-aos-delay="400">
+        <div class="flex items-start space-x-3">
+          <div class="flex-shrink-0 w-6 h-6 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mt-0.5">
+            <i class="fas fa-check text-green-600 dark:text-green-400 text-xs"></i>
+          </div>
+          <p class="text-sm text-secondary">Check your inbox for an email from ScyDB</p>
+        </div>
+        <div class="flex items-start space-x-3">
+          <div class="flex-shrink-0 w-6 h-6 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mt-0.5">
+            <i class="fas fa-mouse-pointer text-blue-600 dark:text-blue-400 text-xs"></i>
+          </div>
+          <p class="text-sm text-secondary">Click the verification link in the email</p>
+        </div>
+        <div class="flex items-start space-x-3">
+          <div class="flex-shrink-0 w-6 h-6 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mt-0.5">
+            <i class="fas fa-sign-in-alt text-purple-600 dark:text-purple-400 text-xs"></i>
+          </div>
+          <p class="text-sm text-secondary">You'll be automatically logged in</p>
+        </div>
+      </div>
+
+      <!-- Resend button -->
+      <div class="text-center mb-6" data-aos="fade-up" data-aos-delay="500">
+        <button 
+          id="resend-btn" 
+          class="btn btn-outline w-full py-3 border-[#F76F53] text-[#F76F53] hover:bg-[#F76F53] hover:text-white"
+        >
+          <i class="fas fa-paper-plane mr-2"></i>
+          <span id="resend-text">Resend Verification Email</span>
+          <span id="resend-spinner" class="loading loading-spinner loading-sm hidden ml-2"></span>
+        </button>
+        
+        <!-- Cooldown timer -->
+        <p id="resend-cooldown" class="text-sm text-secondary mt-2 hidden">
+          You can resend the email in <span id="cooldown-timer">60</span> seconds
+        </p>
+      </div>
+
+      <!-- Help text -->
+      <div class="text-center text-sm text-secondary space-y-2" data-aos="fade-up" data-aos-delay="600">
+        <p>
+          <i class="fas fa-lightbulb text-yellow-500 mr-1"></i>
+          Check your spam folder if you don't see the email
+        </p>
+        <p>
+          Having trouble? 
+          <a href="../contact.html" class="text-primary hover:underline">Contact support</a>
+        </p>
+      </div>
+
+      <!-- Back to login link -->
+      <div class="text-center mt-8" data-aos="fade-up" data-aos-delay="700">
+        <a href="login.html" class="text-secondary hover:text-primary transition-colors">
+          <i class="fas fa-arrow-left mr-2"></i>
+          Back to Login
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-[#F2F0E3] dark:bg-[#1F1F1F] border-t border-[#e0ddd0] dark:border-[#2E2E2E] relative overflow-hidden">
+  <!-- Background Pattern -->
+  <div class="absolute inset-0 opacity-5">
+    <div class="absolute top-0 left-0 w-full h-full">
+      <div class="film-pattern"></div>
+    </div>
+  </div>
+  
+  <div class="container mx-auto px-4 py-16 relative z-10">
+    <!-- Main Footer Content -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+      <!-- Brand Section -->
+      <div class="lg:col-span-1">
+        <div class="flex items-center mb-4">
+          <div class="brand-logo-icon">
+            <i class="fas fa-film text-white text-lg"></i>
+          </div>
+          <h3 class="text-2xl font-bold">ScyDB</h3>
+        </div>
+        <p class="opacity-80 leading-relaxed">
+          A minimalist movie database for discerning viewers. Discover, explore, and curate your perfect film collection.
+        </p>
+      </div>
+      
+      <!-- Navigation -->
+      <div>
+        <h3 class="text-lg font-bold mb-6 flex items-center">
+          <i class="fas fa-compass text-[#F76F53] mr-2"></i>
+          Explore
+        </h3>
+        <ul class="space-y-3">
+          <li><a href="../index.html" class="footer-link">Home</a></li>
+          <li><a href="../movies/" class="footer-link">All Movies</a></li>
+          <li><a href="#" class="footer-link" onclick="handleQuickFilter('rating'); return false;">Top Rated</a></li>
+          <li><a href="#" class="footer-link" onclick="handleQuickFilter('newest'); return false;">Latest Releases</a></li>
+          <li><a href="../about.html" class="footer-link">About ScyDB</a></li>
+        </ul>
+      </div>
+      
+      <!-- Popular Genres -->
+      <div>
+        <h3 class="text-lg font-bold mb-6 flex items-center">
+          <i class="fas fa-tags text-[#F76F53] mr-2"></i>
+          Popular Genres
+        </h3>
+        <ul class="space-y-3">
+          <li><a href="#" class="footer-link" onclick="handleQuickGenre('Action'); return false;">Action</a></li>
+          <li><a href="#" class="footer-link" onclick="handleQuickGenre('Drama'); return false;">Drama</a></li>
+          <li><a href="#" class="footer-link" onclick="handleQuickGenre('Comedy'); return false;">Comedy</a></li>
+          <li><a href="#" class="footer-link" onclick="handleQuickGenre('Sci-Fi'); return false;">Sci-Fi</a></li>
+          <li><a href="#" class="footer-link" onclick="handleQuickGenre('Horror'); return false;">Horror</a></li>
+        </ul>
+      </div>
+      
+      <!-- Connect & Support -->
+      <div>
+        <h3 class="text-lg font-bold mb-6 flex items-center">
+          <i class="fas fa-heart text-[#F76F53] mr-2"></i>
+          Connect
+        </h3>
+        
+        <!-- Social Links -->
+        <div class="flex space-x-3 mb-6">
+          <a href="https://x.com/lox_alpha" class="social-icon">
+            <i class="fab fa-twitter"></i>
+          </a>
+          <a href="https://www.instagram.com/scylox56" class="social-icon">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href="https://github.com/Scylox56" class="social-icon">
+            <i class="fab fa-github"></i>
+          </a>
+          <a href="https://discord.gg/jzbT56dqvj" class="social-icon">
+            <i class="fab fa-discord"></i>
+          </a>
+        </div>
+        
+        <!-- Contact Button -->
+        <a href="../contact.html" class="contact-btn">
+          <i class="fas fa-envelope mr-2"></i>
+          Contact Us
+        </a>
+        
+        <!-- Quick Links -->
+        <ul class="space-y-2 mt-4">
+          <li><a href="../privacy.html" class="footer-link text-sm">Privacy Policy</a></li>
+          <li><a href="../tos.html" class="footer-link text-sm">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- Bottom Bar -->
+    <div class="border-t border-[#e0ddd0] dark:border-[#2E2E2E] pt-8">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="flex items-center gap-6">
+          <p class="opacity-80 text-sm">&copy; 2025 ScyDB. Crafted with passion for cinema.</p>
+          <div class="flex items-center gap-2 text-sm opacity-70">
+            <i class="fas fa-database text-[#F76F53]"></i>
+            <span>Powered by ScyDB API</span>
+          </div>
+        </div>
+        
+        <!-- Back to Top -->
+        <button onclick="scrollToTop()" class="back-to-top">
+          <i class="fas fa-arrow-up"></i>
+          <span class="ml-2 hidden sm:inline">Back to Top</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="../../assets/js/auth.js"></script>
+  <script src="../../assets/js/navbar.js"></script>
+  <script src="../../assets/js/main.js"></script>
+  <script src="../../assets/js/footer.js"></script>
+
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+  AOS.init({
+    duration: 600,
+    easing: 'ease-out-quad',
+    once: true,
+    offset: 20
+  });
+
+  // Get email from URL params or localStorage
+  const urlParams = new URLSearchParams(window.location.search);
+  const email = urlParams.get('email') || localStorage.getItem('pendingVerificationEmail');
+  
+  if (email) {
+    document.getElementById('user-email').textContent = email;
+    localStorage.setItem('pendingVerificationEmail', email);
+  }
+
+  // Resend functionality with persistent cooldown
+  let cooldownActive = false;
+  const resendBtn = document.getElementById('resend-btn');
+  const resendText = document.getElementById('resend-text');
+  const resendSpinner = document.getElementById('resend-spinner');
+  const cooldownElement = document.getElementById('resend-cooldown');
+  const timerElement = document.getElementById('cooldown-timer');
+
+  function startResendCooldown(seconds) {
+    const endTime = Date.now() + seconds * 1000;
+    localStorage.setItem('resendCooldownEnd', endTime);
+
+    cooldownActive = true;
+    resendBtn.disabled = true;
+    resendBtn.classList.add('opacity-50');
+    cooldownElement.classList.remove('hidden');
+
+    let timeLeft = seconds;
+    timerElement.textContent = timeLeft;
+
+    const countdown = setInterval(() => {
+      timeLeft = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
+      timerElement.textContent = timeLeft;
+
+      if (timeLeft <= 0) {
+        clearInterval(countdown);
+        cooldownActive = false;
+        resendBtn.disabled = false;
+        resendBtn.classList.remove('opacity-50');
+        cooldownElement.classList.add('hidden');
+        localStorage.removeItem('resendCooldownEnd');
+      }
+    }, 1000);
+  }
+
+  function restoreCooldown() {
+    const endTime = localStorage.getItem('resendCooldownEnd');
+    if (!endTime) return;
+    const remaining = Math.ceil((endTime - Date.now()) / 1000);
+    if (remaining > 0) startResendCooldown(remaining);
+  }
+
+  // Restore cooldown if page reloaded
+  restoreCooldown();
+
+  resendBtn.addEventListener('click', async () => {
+    if (cooldownActive) return;
+
+    const email = document.getElementById('user-email').textContent;
+    
+    try {
+      resendSpinner.classList.remove('hidden');
+      resendText.textContent = 'Sending...';
+      
+      await axios.post(`${API_BASE_URL}/auth/resend-verification`, { email });
+      
+      Swal.fire({
+        icon: 'success',
+        title: 'Email Sent!',
+        text: 'Verification email has been resent successfully.',
+        timer: 3000,
+        showConfirmButton: false
+      });
+
+      startResendCooldown(60); // Start cooldown for 60s
+
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Failed to Send',
+        text: error.response?.data?.message || 'Please try again later.'
+      });
+    } finally {
+      resendSpinner.classList.add('hidden');
+      resendText.textContent = 'Resend Verification Email';
+    }
+  });
+});
+</script>
+</body>
+</html>
