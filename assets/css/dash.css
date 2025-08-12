@@ -992,127 +992,57 @@ body.dark .swal2-html-container div,
   color: inherit !important;
 }
 
-/* ===================== FORCE DESKTOP LAYOUT FOR MANAGEMENT TABS ON MOBILE ===================== */
+/* ===================== EMERGENCY MOBILE FIX ===================== */
 
 @media (max-width: 768px) {
   
-  /* Force management content areas to use desktop-like scaling */
-  #users-content,
-  #movies-content, 
-  #genres-content,
-  #roles-content,
-  #reviews-content {
-    transform: scale(0.85);
-    transform-origin: top left;
-    width: 117.6%; /* Compensate for scale */
-    margin-bottom: -10%;
+  /* Force remove any blue backgrounds */
+  body, html {
+    background-color: #F2F0E3 !important;
   }
   
-  /* Force tables to maintain desktop width */
-  #users-content table,
-  #movies-content table,
-  #genres-content table, 
-  #roles-content table,
-  #reviews-content table {
-    min-width: 900px;
-    font-size: 0.9rem;
+  .dark body, .dark html {
+    background-color: #1F1F1F !important;
   }
   
-  /* Adjust header sections for management tabs */
-  #users-content .p-6,
-  #movies-content .p-6,
-  #genres-content .p-6,
-  #roles-content .p-6,
-  #reviews-content .p-6 {
-    padding: 1.5rem !important;
+  /* Hide problematic mobile elements */
+  .mobile-overlay,
+  .mobile-menu-toggle {
+    display: none !important;
+    visibility: hidden !important;
   }
   
-  /* Scale down buttons but keep them functional */
-  #users-content .btn,
-  #movies-content .btn,
-  #genres-content .btn,
-  #roles-content .btn,
-  #reviews-content .btn {
-    padding: 0.5rem 1rem !important;
-    font-size: 0.85rem !important;
+  /* Force sidebar to stay visible like desktop */
+  .sidebar-gradient {
+    transform: translateX(0) !important;
+    position: fixed !important;
+    z-index: 10 !important;
   }
   
-  /* Adjust search inputs */
-  #users-content input,
-  #movies-content input,
-  #genres-content input,
-  #roles-content input,
-  #reviews-content input {
-    padding: 0.5rem 0.75rem !important;
-    font-size: 0.85rem !important;
-  }
-  
-  /* Force desktop-like flex layout for headers */
-  #users-content .flex.flex-col.lg\\:flex-row,
-  #movies-content .flex.flex-col.lg\\:flex-row,
-  #genres-content .flex.flex-col.lg\\:flex-row,
-  #roles-content .flex.flex-col.lg\\:flex-row,
-  #reviews-content .flex.flex-col.lg\\:flex-row {
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-  }
-  
-  /* Force desktop button groups */
-  #users-content .flex.gap-3,
-  #movies-content .flex.gap-3,
-  #genres-content .flex.gap-3,
-  #roles-content .flex.gap-3,
-  #reviews-content .flex.gap-3 {
-    flex-direction: row !important;
-    width: auto !important;
-    gap: 0.5rem !important;
-  }
-  
-  /* Table headers and cells adjustment */
-  #users-content th,
-  #movies-content th,
-  #genres-content th,
-  #roles-content th,
-  #reviews-content th,
-  #users-content td,
-  #movies-content td,
-  #genres-content td,
-  #roles-content td,
-  #reviews-content td {
-    padding: 0.75rem 1rem !important;
-    font-size: 0.8rem !important;
-  }
-  
-  /* Ensure overflow scrolling works properly */
-  #users-content .overflow-x-auto,
-  #movies-content .overflow-x-auto,
-  #genres-content .overflow-x-auto,
-  #roles-content .overflow-x-auto,
-  #reviews-content .overflow-x-auto {
+  /* Force main content to use desktop layout */
+  .flex-1.ml-72 {
+    margin-left: 288px !important; /* 18rem = 288px */
+    padding: 2rem !important;
+    padding-top: 2rem !important;
+    width: calc(100vw - 288px) !important;
     overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch !important;
+  }
+  
+  /* Remove any blue overlays or backgrounds */
+  * {
+    background-color: inherit !important;
+  }
+  
+  *:not(.bg-gradient-to-r):not(.bg-gradient-to-br):not([class*="bg-["]) {
+    background: transparent !important;
   }
 }
 
-/* For very small screens, scale down even more */
-@media (max-width: 480px) {
-  #users-content,
-  #movies-content, 
-  #genres-content,
-  #roles-content,
-  #reviews-content {
-    transform: scale(0.75);
-    width: 133.3%; /* Compensate for smaller scale */
-    margin-bottom: -15%;
-  }
-  
-  /* Further reduce table font size */
-  #users-content table,
-  #movies-content table,
-  #genres-content table, 
-  #roles-content table,
-  #reviews-content table {
-    font-size: 0.8rem;
+/* Force override any conflicting styles */
+@media (max-width: 1024px) {
+  .mobile-overlay,
+  .mobile-overlay.active {
+    display: none !important;
+    background: transparent !important;
   }
 }
