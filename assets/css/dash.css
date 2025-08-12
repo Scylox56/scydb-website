@@ -992,129 +992,50 @@ body.dark .swal2-html-container div,
   color: inherit !important;
 }
 
-/* ===================== MOBILE RESPONSIVE FOR MANAGEMENT TABS (NON-SCALING APPROACH) ===================== */
+/* ===================== SIMPLE MOBILE FIX FOR MANAGEMENT TABS ===================== */
 
 @media (max-width: 768px) {
   
-  /* Remove any scaling transforms */
+  /* Hide mobile overlay that's causing the blue background */
+  .mobile-overlay {
+    display: none !important;
+  }
+  
+  /* Force management tabs to use desktop viewport */
   #users-content,
   #movies-content, 
   #genres-content,
   #roles-content,
   #reviews-content {
-    transform: none !important;
-    width: 100% !important;
-    margin-bottom: 0 !important;
-  }
-  
-  /* Make management tab headers stack properly but keep desktop look */
-  #users-content .flex.flex-col.lg\\:flex-row,
-  #movies-content .flex.flex-col.lg\\:flex-row,
-  #genres-content .flex.flex-col.lg\\:flex-row,
-  #roles-content .flex.flex-col.lg\\:flex-row,
-  #reviews-content .flex.flex-col.lg\\:flex-row {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 1rem !important;
-  }
-  
-  /* But keep button groups horizontal */
-  #users-content .flex.gap-3,
-  #movies-content .flex.gap-3,
-  #genres-content .flex.gap-3,
-  #roles-content .flex.gap-3,
-  #reviews-content .flex.gap-3 {
-    flex-direction: row !important;
-    flex-wrap: wrap !important;
-    width: 100% !important;
-    gap: 0.5rem !important;
-  }
-  
-  /* Ensure search inputs are responsive */
-  #users-content input[type="text"],
-  #movies-content input[type="text"],
-  #genres-content input[type="text"],
-  #roles-content input[type="text"],
-  #reviews-content input[type="text"] {
-    width: 100% !important;
-    max-width: 300px !important;
-  }
-  
-  /* Force tables to be horizontally scrollable */
-  #users-content .overflow-x-auto,
-  #movies-content .overflow-x-auto,
-  #genres-content .overflow-x-auto,
-  #roles-content .overflow-x-auto,
-  #reviews-content .overflow-x-auto {
+    min-width: 800px !important;
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch !important;
   }
   
-  /* Set minimum table width to force desktop-like appearance */
+  /* Force main content area to be wider */
+  .flex-1.ml-72 {
+    min-width: 800px !important;
+    overflow-x: auto !important;
+  }
+  
+  /* Ensure tables maintain desktop width */
   #users-content table,
   #movies-content table,
   #genres-content table, 
   #roles-content table,
   #reviews-content table {
-    min-width: 800px !important;
-    width: 800px !important;
-  }
-  
-  /* Reduce padding slightly for mobile */
-  #users-content .p-6,
-  #movies-content .p-6,
-  #genres-content .p-6,
-  #roles-content .p-6,
-  #reviews-content .p-6 {
-    padding: 1rem !important;
-  }
-  
-  /* Adjust table cell padding */
-  #users-content th,
-  #movies-content th,
-  #genres-content th,
-  #roles-content th,
-  #reviews-content th,
-  #users-content td,
-  #movies-content td,
-  #genres-content td,
-  #roles-content td,
-  #reviews-content td {
-    padding: 0.75rem 0.5rem !important;
-    font-size: 0.875rem !important;
-  }
-  
-  /* Make buttons slightly smaller but keep them functional */
-  #users-content .btn,
-  #movies-content .btn,
-  #genres-content .btn,
-  #roles-content .btn,
-  #reviews-content .btn {
-    padding: 0.5rem 0.75rem !important;
-    font-size: 0.875rem !important;
-    white-space: nowrap !important;
+    width: 100% !important;
+    min-width: 700px !important;
   }
 }
 
-/* For very small screens */
-@media (max-width: 480px) {
-  
-  /* Stack buttons vertically on very small screens */
-  #users-content .flex.gap-3,
-  #movies-content .flex.gap-3,
-  #genres-content .flex.gap-3,
-  #roles-content .flex.gap-3,
-  #reviews-content .flex.gap-3 {
-    flex-direction: column !important;
+/* Remove the blue background issue */
+@media (max-width: 1024px) {
+  body {
+    overflow-x: auto !important;
   }
   
-  /* Make tables even wider to maintain desktop look */
-  #users-content table,
-  #movies-content table,
-  #genres-content table, 
-  #roles-content table,
-  #reviews-content table {
-    min-width: 900px !important;
-    width: 900px !important;
+  .mobile-overlay.active {
+    display: none !important;
   }
 }
