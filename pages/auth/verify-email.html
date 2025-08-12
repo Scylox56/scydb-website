@@ -273,7 +273,7 @@
   <script src="../../assets/js/footer.js"></script>
 
   <script>
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   AOS.init({
     duration: 600,
     easing: 'ease-out-quad',
@@ -281,7 +281,6 @@ document.addEventListener('DOMContentLoaded', () => {
     offset: 20
   });
 
-  // Get email from URL params or localStorage
   const urlParams = new URLSearchParams(window.location.search);
   const email = urlParams.get('email') || localStorage.getItem('pendingVerificationEmail');
   
@@ -290,13 +289,13 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('pendingVerificationEmail', email);
   }
 
-  // Resend functionality with persistent cooldown
-  let cooldownActive = false;
   const resendBtn = document.getElementById('resend-btn');
   const resendText = document.getElementById('resend-text');
   const resendSpinner = document.getElementById('resend-spinner');
   const cooldownElement = document.getElementById('resend-cooldown');
   const timerElement = document.getElementById('cooldown-timer');
+
+  let cooldownActive = false;
 
   function startResendCooldown(seconds) {
     const endTime = Date.now() + seconds * 1000;
@@ -306,12 +305,10 @@ document.addEventListener('DOMContentLoaded', () => {
     resendBtn.disabled = true;
     resendBtn.classList.add('opacity-50');
     cooldownElement.classList.remove('hidden');
-
-    let timeLeft = seconds;
-    timerElement.textContent = timeLeft;
+    timerElement.textContent = seconds;
 
     const countdown = setInterval(() => {
-      timeLeft = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
+      const timeLeft = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
       timerElement.textContent = timeLeft;
 
       if (timeLeft <= 0) {
@@ -332,20 +329,27 @@ document.addEventListener('DOMContentLoaded', () => {
     if (remaining > 0) startResendCooldown(remaining);
   }
 
-  // Restore cooldown if page reloaded
   restoreCooldown();
 
   resendBtn.addEventListener('click', async () => {
     if (cooldownActive) return;
 
     const email = document.getElementById('user-email').textContent;
-    
+    if (!email) {
+      Swal.fire({
+        icon: 'error',
+        title: 'No Email Found',
+        text: 'Please sign up again or provide an email.'
+      });
+      return;
+    }
+
     try {
       resendSpinner.classList.remove('hidden');
       resendText.textContent = 'Sending...';
-      
+
       await axios.post(`${API_BASE_URL}/auth/resend-verification`, { email });
-      
+
       Swal.fire({
         icon: 'success',
         title: 'Email Sent!',
@@ -354,7 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showConfirmButton: false
       });
 
-      startResendCooldown(60); // Start cooldown for 60s
+      startResendCooldown(60);
 
     } catch (error) {
       Swal.fire({

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verifying Email | ScyDB</title>
+  <link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon">
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <link href="/assets/css/dist.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-[#F2F0E3] dark:bg-[#1F1F1F] text-[#2E2E2E] dark:text-[#F2F0E3] m-0 min-h-screen flex flex-col">
+  
+  <!-- Navigation -->
+  <nav></nav>
+
+  <!-- Main Section -->
+  <main class="flex-grow flex items-center justify-center px-4 py-20">
+    <div class="text-center max-w-2xl">
+      <div class="mb-8" data-aos="fade-down">
+        <i class="fas fa-envelope-circle-check text-[#F76F53] text-6xl animate-bounce"></i>
+      </div>
+      <div data-aos="fade-up" data-aos-delay="200">
+        <h1 class="text-3xl md:text-4xl font-semibold mb-6">Verifying Your Email...</h1>
+        <p class="text-lg opacity-80 mb-6">
+          Please wait while we confirm your email address.
+        </p>
+        <div class="flex justify-center">
+          <span class="loading loading-spinner loading-lg text-[#F76F53]"></span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="/assets/js/navbar.js"></script>
+  <script src="/assets/js/main.js"></script>
+  <script src="/assets/js/footer.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      AOS.init({ duration: 600, easing: 'ease-out-quad', once: true });
+
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get('token');
+
+      if (!token) {
+        window.location.href = '/404.html';
+        return;
+      }
+
+      try {
+        const res = await axios.get(`${API_BASE_URL}/auth/verify-email/${token}`, { withCredentials: true });
+        
+        if (res.data.token) {
+          localStorage.setItem('token', res.data.token);
+        }
+
+        // Redirect to email verified page
+        window.location.href = '/pages/auth/email-verified.html';
+      } catch (err) {
+        console.error(err);
+        window.location.href = '/404.html';
+      }
+    });
+  </script>
+</body>
+</html>
