@@ -18,24 +18,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = this.value;
         const strength = checkPasswordStrength(password);
         
-        strengthBar.className = 'password-strength-bar';
-        
+        strengthBar.classList.remove('strength-weak', 'strength-medium', 'strength-strong');
+        strengthBar.classList.add('password-strength-bar');
         if (password.length === 0) {
-          strengthBar.style.width = '0%';
-          passwordHint.textContent = 'Password must be at least 8 characters long';
-          passwordHint.className = 'text-xs text-secondary mt-2';
+        strengthBar.style.width = '0%';
+        passwordHint.textContent = 'Password must be at least 8 characters long';
+        passwordHint.className = 'text-xs text-secondary mt-2';
         } else if (strength === 'weak') {
-          strengthBar.classList.add('strength-weak');
-          passwordHint.textContent = 'Weak password - try adding numbers or symbols';
-          passwordHint.className = 'text-xs text-red-500 mt-2';
+        strengthBar.classList.add('strength-weak');
+        passwordHint.textContent = 'Weak password - try adding numbers or symbols';
+        passwordHint.className = 'text-xs text-red-500 mt-2';
         } else if (strength === 'medium') {
-          strengthBar.classList.add('strength-medium');
-          passwordHint.textContent = 'Medium strength - good progress!';
-          passwordHint.className = 'text-xs text-yellow-600 mt-2';
+        strengthBar.classList.add('strength-medium');
+        passwordHint.textContent = 'Medium strength - good progress!';
+        passwordHint.className = 'text-xs text-yellow-600 mt-2';
         } else if (strength === 'strong') {
-          strengthBar.classList.add('strength-strong');
-          passwordHint.textContent = 'Strong password!';
-          passwordHint.className = 'text-xs text-green-600 mt-2';
+        strengthBar.classList.add('strength-strong');
+        passwordHint.textContent = 'Strong password!';
+        passwordHint.className = 'text-xs text-green-600 mt-2';
         }
         
         checkPasswordMatch();

@@ -80,7 +80,10 @@
       height: 100%;
       transition: all 0.3s ease;
       border-radius: 2px;
-    }
+}
     .strength-weak { background: #ef4444; width: 33%; }
     .strength-medium { background: #f59e0b; width: 66%; }
     .strength-strong { background: #10b981; width: 100%; }
+    .password-strength-bar {
+    transition: width 0.3s ease, background-color 0.3s ease;
+    }
