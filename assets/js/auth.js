@@ -188,6 +188,7 @@ async function handleLogout() {
     updateAuthUI();
 }
 
+// Email verification handler
 async function handleEmailVerification(token) {
     try {
         const { data } = await axios.get(`${API_BASE_URL}/auth/verify-email/${token}`, {
@@ -226,6 +227,57 @@ async function handleEmailVerification(token) {
             }
         });
         
+        throw error;
+    }
+}
+
+// Forgot password handler
+async function handleForgotPassword(email) {
+    try {
+        const { data } = await axios.post(`${API_BASE_URL}/auth/forgot-password`, {
+            email
+        }, {
+            withCredentials: true
+        });
+
+        await Swal.fire({
+            icon: 'success',
+            title: 'Email Sent!',
+            text: 'Please check your email for password reset instructions.',
+            showConfirmButton: false,
+            timer: 2000
+        });
+
+        return data;
+    } catch (error) {
+        console.error('Forgot password error:', error);
+        throw error;
+    }
+}
+
+// Reset password handler
+async function handleResetPassword(token, password, passwordConfirm) {
+    try {
+        const { data } = await axios.patch(`${API_BASE_URL}/auth/reset-password/${token}`, {
+            password,
+            passwordConfirm
+        }, {
+            withCredentials: true
+        });
+
+        saveSession(data);
+        
+        await Swal.fire({
+            icon: 'success',
+            title: 'Password Reset!',
+            text: 'Your password has been successfully reset.',
+            showConfirmButton: false,
+            timer: 2000
+        });
+
+        return data.data.user;
+    } catch (error) {
+        console.error('Reset password error:', error);
         throw error;
     }
 }
@@ -348,6 +400,91 @@ function initializeAuth() {
                 Swal.fire(
                     'Signup Failed',
                     error.response?.data?.message || error.message || 'Invalid signup details',
+                    'error'
+                );
+            } finally {
+                if (submitBtn) submitBtn.disabled = false;
+            }
+        });
+    }
+
+    // Forgot Password Form
+    const forgotPasswordForm = document.getElementById('forgot-password-form');
+    if (forgotPasswordForm) {
+        forgotPasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = forgotPasswordForm.querySelector('button[type="submit"]');
+            
+            try {
+                if (submitBtn) submitBtn.disabled = true;
+                
+                const email = document.getElementById('email').value;
+
+                if (!email) {
+                    throw new Error('Please enter your email address');
+                }
+
+                await handleForgotPassword(email);
+                
+                // Show success message and redirect
+                setTimeout(() => {
+                    window.location.href = '/pages/auth/login.html';
+                }, 2000);
+                
+            } catch (error) {
+                Swal.fire(
+                    'Error',
+                    error.response?.data?.message || error.message || 'Something went wrong',
+                    'error'
+                );
+            } finally {
+                if (submitBtn) submitBtn.disabled = false;
+            }
+        });
+    }
+
+    // Reset Password Form
+    const resetPasswordForm = document.getElementById('reset-password-form');
+    if (resetPasswordForm) {
+        resetPasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = resetPasswordForm.querySelector('button[type="submit"]');
+            
+            try {
+                if (submitBtn) submitBtn.disabled = true;
+                
+                const password = document.getElementById('password').value;
+                const passwordConfirm = document.getElementById('passwordConfirm').value;
+                const urlParams = new URLSearchParams(window.location.search);
+                const token = urlParams.get('token');
+
+                if (!password || !passwordConfirm) {
+                    throw new Error('Please fill all fields');
+                }
+
+                if (password !== passwordConfirm) {
+                    throw new Error('Passwords do not match');
+                }
+
+                if (!token) {
+                    throw new Error('Invalid reset link');
+                }
+
+                const user = await handleResetPassword(token, password, passwordConfirm);
+                
+                // Redirect based on role
+                const redirectPath = ['admin', 'super-admin'].includes(user.role)
+                    ? '/pages/users/dashboard.html'
+                    : '/pages/index.html';
+                
+                setTimeout(() => {
+                    window.location.href = redirectPath;
+                }, 2000);
+                
+            } catch (error) {
+                Swal.fire(
+                    'Reset Failed',
+                    error.response?.data?.message || error.message || 'Password reset failed',
                     'error'
                 );
             } finally {
