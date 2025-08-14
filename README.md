@@ -63,7 +63,12 @@ ScyDB is a comprehensive movie database website that allows users to discover, r
 ├── pages/
 │   ├── auth/
 │   │   ├── login.html           # User login page
-│   │   └── signup.html          # User registration page
+│   │   ├── signup.html          # User registration page
+|   |   ├── verify-email.html    # Email verification page
+|   |   ├── verify-link.html     # Link Verification page
+|   |   ├── email-verified.html  # Verification success page
+|   |   ├── forgot-password.html # Forgot your password page
+|   |   └── reset-password.html  # Change user password page
 │   ├── movies/
 │   │   ├── index.html           # Movie browsing with filters
 │   │   ├── details.html         # Individual movie details
@@ -82,12 +87,17 @@ ScyDB is a comprehensive movie database website that allows users to discover, r
 │   ├── css/
 │   │   ├── dist.css             # Main stylesheet
 │   │   ├── dash.css             # Dashboard-specific styles
+|   |   ├── reset-pass.css       # Additional component styles
+|   |   ├── forgot-pass.css      # Additional component styles
 │   │   └── style.css            # Additional component styles
 │   ├── js/
 │   │   ├── auth.js              # Authentication logic
 │   │   ├── movies.js            # Movie-related functionality
 │   │   ├── admin.js             # Admin panel features
 │   │   ├── users.js             # User management
+|   |   ├── reset-pass.js        # Reset password functionality
+|   |   ├── forgot-pass.js       # Page specific functionality
+|   |   ├── watchlist.js         # Movie watchlist management
 │   │   ├── dashboard.js         # Dashboard charts & analytics
 │   │   ├── navbar.js            # Navigation functionality
 │   │   ├── main.js              # Core utilities
